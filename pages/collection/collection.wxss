@@ -1,1 +1,145 @@
-.title { font-size: 36rpx; font-weight: 600; }
+/* 归属：B｜核心交互 Owner */
+.collection-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #F5F7FA 0%, #EEF1F6 100%);
+  padding: 40rpx 30rpx calc(40rpx + env(safe-area-inset-bottom));
+}
+.page-title {
+  display: block;
+  font-size: 44rpx;
+  font-weight: 500;
+  color: #2C3A4F;
+}
+.page-subtitle {
+  display: block;
+  font-size: 26rpx;
+  color: #7D879C;
+  margin-bottom: 30rpx;
+}
+
+.filter-bar {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 30rpx;
+}
+.filter-btn {
+  padding: 12rpx 28rpx;
+  border-radius: 30rpx;
+  background: #fff;
+  color: #5F6B80;
+  font-size: 26rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.04);
+}
+.filter-btn.active {
+  background: #4A5D7A;
+  color: #fff;
+}
+
+.pattern-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24rpx;
+}
+.pattern-card {
+  width: 324rpx;
+  background: #fff;
+  border-radius: 28rpx;
+  padding: 24rpx;
+  text-align: center;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.04);
+  position: relative;
+}
+.pattern-card.locked {
+  opacity: 0.65;
+}
+.pattern-thumb {
+  width: 220rpx;
+  height: 220rpx;
+  background: #E8EDF5;
+  border-radius: 50%;
+  margin: 0 auto 16rpx;
+  display: block;
+}
+.pattern-name {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #2C3A4F;
+}
+.pattern-tags {
+  display: block;
+  font-size: 22rpx;
+  color: #7D879C;
+  margin-top: 4rpx;
+}
+.lock-badge {
+  position: absolute;
+  top: 16rpx;
+  right: 16rpx;
+  background: rgba(0,0,0,0.45);
+  color: #fff;
+  font-size: 20rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 12rpx;
+}
+
+.detail-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.detail-card {
+  width: 560rpx;
+  background: #fff;
+  border-radius: 36rpx;
+  padding: 40rpx;
+  text-align: center;
+}
+.detail-canvas {
+  width: 400rpx;
+  height: 400rpx;
+  background: #E8EDF5;
+  border-radius: 50%;
+  margin: 0 auto 24rpx;
+  display: block;
+}
+.detail-name {
+  display: block;
+  font-size: 38rpx;
+  font-weight: 500;
+  color: #2C3A4F;
+}
+.detail-tags {
+  display: block;
+  font-size: 24rpx;
+  color: #7D879C;
+  margin: 8rpx 0 20rpx;
+}
+.detail-story {
+  display: block;
+  font-size: 26rpx;
+  color: #5F6B80;
+  line-height: 1.6;
+  margin-bottom: 30rpx;
+}
+button {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+.primary-btn {
+  width: 100%;
+  height: 84rpx;
+  line-height: 84rpx;
+  background: linear-gradient(90deg, #4A5D7A, #6A7CA0);
+  color: #fff;
+  border-radius: 42rpx;
+  font-size: 30rpx;
+}
