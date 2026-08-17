@@ -17,7 +17,8 @@
       data-id="{{item.id}}"
       bindtap="openDetail"
     >
-      <canvas type="2d" id="col-{{item.id}}" class="pattern-thumb" style="width:220rpx;height:220rpx"></canvas>
+      <image wx:if="{{assetMap[item.id].hasImage}}" class="pattern-thumb" src="/assets/patterns/{{assetMap[item.id].file}}" mode="aspectFit"></image>
+      <canvas wx:else type="2d" id="col-{{item.id}}" class="pattern-thumb" style="width:220rpx;height:220rpx"></canvas>
       <text class="pattern-name">{{item.name}}</text>
       <text class="pattern-tags">{{item.tags}}</text>
       <view wx:if="{{!unlocked.includes(item.id)}}" class="lock-badge">未解锁</view>
@@ -27,7 +28,8 @@
   <!-- 详情弹窗 -->
   <view wx:if="{{detail}}" class="detail-mask" bindtap="closeDetail">
     <view class="detail-card">
-      <canvas type="2d" id="detail-canvas" class="detail-canvas" style="width:400rpx;height:400rpx"></canvas>
+      <image wx:if="{{detail.hasImage}}" class="detail-canvas" src="/assets/patterns/{{detail.file}}" mode="aspectFit"></image>
+      <canvas wx:else type="2d" id="detail-canvas" class="detail-canvas" style="width:400rpx;height:400rpx"></canvas>
       <text class="detail-name">{{detail.name}}</text>
       <text class="detail-tags">{{detail.tags}}</text>
       <text class="detail-story">{{detail.story}}</text>
