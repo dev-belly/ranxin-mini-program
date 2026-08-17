@@ -1,4 +1,72 @@
-<!-- 归属：B｜核心交互 Owner -->
-<view class="page">
-  <text class="title">{title}</text>
+<view class="game-page">
+  <!-- 顶部 HUD -->
+  <view class="game-header">
+    <view class="score-box">
+      <text class="score-label">得分</text>
+      <text class="score-value">{{score}}</text>
+    </view>
+    <view class="title-box">
+      <text class="game-title">合成大染缸</text>
+      <text class="game-subtitle">把烦恼一颗颗合掉</text>
+    </view>
+    <view class="next-box">
+      <text class="score-label">下一颗</text>
+      <view class="next-ball" style="background:{{['#D99E2B','#B83B3B','#6B3FA0','#2E5AAC','#1E4D8C','#1E4D8C','#2E5AAC','#1E4D8C'][nextLevel]}}"></view>
+    </view>
+  </view>
+
+  <!-- 游戏画布 -->
+  <view class="board-wrap">
+    <canvas
+      type="2d"
+      id="game-canvas"
+      class="game-canvas"
+      style="width:100%;height:100%"
+      bindtap="onBoardTap"
+      bindtouchmove="onBoardMove"
+    ></canvas>
+  </view>
+
+  <!-- 底部道具栏 -->
+  <view class="power-bar">
+    <view class="power-btn {{powerChange<=0?'disabled':''}}" bindtap="useChange">
+      <text class="power-icon">↻</text>
+      <text class="power-name">换一次</text>
+      <text class="power-count">×{{powerChange}}</text>
+    </view>
+    <view class="power-btn {{powerRemove<=0?'disabled':''}} {{removeMode?'active':''}}" bindtap="useRemove">
+      <text class="power-icon">✂</text>
+      <text class="power-name">消除一个</text>
+      <text class="power-count">×{{powerRemove}}</text>
+    </view>
+    <view class="power-btn {{muted?'active':''}}" bindtap="toggleMute">
+      <text class="power-icon">{{muted?'🔇':'🔊'}}</text>
+      <text class="power-name">{{muted?'静音':'声音'}}</text>
+    </view>
+  </view>
+
+  <!-- 游戏结束 -->
+  <view wx:if="{{gameOver}}" class="result-mask">
+    <view class="result-card">
+      <text class="result-title">奖励收获</text>
+      <text class="result-subtitle">你的灵魂扎染之旅又多了一份美好印记</text>
+      <view wx:if="{{result.unlock}}" class="unlock-box">
+        <text>恭喜你获得</text>
+        <text class="unlock-name">{{result.unlock.name}}</text>
+        <text>已加入你的纹样库</text>
+      </view>
+      <view class="result-score">{{result.score}}</view>
+      <text class="result-unit">分</text>
+      <view class="result-stats">
+        <view class="stat"><text>{{result.merges}}</text><text>本局合成</text></view>
+        <view class="stat"><text>{{result.time}}</text><text>分钟</text></view>
+        <view class="stat"><text>{{result.eliminated}}</text><text>消除纹球</text></view>
+      </view>
+      <button class="primary-btn" bindtap="collectPattern">收下纹样</button>
+      <view class="result-actions">
+        <button class="ghost-btn" bindtap="replay">再玩一局</button>
+        <button class="ghost-btn" bindtap="viewRank">查看排行榜</button>
+      </view>
+    </view>
+  </view>
 </view>

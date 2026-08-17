@@ -1,4 +1,140 @@
-<!-- 归属：B｜核心交互 Owner -->
-<view class="page">
-  <text class="title">{title}</text>
+<view class="diy-page">
+  <!-- 顶部步骤条 -->
+  <view class="stepper">
+    <view class="stepper-line"></view>
+    <view wx:for="{{steps}}" wx:key="index" class="step-item {{index===step?'active':''}} {{index<=step?'done':''}}">
+      <view class="step-dot">{{index+1}}</view>
+      <text class="step-label">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 0 情绪 -->
+  <view wx:if="{{step===0}}" class="step-panel">
+    <text class="step-title">此刻，你更接近哪一种感觉？</text>
+    <text class="step-subtitle">选择你此刻的状态，生成你的专属扎染</text>
+    <view class="mood-grid">
+      <view wx:for="{{moods}}" wx:key="id" class="mood-card {{mood===item.id?'selected':''}}" data-id="{{item.id}}" bindtap="chooseMood">
+        <text class="mood-emoji">{{item.emoji}}</text>
+        <text class="mood-label">{{item.label}}</text>
+      </view>
+    </view>
+    <view class="tip-box">
+      <text class="tip-text">{{tip}}</text>
+    </view>
+  </view>
+
+  <!-- 1 布料 -->
+  <view wx:if="{{step===1}}" class="step-panel">
+    <text class="step-title">先选一块布</text>
+    <text class="step-subtitle">不同材质，会留下不同的染色痕迹</text>
+    <view class="fabric-list">
+      <view wx:for="{{fabrics}}" wx:key="id" class="fabric-card {{fabric===item.id?'selected':''}}" data-id="{{item.id}}" bindtap="chooseFabric">
+        <view class="fabric-icon" style="background:{{mood==='good'?'#F4D18C':'#A8C4F4'}}"></view>
+        <view class="fabric-info">
+          <text class="fabric-name">{{item.name}}</text>
+          <text class="fabric-tag">{{item.tag}}</text>
+          <text class="fabric-desc">{{item.desc}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 2 纹样 -->
+  <view wx:if="{{step===2}}" class="step-panel">
+    <text class="step-title">选择纹样</text>
+    <text class="step-subtitle">选择你今天想染下的形状</text>
+    <view class="pattern-grid">
+      <view wx:for="{{catalog}}" wx:key="id" class="pattern-card {{patternId===item.id?'selected':''}}" data-id="{{item.id}}" bindtap="choosePattern">
+        <view class="pattern-thumb-wrap">
+          <canvas type="2d" id="pat-{{item.id}}" class="pattern-thumb" style="width:120rpx;height:120rpx"></canvas>
+        </view>
+        <text class="pattern-name">{{item.name}}</text>
+        <text class="pattern-tags">{{item.tags}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 3 纹样DIY -->
+  <view wx:if="{{step===3}}" class="step-panel editor-panel">
+    <text class="step-title">纹样 DIY</text>
+    <text class="step-subtitle">拖动、旋转与扎结，做出你的专属纹样</text>
+    <canvas type="2d" id="diy-preview" class="diy-canvas" style="width:680rpx;height:680rpx"></canvas>
+    <view class="editor-tabs">
+      <view wx:for="{{['结构','对称','松紧','留白','旋转']}}" wx:key="*this" class="tab {{activeTab===item?'active':''}}" data-tab="{{item}}" bindtap="switchTab">{{item}}</view>
+    </view>
+    <view class="sliders">
+      <view class="slider-row">
+        <text>对称 {{params.petals}} 瓣</text>
+        <slider min="2" max="16" step="1" value="{{params.petals}}" data-key="petals" bindchange="onParamChange" show-value/>
+      </view>
+      <view class="slider-row">
+        <text>扎结力度</text>
+        <slider min="0" max="100" value="{{params.tightness}}" data-key="tightness" bindchange="onParamChange" show-value/>
+      </view>
+      <view class="slider-row">
+        <text>留白面积</text>
+        <slider min="0" max="100" value="{{params.whitespace}}" data-key="whitespace" bindchange="onParamChange" show-value/>
+      </view>
+      <view class="slider-row">
+        <text>旋转角度</text>
+        <slider min="-180" max="180" value="{{params.rotation}}" data-key="rotation" bindchange="onParamChange" show-value/>
+      </view>
+    </view>
+    <view class="tip-box">
+      <text class="tip-text">{{tip}}</text>
+    </view>
+  </view>
+
+  <!-- 4 入染 -->
+  <view wx:if="{{step===4}}" class="step-panel">
+    <text class="step-title">选择染液颜色</text>
+    <view class="dye-list">
+      <view wx:for="{{dyes}}" wx:key="*this" class="dye-item {{dyeName===item?'selected':''}}" data-name="{{item}}" bindtap="chooseDye">
+        <view class="dye-circle" style="background:{{dyeColors[item]}};box-shadow: inset 0 0 0 2rpx rgba(0,0,0,0.06)"></view>
+        <text>{{item}}</text>
+      </view>
+    </view>
+    <view class="slider-row">
+      <text>染液浓度 {{concentration}}%</text>
+      <slider min="10" max="100" value="{{concentration}}" bindchange="onConcentrationChange" show-value/>
+    </view>
+    <text class="step-title" style="margin-top:30rpx">入染方式</text>
+    <view wx:for="{{dyeMethods}}" wx:key="id" class="method-card {{dyeMethod===item.id?'selected':''}}" data-id="{{item.id}}" bindtap="chooseDyeMethod">
+      <view class="method-main">
+        <text class="method-name">{{item.name}}</text>
+        <text wx:if="{{item.badge}}" class="method-badge">{{item.badge}}</text>
+      </view>
+      <text class="method-desc">{{item.desc}}</text>
+    </view>
+    <canvas type="2d" id="diy-preview" class="diy-canvas small" style="width:680rpx;height:400rpx"></canvas>
+  </view>
+
+  <!-- 5 氧化 -->
+  <view wx:if="{{step===5}}" class="step-panel">
+    <text class="step-title">氧化设置</text>
+    <view class="slider-row">
+      <text>预计氧化时长 {{oxidationTime}} 分钟</text>
+      <slider min="1" max="5" step="1" value="{{oxidationTime}}" bindchange="onOxidationChange" show-value/>
+    </view>
+    <text class="step-subtitle">氧化过程中，靛蓝色会随着与空气接触逐渐加深。</text>
+    <canvas type="2d" id="diy-preview" class="diy-canvas" style="width:680rpx;height:680rpx"></canvas>
+  </view>
+
+  <!-- 6 拆结 -->
+  <view wx:if="{{step===6}}" class="step-panel">
+    <text class="step-title">拆结方式</text>
+    <text class="step-subtitle">轻轻拆开束缚，让纹样慢慢显现</text>
+    <view wx:for="{{untieMethods}}" wx:key="id" class="method-card {{untieMethod===item.id?'selected':''}}" data-id="{{item.id}}" bindtap="chooseUntieMethod">
+      <text class="method-name">{{item.name}}</text>
+      <text class="method-desc">{{item.desc}}</text>
+    </view>
+    <canvas type="2d" id="diy-preview" class="diy-canvas" style="width:680rpx;height:680rpx"></canvas>
+    <button class="primary-btn" bindtap="saveWork">把作品变成实物</button>
+  </view>
+
+  <!-- 底部导航 -->
+  <view class="bottom-bar">
+    <button class="ghost-btn" bindtap="prev" disabled="{{step===0}}">上一步</button>
+    <button class="primary-btn" bindtap="next" wx:if="{{step<6}}">下一步</button>
+  </view>
 </view>

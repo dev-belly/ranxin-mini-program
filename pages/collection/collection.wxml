@@ -1,4 +1,37 @@
-<!-- 归属：B｜核心交互 Owner -->
-<view class="page">
-  <text class="title">{title}</text>
+<view class="collection-page">
+  <text class="page-title">纹样收集</text>
+  <text class="page-subtitle">你在游戏与 DIY 中解锁的灵魂纹样</text>
+
+  <view class="filter-bar">
+    <view class="filter-btn {{filter==='all'?'active':''}}" data-key="all" bindtap="setFilter">全部</view>
+    <view class="filter-btn {{filter==='unlocked'?'active':''}}" data-key="unlocked" bindtap="setFilter">已解锁</view>
+    <view class="filter-btn {{filter==='locked'?'active':''}}" data-key="locked" bindtap="setFilter">未解锁</view>
+  </view>
+
+  <view class="pattern-grid">
+    <view
+      wx:for="{{catalog}}"
+      wx:key="id"
+      wx:if="{{filter==='all' || (filter==='unlocked' && unlocked.includes(item.id)) || (filter==='locked' && !unlocked.includes(item.id))}}"
+      class="pattern-card {{unlocked.includes(item.id)?'':'locked'}}"
+      data-id="{{item.id}}"
+      bindtap="openDetail"
+    >
+      <canvas type="2d" id="col-{{item.id}}" class="pattern-thumb" style="width:220rpx;height:220rpx"></canvas>
+      <text class="pattern-name">{{item.name}}</text>
+      <text class="pattern-tags">{{item.tags}}</text>
+      <view wx:if="{{!unlocked.includes(item.id)}}" class="lock-badge">未解锁</view>
+    </view>
+  </view>
+
+  <!-- 详情弹窗 -->
+  <view wx:if="{{detail}}" class="detail-mask" bindtap="closeDetail">
+    <view class="detail-card">
+      <canvas type="2d" id="detail-canvas" class="detail-canvas" style="width:400rpx;height:400rpx"></canvas>
+      <text class="detail-name">{{detail.name}}</text>
+      <text class="detail-tags">{{detail.tags}}</text>
+      <text class="detail-story">{{detail.story}}</text>
+      <button class="primary-btn" bindtap="closeDetail">知道了</button>
+    </view>
+  </view>
 </view>
