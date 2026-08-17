@@ -1,0 +1,18 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/mbti/index",
+    "pages/works/works",
+    "pages/game/game",
+    "pages/collection/collection",
+    "pages/diy/diy"
+  ],
+  "window": {
+    "navigationBarTitleText": "染心",
+    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f5f5f5"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

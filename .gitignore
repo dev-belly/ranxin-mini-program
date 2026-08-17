@@ -1,0 +1,9 @@
+node_modules/
+miniprogram_npm/
+*.log
+project.private.config.json
+.env
+*.local
+config/secret.*
+secret.*.js
+.DS_Store

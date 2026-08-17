@@ -1,0 +1,4 @@
+<!-- 归属：A｜产品前端 Owner -->
+<view class="page">
+  <text class="title">{title}</text>
+</view>

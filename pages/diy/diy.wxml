@@ -1,0 +1,4 @@
+<!-- 归属：B｜核心交互 Owner -->
+<view class="page">
+  <text class="title">{title}</text>
+</view>
