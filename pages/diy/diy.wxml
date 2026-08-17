@@ -57,8 +57,8 @@
   <!-- 3 纹样DIY -->
   <view wx:if="{{step===3}}" class="step-panel editor-panel">
     <text class="step-title">纹样 DIY</text>
-    <text class="step-subtitle">拖动、旋转与扎结，做出你的专属纹样</text>
-    <canvas type="2d" id="diy-preview" class="diy-canvas" style="width:680rpx;height:680rpx"></canvas>
+    <text class="step-subtitle">直接拖动画布即可旋转全局角度，或调节下方参数</text>
+    <canvas type="2d" id="diy-preview" class="diy-canvas" style="width:680rpx;height:680rpx" bindtouchstart="onEditorTouch" bindtouchmove="onEditorTouch"></canvas>
     <view class="editor-tabs">
       <view wx:for="{{['结构','对称','松紧','留白','旋转']}}" wx:key="*this" class="tab {{activeTab===item?'active':''}}" data-tab="{{item}}" bindtap="switchTab">{{item}}</view>
     </view>

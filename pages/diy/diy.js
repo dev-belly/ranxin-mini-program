@@ -85,10 +85,25 @@ Page({
       canvas.width = width * dpr;
       canvas.height = height * dpr;
       this.canvas = canvas;
+      this.canvasW = width;
+      this.canvasH = height;
       this.ctx = canvas.getContext('2d');
       this.ctx.scale(dpr, dpr);
+      query.select('#diy-preview').boundingClientRect(rect => {
+        this.previewRect = rect;
+      }).exec();
       this.drawPreview();
     });
+  },
+
+  onEditorTouch(e) {
+    if (!this.previewRect) return;
+    const t = e.touches[0];
+    const cx = this.previewRect.left + this.canvasW / 2;
+    const cy = this.previewRect.top + this.canvasH / 2;
+    let deg = Math.atan2(t.clientY - cy, t.clientX - cx) * 180 / Math.PI;
+    deg = Math.max(-180, Math.min(180, Math.round(deg)));
+    this.setData({ 'params.rotation': deg, activeTab: '旋转' }, () => this.drawPreview());
   },
 
   randomTip() {

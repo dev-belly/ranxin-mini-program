@@ -85,19 +85,22 @@ Page({
 
   updatePhysics() {
     const balls = this.balls;
+    // 1) 积分 + 边界约束
     for (let b of balls) {
       b.vy += G;
       b.vx *= FRICTION;
       b.vy *= FRICTION;
+      // 速度钳制，避免穿透加速
+      b.vx = Math.max(-20, Math.min(20, b.vx));
+      b.vy = Math.max(-20, Math.min(20, b.vy));
       b.x += b.vx;
       b.y += b.vy;
 
-      // 地板
       if (b.y + b.r > this.boardH) {
         b.y = this.boardH - b.r;
         b.vy *= -RESTITUTION;
+        if (Math.abs(b.vy) < 0.4) b.vy = 0;
       }
-      // 墙壁
       if (b.x - b.r < 0) {
         b.x = b.r;
         b.vx *= -RESTITUTION;
@@ -108,37 +111,36 @@ Page({
       }
     }
 
-    // 碰撞与合并
+    // 2) 合并判定：同级且足够接近即合并（每帧至多一次）
     for (let i = 0; i < balls.length; i++) {
       for (let j = i + 1; j < balls.length; j++) {
         const a = balls[i], b = balls[j];
-        const dx = b.x - a.x;
-        const dy = b.y - a.y;
+        if (a.level !== b.level || a.level >= LEVELS.length - 1) continue;
+        const dx = b.x - a.x, dy = b.y - a.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        const minDist = a.r + b.r;
-        if (dist < minDist && dist > 0) {
-          // 相同等级且速度较低则合并
-          const relSpeed = Math.hypot(a.vx - b.vx, a.vy - b.vy);
-          if (a.level === b.level && a.level < LEVELS.length - 1 && relSpeed < MERGE_SPEED * 6) {
-            this.mergeBalls(i, j);
-            return; // 数组已变，下一帧继续
+        if (dist < (a.r + b.r) * 0.82) {
+          this.mergeBalls(i, j);
+          return;
+        }
+      }
+    }
+
+    // 3) 分离迭代：避免不同级球体互相嵌入与抖动
+    for (let iter = 0; iter < 3; iter++) {
+      for (let i = 0; i < balls.length; i++) {
+        for (let j = i + 1; j < balls.length; j++) {
+          const a = balls[i], b = balls[j];
+          let dx = b.x - a.x;
+          let dy = b.y - a.y;
+          let dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist === 0) { dx = 0.01; dy = 0; dist = 0.01; }
+          const minDist = a.r + b.r;
+          if (dist < minDist) {
+            const nx = dx / dist, ny = dy / dist;
+            const sep = (minDist - dist) * 0.5;
+            a.x -= nx * sep; a.y -= ny * sep;
+            b.x += nx * sep; b.y += ny * sep;
           }
-          // 弹性碰撞/推开
-          const nx = dx / dist;
-          const ny = dy / dist;
-          const overlap = minDist - dist;
-          const sep = overlap * 0.5;
-          a.x -= nx * sep;
-          a.y -= ny * sep;
-          b.x += nx * sep;
-          b.y += ny * sep;
-          const dvx = b.vx - a.vx;
-          const dvy = b.vy - a.vy;
-          const impulse = (dvx * nx + dvy * ny) * 0.5;
-          a.vx += impulse * nx * RESTITUTION;
-          a.vy += impulse * ny * RESTITUTION;
-          b.vx -= impulse * nx * RESTITUTION;
-          b.vy -= impulse * ny * RESTITUTION;
         }
       }
     }
