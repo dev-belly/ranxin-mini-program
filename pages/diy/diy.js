@@ -42,6 +42,9 @@ Page({
     dyeMethods: DYE_METHODS,
     untieMethods: UNTIE_METHODS,
     catalog: engine.PATTERN_CATALOG,
+    cats: ['推荐', '自然', '几何', '白族传统'],
+    currentCat: '推荐',
+    filteredCatalog: engine.PATTERN_CATALOG,
     mood: 'quiet',
     fabric: 'scarf',
     patternId: 'tuan',
@@ -68,7 +71,7 @@ Page({
   },
 
   onLoad() {
-    this.setData({ tip: this.randomTip() });
+    this.setData({ tip: this.randomTip(), filteredCatalog: engine.PATTERN_CATALOG });
   },
 
   onReady() {
@@ -166,6 +169,12 @@ Page({
     const patternId = e.currentTarget.dataset.id;
     const pattern = engine.getPatternById(patternId);
     this.setData({ patternId, 'params.petals': pattern.petals }, () => this.drawPreview());
+  },
+
+  setCat(e) {
+    const cat = e.currentTarget.dataset.cat;
+    const list = cat === '推荐' ? engine.PATTERN_CATALOG : engine.PATTERN_CATALOG.filter(p => p.cat === cat);
+    this.setData({ currentCat: cat, filteredCatalog: list }, () => this.renderPatternThumbs());
   },
 
   switchTab(e) {

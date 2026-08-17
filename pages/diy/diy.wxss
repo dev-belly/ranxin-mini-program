@@ -155,6 +155,24 @@
   flex-wrap: wrap;
   gap: 24rpx;
 }
+.cat-bar {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 28rpx;
+  flex-wrap: wrap;
+}
+.cat-btn {
+  padding: 10rpx 26rpx;
+  border-radius: 30rpx;
+  background: #fff;
+  color: #5F6B80;
+  font-size: 26rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.04);
+}
+.cat-btn.active {
+  background: #4A5D7A;
+  color: #fff;
+}
 .pattern-card {
   width: 300rpx;
   background: #fff;

@@ -43,8 +43,11 @@
   <view wx:if="{{step===2}}" class="step-panel">
     <text class="step-title">选择纹样</text>
     <text class="step-subtitle">选择你今天想染下的形状</text>
+    <view class="cat-bar">
+      <view wx:for="{{cats}}" wx:key="*this" class="cat-btn {{currentCat===item?'active':''}}" data-cat="{{item}}" bindtap="setCat">{{item}}</view>
+    </view>
     <view class="pattern-grid">
-      <view wx:for="{{catalog}}" wx:key="id" class="pattern-card {{patternId===item.id?'selected':''}}" data-id="{{item.id}}" bindtap="choosePattern">
+      <view wx:for="{{filteredCatalog}}" wx:key="id" class="pattern-card {{patternId===item.id?'selected':''}}" data-id="{{item.id}}" bindtap="choosePattern">
         <view class="pattern-thumb-wrap">
           <canvas type="2d" id="pat-{{item.id}}" class="pattern-thumb" style="width:120rpx;height:120rpx"></canvas>
         </view>

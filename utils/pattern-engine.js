@@ -12,13 +12,14 @@ const DYE_COLORS = {
   栀子黄: { main: '#D99E2B', light: '#EAC469', dark: '#8F6513' }
 };
 
+// 主题对齐：以白族扎染正统纹样为基准（蝴蝶纹/团花纹/水波纹/山水纹/几何纹/卷草纹）
 const PATTERN_CATALOG = [
-  { id: 'shui', name: '水波纹', tags: '自然 · 流动', type: 'wave', petals: 6 },
-  { id: 'hudie', name: '蝴蝶纹', tags: '轻盈 · 新生', type: 'butterfly', petals: 2 },
-  { id: 'tuan', name: '团花纹', tags: '圆满 · 聚合', type: 'radial', petals: 8 },
-  { id: 'ling', name: '菱形纹', tags: '秩序 · 稳定', type: 'diamond', petals: 4 },
-  { id: 'cang', name: '苍山纹', tags: '层叠 · 坚定', type: 'mountain', petals: 1 },
-  { id: 'he', name: '鹤翎纹', tags: '舒展 · 自由', type: 'feather', petals: 12 }
+  { id: 'hudie', name: '蝴蝶纹', tags: '多子多福', type: 'butterfly', petals: 2, cat: '白族传统' },
+  { id: 'tuan', name: '团花纹', tags: '团圆美满', type: 'radial', petals: 8, cat: '白族传统' },
+  { id: 'shui', name: '水波纹', tags: '风调雨顺', type: 'wave', petals: 6, cat: '自然' },
+  { id: 'cang', name: '山水纹', tags: '乐山乐水', type: 'mountain', petals: 1, cat: '自然' },
+  { id: 'ling', name: '菱形纹', tags: '秩序稳定', type: 'diamond', petals: 4, cat: '几何' },
+  { id: 'he', name: '卷草纹', tags: '生生不息', type: 'vine', petals: 10, cat: '白族传统' }
 ];
 
 function hexToRgb(hex) {
@@ -121,6 +122,15 @@ function renderTieDye(ctx, width, height, opts) {
       ctx.closePath();
     } else if (type === 'feather') {
       ctx.ellipse(cx + unitR * 0.35, cy, unitR * 0.5, unitR * 0.12, 0, 0, Math.PI * 2);
+    } else if (type === 'vine') {
+      // 卷草：沿螺旋排布的小珠串，模拟卷草纹
+      for (let t = 0; t <= Math.PI * 3; t += 0.3) {
+        const rr = (t / (Math.PI * 3)) * unitR * 0.55;
+        const px = cx + unitR * 0.15 + Math.cos(t) * rr;
+        const py = cy + Math.sin(t) * rr;
+        ctx.moveTo(px, py);
+        ctx.arc(px, py, unitR * 0.1, 0, Math.PI * 2);
+      }
     } else {
       // radial / tuan
       ctx.ellipse(cx + unitR * 0.2, cy, unitR * 0.42, unitR * 0.22, 0, 0, Math.PI * 2);
