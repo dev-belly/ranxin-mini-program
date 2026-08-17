@@ -2,6 +2,7 @@
 // 纹样收集 / 我的纹样库
 const engine = require('../../utils/pattern-engine.js');
 const api = require('../../utils/api.js');
+const assets = require('../../utils/assets.js');
 
 const STORIES = {
   shui: '连续折叠与扎结会形成自然流线，象征流动、松弛与不过度控制。',
@@ -17,19 +18,21 @@ Page({
     catalog: engine.PATTERN_CATALOG,
     unlocked: [],
     filter: 'all',
-    detail: null
+    detail: null,
+    assetMap: {}
   },
 
   onLoad() {
-    this.loadUnlocked();
+    // 先解析资源就绪状态（真实图片优先），再渲染缩略图
+    assets.resolvePatternAssets(engine.PATTERN_CATALOG).then(map => {
+      this.setData({ assetMap: map }, () => this.loadUnlocked());
+    }).catch(() => {
+      this.loadUnlocked();
+    });
   },
 
   onShow() {
     this.loadUnlocked();
-  },
-
-  onReady() {
-    this.renderThumbs();
   },
 
   loadUnlocked() {
@@ -46,8 +49,11 @@ Page({
   renderThumbs() {
     const dpr = wx.getSystemInfoSync().pixelRatio;
     const catalog = this.data.catalog;
+    const assetMap = this.data.assetMap || {};
     wx.nextTick(() => {
       catalog.forEach(p => {
+        // 已有真实图片则交由 <image> 渲染，跳过 Canvas
+        if (assetMap[p.id] && assetMap[p.id].hasImage) return;
         wx.createSelectorQuery().select('#col-' + p.id).fields({ node: true, size: true }).exec(res => {
           if (!res[0]) return;
           const canvas = res[0].node;
@@ -78,13 +84,22 @@ Page({
   openDetail(e) {
     const id = e.currentTarget.dataset.id;
     const p = engine.getPatternById(id);
-    this.setData({ detail: { ...p, story: STORIES[id] || '这是一款独特的扎染纹样，承载着你的手作情绪。' } }, () => {
+    const a = (this.data.assetMap || {})[id] || {};
+    this.setData({
+      detail: {
+        ...p,
+        story: STORIES[id] || '这是一款独特的扎染纹样，承载着你的手作情绪。',
+        file: a.file,
+        hasImage: a.hasImage
+      }
+    }, () => {
       wx.nextTick(() => this.renderDetailCanvas());
     });
   },
 
   renderDetailCanvas() {
     if (!this.data.detail) return;
+    if (this.data.detail.hasImage) return; // 真实图片优先
     const dpr = wx.getSystemInfoSync().pixelRatio;
     wx.createSelectorQuery().select('#detail-canvas').fields({ node: true, size: true }).exec(res => {
       if (!res[0]) return;
