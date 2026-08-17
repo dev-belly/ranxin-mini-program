@@ -1,0 +1,16 @@
+{
+  "patterns": {
+    "hudie": "hudie.png",
+    "tuan": "tuan.png",
+    "shui": "shui.png",
+    "cang": "cang.png",
+    "ling": "ling.png",
+    "he": "he.png"
+  },
+  "products": {
+    "scarf": "scarf.png",
+    "bag": "bag.png",
+    "pillow": "pillow.png"
+  },
+  "note": "由用户经 ChatGPT 生成后放入；缺失时由 utils/pattern-engine.js 程序化渲染兜底。文件名需与本清单一致（或发回图片由 B 重命名接入）。"
+}
