@@ -72,15 +72,22 @@ Page({
 
   onLoad() {
     this.setData({ tip: this.randomTip(), filteredCatalog: engine.PATTERN_CATALOG });
+    // 接受「情绪测试」页推荐的预填纹样（A 的 mbti 页写入）
+    const prefill = wx.getStorageSync('ranxin_diy_prefill');
+    if (prefill && engine.getPatternById(prefill)) {
+      this.setData({ patternId: prefill });
+      wx.removeStorageSync('ranxin_diy_prefill');
+    }
   },
 
   onReady() {
-    this.initCanvas();
+    // 画布在 step>=3 才出现，由 afterStepChange 按需初始化
   },
 
-  initCanvas() {
+  // 按当前步骤的画布 id 初始化并绘制（每步画布 id 唯一）
+  initCanvasById(id) {
     const query = wx.createSelectorQuery();
-    query.select('#diy-preview').fields({ node: true, size: true }).exec((res) => {
+    query.select('#' + id).fields({ node: true, size: true }).exec((res) => {
       if (!res[0]) return;
       const canvas = res[0].node;
       const { width, height } = res[0];
@@ -92,9 +99,12 @@ Page({
       this.canvasH = height;
       this.ctx = canvas.getContext('2d');
       this.ctx.scale(dpr, dpr);
-      query.select('#diy-preview').boundingClientRect(rect => {
-        this.previewRect = rect;
-      }).exec();
+      if (id === 'diy-preview') {
+        // 编辑器画布需要记录屏幕坐标，用于拖拽旋转
+        query.select('#diy-preview').boundingClientRect(rect => {
+          this.previewRect = rect;
+        }).exec();
+      }
       this.drawPreview();
     });
   },
@@ -121,11 +131,16 @@ Page({
 
   drawPreview() {
     if (!this.ctx) return;
-    const { patternId, params, dyeName, concentration } = this.data;
+    const { patternId, params, dyeName, concentration, step, oxidationTime } = this.data;
     const pattern = engine.getPatternById(patternId);
     const dpr = wx.getSystemInfoSync().pixelRatio;
     const w = this.canvas.width / dpr;
     const h = this.canvas.height / dpr;
+    // 氧化步骤：氧化时长越长，靛蓝越深（视觉反馈）
+    let conc = concentration / 100;
+    if (step === 5) {
+      conc = Math.min(1, conc + (oxidationTime - 1) * 0.06);
+    }
     engine.renderTieDye(this.ctx, w, h, {
       type: pattern.type,
       petals: params.petals,
@@ -133,7 +148,7 @@ Page({
       whitespace: params.whitespace / 100,
       rotation: params.rotation,
       dyeName,
-      concentration: concentration / 100,
+      concentration: conc,
       seed: 42
     });
   },
@@ -200,7 +215,7 @@ Page({
   },
 
   onOxidationChange(e) {
-    this.setData({ oxidationTime: e.detail.value });
+    this.setData({ oxidationTime: e.detail.value }, () => this.drawPreview());
   },
 
   chooseUntieMethod(e) {
@@ -224,9 +239,16 @@ Page({
   },
 
   afterStepChange() {
-    if (this.data.step >= 3) {
-      wx.nextTick(() => this.initCanvas());
-    } else if (this.data.step === 2) {
+    const step = this.data.step;
+    if (step === 3) {
+      wx.nextTick(() => this.initCanvasById('diy-preview'));
+    } else if (step === 4) {
+      wx.nextTick(() => this.initCanvasById('dye-preview'));
+    } else if (step === 5) {
+      wx.nextTick(() => this.initCanvasById('oxi-preview'));
+    } else if (step === 6) {
+      wx.nextTick(() => this.initCanvasById('untie-preview'));
+    } else if (step === 2) {
       wx.nextTick(() => this.renderPatternThumbs());
     }
   },
@@ -260,7 +282,7 @@ Page({
     const { patternId, params, fabric, dyeName, concentration, oxidationTime, untieMethod, mood } = this.data;
     const pattern = engine.getPatternById(patternId);
     const work = {
-      id: 'diy_' + Date.now(),
+      workId: 'work_' + Date.now(),
       title: pattern.name + ' · ' + FABRICS.find(f => f.id === fabric).name,
       patternId,
       params: { ...params },
@@ -273,22 +295,26 @@ Page({
       source: 'diy',
       createdAt: new Date().toISOString()
     };
-    // 生成缩略图
-    wx.canvasToTempFilePath({
-      canvas: this.canvas,
-      success: (res) => {
-        work.thumb = res.tempFilePath;
-        let works = wx.getStorageSync('ranxin_works') || [];
-        works.unshift(work);
-        wx.setStorageSync('ranxin_works', works);
-        // 同时解锁纹样
-        this.unlockPattern(patternId);
-        api.saveWork(work).then(() => {
-          wx.showToast({ title: '作品已保存', icon: 'success' });
-          setTimeout(() => wx.navigateBack(), 1200);
-        });
-      }
-    });
+    // 统一经 api.saveWork 落库（带 workId，避免重复写入与过滤丢弃）
+    const persist = () => {
+      this.unlockPattern(patternId);
+      api.saveWork(work).then(() => {
+        wx.showToast({ title: '作品已保存', icon: 'success' });
+        setTimeout(() => wx.navigateBack(), 1200);
+      }).catch(() => {
+        wx.showToast({ title: '保存失败，请重试', icon: 'none' });
+      });
+    };
+    // 生成缩略图（当前画布可用时），失败也照常保存
+    if (this.canvas) {
+      wx.canvasToTempFilePath({
+        canvas: this.canvas,
+        success: (res) => { work.thumb = res.tempFilePath; persist(); },
+        fail: () => persist()
+      });
+    } else {
+      persist();
+    }
   },
 
   unlockPattern(id) {

@@ -4,6 +4,10 @@
 // 协议：遵循《研发规范 V1.0》附录 A 的 8 个冻结接口。
 // 切换：C 接好云函数后，把 USE_MOCK 改为 false 即可无缝切换。
 // 注意：字段 / 签名变更必须提前通知 A/B。
+// ------------------------------------------------------------
+// 注：本文件由 B 在整合阶段自 origin/c 合入 main，并统一了纹样显示名
+//     （cang=山水纹 / he=卷草纹），与 B 的 utils/pattern-engine.js 及
+//     assets/patterns/manifest.json 保持一致。
 // ============================================================
 const USE_MOCK = true;
 
@@ -12,12 +16,12 @@ const USE_MOCK = true;
 // 纹样 id 与 B 的 assets/patterns/manifest.json 命名保持一致
 // ------------------------------------------------------------
 const MOCK_PATTERNS = [
-  { id: 'hudie', name: '蝴蝶纹', category: 'natural',   thumb: '/assets/patterns/hudie.png', unlockedByDefault: true  },
-  { id: 'tuan',  name: '团花纹', category: 'natural',   thumb: '/assets/patterns/tuan.png',  unlockedByDefault: true  },
-  { id: 'shui',  name: '水波纹', category: 'natural',   thumb: '/assets/patterns/shui.png',  unlockedByDefault: false },
-  { id: 'cang',  name: '苍山纹', category: 'landscape', thumb: '/assets/patterns/cang.png',  unlockedByDefault: false },
-  { id: 'ling',  name: '菱形纹', category: 'geometric', thumb: '/assets/patterns/ling.png',  unlockedByDefault: false },
-  { id: 'he',    name: '荷花纹', category: 'natural',   thumb: '/assets/patterns/he.png',    unlockedByDefault: false }
+  { id: 'hudie', name: '蝴蝶纹', category: '白族传统', thumb: '/assets/patterns/hudie.png', unlockedByDefault: true },
+  { id: 'tuan',  name: '团花纹', category: '白族传统', thumb: '/assets/patterns/tuan.png',  unlockedByDefault: true },
+  { id: 'shui',  name: '水波纹', category: '自然',     thumb: '/assets/patterns/shui.png',  unlockedByDefault: false },
+  { id: 'cang',  name: '山水纹', category: '自然',     thumb: '/assets/patterns/cang.png',  unlockedByDefault: false },
+  { id: 'ling',  name: '菱形纹', category: '几何',     thumb: '/assets/patterns/ling.png',  unlockedByDefault: false },
+  { id: 'he',    name: '卷草纹', category: '白族传统', thumb: '/assets/patterns/he.png',    unlockedByDefault: false }
 ];
 
 // 模拟网络延迟，让前端体验接近真实请求（200ms）

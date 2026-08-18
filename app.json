@@ -9,9 +9,21 @@
   ],
   "window": {
     "navigationBarTitleText": "染心",
-    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarBackgroundColor": "#f8f9fc",
     "navigationBarTextStyle": "black",
-    "backgroundColor": "#f5f5f5"
+    "backgroundColor": "#f8f9fc",
+    "navigationStyle": "default"
+  },
+  "tabBar": {
+    "color": "#8a93a6",
+    "selectedColor": "#4f5fc9",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "情绪染坊" },
+      { "pagePath": "pages/diy/diy", "text": "正念DIY" },
+      { "pagePath": "pages/works/works", "text": "我的作品" }
+    ]
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json"

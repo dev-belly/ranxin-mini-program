@@ -22,8 +22,9 @@ const TOP_LINE = 140;
 Page({
   data: {
     score: 0,
-    best: 3280,
+    best: 0,
     nextLevel: 0,
+    nextThumb: '',
     powerChange: 3,
     powerRemove: 3,
     muted: false,
@@ -38,7 +39,16 @@ Page({
     this.eliminated = 0;
     this.startTime = Date.now();
     this.nextLevel = Math.floor(Math.random() * 3);
-    this.setData({ nextLevel: this.nextLevel });
+    this.setData({
+      nextLevel: this.nextLevel,
+      nextThumb: this.nextBallThumb(this.nextLevel),
+      best: wx.getStorageSync('ranxin_game_best') || 0
+    });
+  },
+
+  nextBallThumb(level) {
+    const map = ['hudie', 'tuan', 'shui', 'cang', 'ling', 'he'];
+    return '/assets/patterns/' + (map[level % map.length] || 'hudie') + '.png';
   },
 
   onReady() {
@@ -164,6 +174,7 @@ Page({
     this.balls.push(newBall);
     this.merges++;
     this.eliminated += 1;
+    if (!this.data.muted) wx.vibrateShort({ type: 'light' });
     const add = LEVELS[newLevel].score;
     this.setData({ score: this.data.score + add });
   },
@@ -234,7 +245,11 @@ Page({
 
   checkGameOver() {
     for (let b of this.balls) {
-      if (b.y - b.r < TOP_LINE && Math.abs(b.vy) < 0.5 && Math.abs(b.vx) < 0.5) {
+      // 仅当球停在死亡线之上且基本静止（持续约 0.6s）才判负，
+      // 否则刚落下的球（初速≈0）会被误判为「堆到顶」而秒结束。
+      const stuck = (b.y - b.r < TOP_LINE) && Math.abs(b.vy) < 0.6 && Math.abs(b.vx) < 0.6;
+      b.overFrames = stuck ? (b.overFrames || 0) + 1 : 0;
+      if (b.overFrames > 40) {
         this.gameOver();
         break;
       }
@@ -243,10 +258,23 @@ Page({
 
   onBoardTap(e) {
     if (this.data.gameOver) return;
-    if (this.data.removeMode) return this.onBallTap(e);
-    const x = e.detail.x - (this.boardLeft || 0);
-    const clamped = Math.max(LEVELS[this.nextLevel].r, Math.min(this.boardW - LEVELS[this.nextLevel].r, x));
+    const pt = this.tapPoint(e);
+    if (this.data.removeMode) return this.removeBallAt(pt.x, pt.y);
+    const clamped = Math.max(LEVELS[this.nextLevel].r, Math.min(this.boardW - LEVELS[this.nextLevel].r, pt.x));
     this.spawnBall(clamped);
+  },
+
+  tapPoint(e) {
+    const t = (e.changedTouches && e.changedTouches[0]) || (e.touches && e.touches[0]) || e.detail || {};
+    let x, y;
+    if (t.clientX != null) {
+      x = t.clientX - (this.boardLeft || 0);
+      y = t.clientY - (this.boardTop || 0);
+    } else {
+      x = t.x != null ? t.x : 0;
+      y = t.y != null ? t.y : 0;
+    }
+    return { x, y };
   },
 
   onBoardMove(e) {
@@ -264,29 +292,35 @@ Page({
       vy: 0,
       r: LEVELS[lvl].r,
       level: lvl,
-      pattern: this.randomPattern()
+      pattern: this.randomPattern(),
+      overFrames: 0
     });
     this.nextLevel = Math.floor(Math.random() * 3);
-    this.setData({ nextLevel: this.nextLevel });
+    this.setData({ nextLevel: this.nextLevel, nextThumb: this.nextBallThumb(this.nextLevel) });
     this.pendingX = x;
   },
 
-  onBallTap(e) {
-    if (!this.data.removeMode || this.data.gameOver) return;
-    // 简化：消除最后一个点击的球（实际应根据坐标命中检测）
-    // 为演示，移除最近生成的同等级球
-    const idx = this.balls.length - 1;
-    if (idx >= 0) {
-      this.balls.splice(idx, 1);
-      this.eliminated++;
-      this.setData({ powerRemove: this.data.powerRemove - 1, removeMode: false });
+  removeBallAt(x, y) {
+    let idx = -1;
+    for (let i = this.balls.length - 1; i >= 0; i--) {
+      const b = this.balls[i];
+      const dx = b.x - x, dy = b.y - y;
+      if (dx * dx + dy * dy <= b.r * b.r) { idx = i; break; }
     }
+    if (idx < 0) {
+      wx.showToast({ title: '点准要消除的球哦', icon: 'none' });
+      return;
+    }
+    this.balls.splice(idx, 1);
+    this.eliminated++;
+    this.setData({ powerRemove: this.data.powerRemove - 1, removeMode: false });
+    if (!this.data.muted) wx.vibrateShort({ type: 'light' });
   },
 
   useChange() {
     if (this.data.gameOver || this.data.powerChange <= 0) return;
     this.nextLevel = Math.floor(Math.random() * 3);
-    this.setData({ powerChange: this.data.powerChange - 1, nextLevel: this.nextLevel });
+    this.setData({ powerChange: this.data.powerChange - 1, nextLevel: this.nextLevel, nextThumb: this.nextBallThumb(this.nextLevel) });
   },
 
   useRemove() {
@@ -303,16 +337,38 @@ Page({
     this.stopLoop();
     const score = this.data.score;
     const best = Math.max(score, this.data.best);
+    wx.setStorageSync('ranxin_game_best', best);
     const unlock = this.pickUnlockPattern(score);
+    if (unlock) unlock.thumb = '/assets/patterns/' + unlock.id + '.png';
+    const seconds = Math.floor((Date.now() - this.startTime) / 1000);
+    const minutes = Math.max(1, Math.floor(seconds / 60));
+    const unlocked = wx.getStorageSync('ranxin_unlocked_patterns') || [];
+    const unlockedPatterns = unlocked.slice(-3).reverse().map(id => {
+      const p = engine.PATTERN_CATALOG.find(x => x.id === id);
+      return p ? { id, name: p.name, thumb: '/assets/patterns/' + id + '.png' } : null;
+    }).filter(Boolean);
+    // 补足 3 个默认已解锁展示
+    const defaults = engine.PATTERN_CATALOG.filter(p => p.unlockedByDefault).map(p => ({
+      id: p.id, name: p.name, thumb: '/assets/patterns/' + p.id + '.png'
+    }));
+    while (unlockedPatterns.length < 3 && defaults.length) {
+      const d = defaults.shift();
+      if (!unlockedPatterns.find(u => u.id === d.id)) unlockedPatterns.push(d);
+    }
+    const percent = Math.min(99, 50 + Math.floor(score / 100));
     this.setData({
       gameOver: true,
       best,
       result: {
         score,
         merges: this.merges,
-        time: Math.floor((Date.now() - this.startTime) / 60000),
+        time: seconds,
+        timeMinutes: minutes,
         eliminated: this.eliminated,
-        unlock
+        unlock,
+        percent,
+        unlockedCount: unlocked.length || 1,
+        unlockedPatterns
       }
     });
     if (unlock) this.unlockPattern(unlock.id);
@@ -336,7 +392,13 @@ Page({
 
   collectPattern() {
     wx.showToast({ title: '纹样已收入库', icon: 'success' });
-    setTimeout(() => this.replay(), 800);
+    setTimeout(() => {
+      wx.switchTab({ url: '/pages/works/works' });
+    }, 600);
+  },
+
+  viewCollection() {
+    wx.navigateTo({ url: '/pages/collection/collection' });
   },
 
   replay() {
@@ -348,6 +410,7 @@ Page({
     this.setData({
       score: 0,
       nextLevel: this.nextLevel,
+      nextThumb: this.nextBallThumb(this.nextLevel),
       gameOver: false,
       result: {},
       removeMode: false,

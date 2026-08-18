@@ -1,6 +1,17 @@
 <view class="collection-page">
+  <view class="rx-bg"></view>
   <text class="page-title">纹样收集</text>
   <text class="page-subtitle">你在游戏与 DIY 中解锁的灵魂纹样</text>
+
+  <view class="unlock-banner">
+    <view class="unlock-progress">
+      <text class="unlock-text">已收集纹样 {{unlockedCount}}/{{total}}</text>
+      <view class="progress-bar">
+        <view class="progress-fill" style="width:{{unlockedCount / total * 100}}%"></view>
+      </view>
+    </view>
+    <button class="banner-btn" bindtap="goGame">玩合成大染缸，解锁更多纹样</button>
+  </view>
 
   <view class="filter-bar">
     <view class="filter-btn {{filter==='all'?'active':''}}" data-key="all" bindtap="setFilter">全部</view>
@@ -10,24 +21,26 @@
 
   <view class="pattern-grid">
     <view
-      wx:for="{{catalog}}"
+      wx:for="{{viewList}}"
       wx:key="id"
-      wx:if="{{filter==='all' || (filter==='unlocked' && unlocked.includes(item.id)) || (filter==='locked' && !unlocked.includes(item.id))}}"
-      class="pattern-card {{unlocked.includes(item.id)?'':'locked'}}"
+      wx:if="{{filter==='all' || (filter==='unlocked' && item.unlocked) || (filter==='locked' && !item.unlocked)}}"
+      class="pattern-card {{item.unlocked?'':'locked'}}"
       data-id="{{item.id}}"
       bindtap="openDetail"
     >
-      <canvas type="2d" id="col-{{item.id}}" class="pattern-thumb" style="width:220rpx;height:220rpx"></canvas>
+      <image wx:if="{{assetMap[item.id].hasImage}}" class="pattern-thumb" src="/assets/patterns/{{assetMap[item.id].file}}" mode="aspectFit"></image>
+      <canvas wx:else type="2d" id="col-{{item.id}}" class="pattern-thumb" style="width:220rpx;height:220rpx"></canvas>
       <text class="pattern-name">{{item.name}}</text>
       <text class="pattern-tags">{{item.tags}}</text>
-      <view wx:if="{{!unlocked.includes(item.id)}}" class="lock-badge">未解锁</view>
+      <view wx:if="{{!item.unlocked}}" class="lock-badge">未解锁</view>
     </view>
   </view>
 
   <!-- 详情弹窗 -->
   <view wx:if="{{detail}}" class="detail-mask" bindtap="closeDetail">
     <view class="detail-card">
-      <canvas type="2d" id="detail-canvas" class="detail-canvas" style="width:400rpx;height:400rpx"></canvas>
+      <image wx:if="{{detail.hasImage}}" class="detail-canvas" src="/assets/patterns/{{detail.file}}" mode="aspectFit"></image>
+      <canvas wx:else type="2d" id="detail-canvas" class="detail-canvas" style="width:400rpx;height:400rpx"></canvas>
       <text class="detail-name">{{detail.name}}</text>
       <text class="detail-tags">{{detail.tags}}</text>
       <text class="detail-story">{{detail.story}}</text>

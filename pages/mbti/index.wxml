@@ -1,4 +1,25 @@
 <!-- 归属：A｜产品前端 Owner -->
 <view class="page">
-  <text class="title">{title}</text>
+  <view class="rx-bg"></view>
+  <block wx:if="{{!result}}">
+    <view class="progress">第 {{step + 1}} / {{questions.length}} 题</view>
+    <view class="q-title">{{questions[step].title}}</view>
+    <view class="options">
+      <button class="opt" wx:for="{{questions[step].options}}" wx:key="pid"
+              data-q="{{step}}" data-pid="{{item.pid}}" bindtap="choose">
+        {{item.label}}
+      </button>
+    </view>
+  </block>
+
+  <block wx:else>
+    <view class="result">
+      <image class="result-img" src="{{result.thumb}}" mode="aspectFit" />
+      <view class="result-tag">为你推荐的纹样</view>
+      <view class="result-name">{{result.name}}</view>
+      <view class="result-story">{{result.story}}</view>
+      <button class="cta" bindtap="goDiy">用这个纹样去创作</button>
+      <view class="link" bindtap="restart">重新测一次</view>
+    </view>
+  </block>
 </view>

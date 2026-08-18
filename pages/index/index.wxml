@@ -1,4 +1,99 @@
-<!-- 归属：A｜产品前端 Owner -->
-<view class="page">
-  <text class="title">{title}</text>
+<!-- 归属：A｜产品前端 Owner（B 按设计稿 image1 重制） -->
+<view class="rx-bg"></view>
+<view class="rx-page home">
+
+  <!-- 顶部标题 -->
+  <view class="home-header">
+    <view class="home-brand">
+      <text class="home-title">染心</text>
+      <text class="home-tag">用染色表达情绪，遇见更懂你的自己</text>
+    </view>
+    <view class="music-btn" bindtap="toggleMusic">
+      <text class="music-icon">♪</text>
+    </view>
+  </view>
+
+  <!-- 情绪选择 -->
+  <view class="emotion-section">
+    <view class="emotion-title">今天，你想把什么情绪染开？</view>
+    <view class="emotion-chips">
+      <view
+        wx:for="{{emotions}}"
+        wx:key="key"
+        class="rx-chip {{item.active ? 'active' : ''}} emotion-chip"
+        data-key="{{item.key}}"
+        bindtap="selectEmotion"
+      >
+        <text wx:if="{{item.active}}" class="chip-star">✦</text>
+        {{item.label}}
+      </view>
+    </view>
+  </view>
+
+  <!-- MBTI 灵魂扎染卡 -->
+  <view class="feature-card mbti-card" bindtap="goMbti">
+    <view class="card-tag">MBTI 灵魂扎染</view>
+    <view class="card-copy">
+      <view class="card-headline">测测你的</view>
+      <view class="card-headline">灵魂扎染纹样</view>
+      <view class="card-desc">30个问题，找到属于你的白族扎染纹样</view>
+      <view class="rx-btn-primary card-btn">开始测试 ></view>
+    </view>
+    <image class="mbti-pattern" src="/assets/patterns/tuan.png" mode="aspectFill" />
+  </view>
+
+  <!-- 合成大染缸卡 -->
+  <view class="feature-card game-card" bindtap="goGame">
+    <view class="game-header">
+      <view>
+        <view class="game-title">合成大染缸</view>
+        <view class="game-sub">把烦恼一颗颗合掉</view>
+        <view class="game-tag-row">
+          <text class="rx-tag">沉浸解压</text>
+          <text class="rx-tag">超上头</text>
+        </view>
+      </view>
+      <view class="game-score">
+        <text class="game-score-label">今日最高</text>
+        <text class="game-score-num">{{todayBest}}</text>
+      </view>
+    </view>
+    <view class="game-orbs">
+      <view class="orb orb-1"><image src="/assets/patterns/shui.png" mode="aspectFill"/></view>
+      <view class="orb orb-2"><image src="/assets/patterns/ling.png" mode="aspectFill"/></view>
+      <view class="orb orb-3"><image src="/assets/patterns/hudie.png" mode="aspectFill"/></view>
+      <view class="orb orb-4"><image src="/assets/patterns/he.png" mode="aspectFill"/></view>
+      <view class="orb orb-5"><image src="/assets/patterns/cang.png" mode="aspectFill"/></view>
+    </view>
+    <view class="rx-btn-secondary game-btn" bindtap="goGame">开始解压 ></view>
+  </view>
+
+  <!-- 今日染力榜 -->
+  <view class="leaderboard-section">
+    <view class="lb-header">
+      <view class="lb-title">今日染力榜</view>
+      <view class="lb-tabs">
+        <view class="lb-tab {{leaderboard.active==='user'?'active':''}}" data-tab="user" bindtap="switchLeaderboardTab">用户</view>
+        <view class="lb-tab {{leaderboard.active==='city'?'active':''}}" data-tab="city" bindtap="switchLeaderboardTab">全国</view>
+      </view>
+    </view>
+    <view class="rx-card lb-card">
+      <view wx:for="{{leaderboard.list}}" wx:key="rank" class="lb-row">
+        <view class="lb-rank">{{item.rank}}</view>
+        <image class="lb-avatar" src="{{item.avatar}}" mode="aspectFill" />
+        <view class="lb-name">{{item.name}}</view>
+        <view class="lb-score">{{item.score}}</view>
+      </view>
+      <view class="lb-more" bindtap="goLeaderboard">查看完整榜单 ></view>
+    </view>
+  </view>
+
+  <!-- 一分钟非遗 -->
+  <view class="knowledge-card" bindtap="goKnowledge">
+    <view class="knowledge-tag">一分钟非遗</view>
+    <view class="knowledge-title">刚从染缸里取出的布，为什么不是蓝色？</view>
+    <view class="knowledge-desc">板蓝根染液接触空气后，会经历一场缓慢的氧化变色。</view>
+    <view class="knowledge-link">看看它怎样变蓝 →</view>
+  </view>
+
 </view>

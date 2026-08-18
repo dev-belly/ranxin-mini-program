@@ -1,1 +1,85 @@
-.title { font-size: 36rpx; font-weight: 600; }
+/* 归属：A｜产品前端 Owner · rx 水彩主题统一 */
+.page {
+  padding: 40rpx 36rpx 60rpx;
+  background: transparent;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+.progress {
+  font-size: 24rpx;
+  color: #8a93a6;
+  text-align: center;
+}
+.q-title {
+  margin: 24rpx 0 36rpx;
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #1a2b4d;
+  text-align: center;
+  font-family: "Songti SC", "STSong", serif;
+  letter-spacing: 2rpx;
+  line-height: 1.5;
+}
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+.opt {
+  background: rgba(255, 255, 255, 0.92);
+  color: #1a2b4d;
+  font-size: 30rpx;
+  font-weight: 500;
+  border-radius: 20rpx;
+  padding: 30rpx 0;
+  box-shadow: 0 8rpx 22rpx rgba(47, 68, 130, 0.08);
+  border: 2rpx solid transparent;
+}
+.opt::after { border: none; }
+
+.result {
+  text-align: center;
+  padding-top: 40rpx;
+}
+.result-img {
+  width: 360rpx;
+  height: 360rpx;
+  border-radius: 50%;
+  background: rgba(75, 110, 230, 0.08);
+  box-shadow: 0 12rpx 30rpx rgba(47, 68, 130, 0.12);
+}
+.result-tag {
+  margin-top: 28rpx;
+  font-size: 24rpx;
+  color: #6b7790;
+}
+.result-name {
+  margin-top: 8rpx;
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #1a2b4d;
+  font-family: "Songti SC", "STSong", serif;
+  letter-spacing: 4rpx;
+}
+.result-story {
+  margin: 24rpx 20rpx 0;
+  font-size: 28rpx;
+  color: #5b6c8a;
+  line-height: 1.7;
+}
+.cta {
+  margin: 40rpx 20rpx 0;
+  background: linear-gradient(135deg, #4b6ee6 0%, #7b5fe0 100%);
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 600;
+  border-radius: 999rpx;
+  padding: 22rpx 0;
+  box-shadow: 0 10rpx 24rpx rgba(93, 95, 220, 0.25);
+}
+.cta::after { border: none; }
+.link {
+  margin-top: 24rpx;
+  font-size: 26rpx;
+  color: #8a93a6;
+}
