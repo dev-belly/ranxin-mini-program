@@ -5,15 +5,18 @@
   min-height: 200rpx;
   border-radius: 31rpx;
   overflow: hidden;
-  background: linear-gradient(90deg, #082d6d 0%, #0a3277 45%, #184988 100%);
-  box-shadow: 0 12rpx 28rpx rgba(24,48,89,.10);
+  background: linear-gradient(90deg, rgba(8,45,109,.66), rgba(10,50,119,.58), rgba(24,73,136,.66));
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+  border: 1.5rpx solid rgba(255,255,255,0.4);
+  box-shadow: 0 16rpx 50rpx rgba(8,30,80,0.28), inset 0 1rpx 0 rgba(255,255,255,0.35);
 }
 .kn-hero::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 2;
-  background: linear-gradient(90deg, rgba(7,29,71,.96) 0%, rgba(7,29,71,.78) 45%, transparent 85%);
+  background: linear-gradient(90deg, rgba(7,29,71,.55) 0%, rgba(7,29,71,.40) 45%, transparent 85%);
 }
 .kn-hero-copy { position: relative; z-index: 3; padding: 36rpx; color: #fff; }
 .kn-hero-pill {
@@ -38,6 +41,13 @@
   display: flex;
   align-items: center;
   padding: 32rpx 28rpx;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.10)), rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  backdrop-filter: blur(20px) saturate(170%);
+  border: 1.5rpx solid rgba(255, 255, 255, 0.72);
+  border-radius: 31rpx;
+  box-shadow: 0 14rpx 44rpx rgba(31, 45, 90, 0.16), inset 0 1.5rpx 0 rgba(255, 255, 255, 0.92);
+  overflow: hidden;
 }
 .kn-icon {
   width: 88rpx;
