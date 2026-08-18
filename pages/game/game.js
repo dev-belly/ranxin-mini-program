@@ -3,6 +3,7 @@
 // 玩法：交换相邻纹样元素，3+ 同色消除；稀有「残片」降至底部收集解锁纹样；
 //       每次消除浮现正念提示语；限步数（3—5 分钟碎片场景）。
 const engine = require('../../utils/pattern-engine.js');
+const api = require('../../utils/api.js');
 
 const TYPES = ['hudie', 'tuan', 'shui', 'cang', 'ling', 'he'];
 const COLS = 8;
@@ -388,6 +389,19 @@ Page({
         unlockedPatterns
       }
     });
+    // 上报成绩并领取云端奖励（C 真实接口；Mock 下返回固定奖励，幂等无害）
+    if (typeof api !== 'undefined') {
+      api.submitGame({ score, duration: seconds }).then(res => {
+        const reward = res && res.reward;
+        if (reward && reward.patternId) {
+          api.unlockPattern(reward.patternId, { sourceType: 'game' }).then(r => {
+            if (r && r.isNew && r.pattern) {
+              wx.showToast({ title: '游戏解锁：' + r.pattern.name, icon: 'none' });
+            }
+          }).catch(() => {});
+        }
+      }).catch(() => {});
+    }
   },
 
   collectPattern() {
