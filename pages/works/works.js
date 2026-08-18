@@ -56,7 +56,7 @@ Page({
 
   // 生成作品分享卡并保存相册
   shareWork(e) {
-    const w = this.data.list[e.currentTarget.dataset.i];
+    const w = this.data.displayList[e.currentTarget.dataset.i];
     if (!w) return;
     const query = wx.createSelectorQuery();
     query.select('#share-canvas').fields({ node: true, size: true }).exec((res) => {
@@ -83,11 +83,14 @@ Page({
       }
       wx.canvasToTempFilePath({
         canvas,
+        x: 0, y: 0, width: W, height: H,
+        destWidth: W, destHeight: H,
         success: (r2) => wx.saveImageToPhotosAlbum({
           filePath: r2.tempFilePath,
           success: () => wx.showToast({ title: '已存到相册', icon: 'success' }),
           fail: () => wx.showToast({ title: '请授权相册', icon: 'none' })
-        })
+        }),
+        fail: () => wx.showToast({ title: '生成失败', icon: 'none' })
       });
     });
   },

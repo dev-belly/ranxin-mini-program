@@ -181,6 +181,8 @@ Page({
       ctx.fillText(r.story.slice(0, 18), W / 2, 358);
       wx.canvasToTempFilePath({
         canvas,
+        x: 0, y: 0, width: W, height: H,
+        destWidth: W, destHeight: H,
         success: (res2) => {
           this.setData({ posterPath: res2.tempFilePath });
           wx.saveImageToPhotosAlbum({
