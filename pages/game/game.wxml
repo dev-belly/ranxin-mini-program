@@ -1,72 +1,129 @@
+<!-- 归属：B｜核心交互 Owner（按设计稿 image5/image6 重制） -->
+<view class="rx-bg"></view>
 <view class="game-page">
+
   <!-- 顶部 HUD -->
-  <view class="game-header">
-    <view class="score-box">
-      <text class="score-label">得分</text>
-      <text class="score-value">{{score}}</text>
+  <view class="game-hud">
+    <view class="hud-left">
+      <view class="hud-label">得分</view>
+      <view class="hud-score">{{score}}</view>
     </view>
-    <view class="title-box">
-      <text class="game-title">合成大染缸</text>
-      <text class="game-subtitle">把烦恼一颗颗合掉</text>
+    <view class="hud-center">
+      <view class="hud-title">合成大染缸</view>
+      <view wx:if="{{!gameOver}}" class="hud-next">
+        <text class="hud-next-label">下一颗</text>
+        <view class="hud-next-ball">
+          <image src="{{nextThumb}}" mode="aspectFill" />
+        </view>
+      </view>
     </view>
-    <view class="next-box">
-      <text class="score-label">下一颗</text>
-      <view class="next-ball" style="background:{{['#D99E2B','#B83B3B','#6B3FA0','#2E5AAC','#1E4D8C','#1E4D8C','#2E5AAC','#1E4D8C'][nextLevel]}}"></view>
+    <view class="hud-right">
+      <view class="hud-best-label">历史最高</view>
+      <view class="hud-best">{{best}}</view>
     </view>
   </view>
 
-  <!-- 游戏画布 -->
+  <!-- 游戏画布 / 染缸 -->
   <view class="board-wrap">
-    <canvas
-      type="2d"
-      id="game-canvas"
-      class="game-canvas"
-      style="width:100%;height:100%"
-      bindtap="onBoardTap"
-      bindtouchmove="onBoardMove"
-    ></canvas>
+    <view class="board-frame">
+      <canvas
+        type="2d"
+        id="game-canvas"
+        class="game-canvas"
+        style="width:100%;height:100%"
+        bindtap="onBoardTap"
+        bindtouchmove="onBoardMove"
+      ></canvas>
+    </view>
+    <view class="board-hint">
+      <text class="hint-star">✦</text>
+      <text class="hint-text">相同纹样碰在一起，就会慢慢缩小</text>
+      <text class="hint-star">✦</text>
+    </view>
   </view>
 
   <!-- 底部道具栏 -->
   <view class="power-bar">
     <view class="power-btn {{powerChange<=0?'disabled':''}}" bindtap="useChange">
-      <text class="power-icon">↻</text>
+      <view class="power-icon-wrap">↻</view>
       <text class="power-name">换一次</text>
       <text class="power-count">×{{powerChange}}</text>
     </view>
     <view class="power-btn {{powerRemove<=0?'disabled':''}} {{removeMode?'active':''}}" bindtap="useRemove">
-      <text class="power-icon">✂</text>
+      <view class="power-icon-wrap">✂</view>
       <text class="power-name">消除一个</text>
       <text class="power-count">×{{powerRemove}}</text>
     </view>
     <view class="power-btn {{muted?'active':''}}" bindtap="toggleMute">
-      <text class="power-icon">{{muted?'🔇':'🔊'}}</text>
-      <text class="power-name">{{muted?'静音':'声音'}}</text>
+      <view class="power-icon-wrap">{{muted?'🔇':'🔊'}}</view>
+      <text class="power-name">静音</text>
     </view>
   </view>
 
-  <!-- 游戏结束 -->
+  <!-- 游戏结束 / 奖励收获 -->
   <view wx:if="{{gameOver}}" class="result-mask">
     <view class="result-card">
-      <text class="result-title">奖励收获</text>
-      <text class="result-subtitle">你的灵魂扎染之旅又多了一份美好印记</text>
+      <view class="result-header">
+        <view class="result-title">奖励收获</view>
+        <view class="result-subtitle">你的灵魂扎染之旅又多了一份美好印记 ✦</view>
+      </view>
+
       <view wx:if="{{result.unlock}}" class="unlock-box">
+        <view class="unlock-label">恭喜你获得</view>
+        <view class="unlock-name">{{result.unlock.name}}</view>
+        <view class="unlock-meta">已加入你的纹样库 ◎</view>
         <image class="unlock-img" src="{{result.unlock.thumb}}" mode="aspectFill" />
-        <text>恭喜你获得</text>
-        <text class="unlock-name">{{result.unlock.name}}</text>
-        <text>已加入你的纹样库</text>
       </view>
-      <view class="result-score">{{result.score}}</view>
-      <text class="result-unit">分</text>
+
+      <view class="score-panel">
+        <view class="score-row">
+          <view class="star">✦</view>
+          <view class="score-num">{{result.score}}</view>
+          <view class="score-unit">分</view>
+        </view>
+        <view class="score-percent">超过了 {{result.percent}}% 的玩家</view>
+      </view>
+
       <view class="result-stats">
-        <view class="stat"><text>{{result.merges}}</text><text>本局合成</text></view>
-        <view class="stat"><text>{{result.time}}</text><text>秒</text></view>
-        <view class="stat"><text>{{result.eliminated}}</text><text>消除纹球</text></view>
+        <view class="stat">
+          <view class="stat-icon">✁</view>
+          <view class="stat-num">{{result.merges}}</view>
+          <view class="stat-label">本局合成</view>
+        </view>
+        <view class="stat">
+          <view class="stat-icon">◷</view>
+          <view class="stat-num">{{result.timeMinutes}}</view>
+          <view class="stat-label">分钟</view>
+        </view>
+        <view class="stat">
+          <view class="stat-icon">✦</view>
+          <view class="stat-num">{{result.eliminated}}</view>
+          <view class="stat-label">消除纹球</view>
+        </view>
       </view>
-      <button class="primary-btn" bindtap="collectPattern">收下纹样</button>
+
+      <view class="result-tip">
+        <text class="tip-icon">★</text>
+        <view class="tip-text">每一次专注与选择，都是在靠近更真实的自己。再接再厉，收集更多独特的灵魂纹样吧！</view>
+      </view>
+
+      <view class="rx-btn-primary result-btn" bindtap="collectPattern">收下纹样 ✦</view>
       <view class="result-actions">
-        <button class="ghost-btn" bindtap="replay">再玩一局</button>
-        <button class="ghost-btn" bindtap="viewRank">查看排行榜</button>
+        <view class="rx-btn-secondary result-half" bindtap="replay">再玩一局（30题）</view>
+        <view class="rx-btn-secondary result-half" bindtap="viewRank">查看排行榜</view>
+      </view>
+
+      <view class="mini-collection">
+        <view class="mc-header">
+          <text class="mc-title">我的纹样库</text>
+          <text class="mc-count" bindtap="viewCollection">已收集 {{result.unlockedCount}} 个纹样 ></text>
+        </view>
+        <view class="mc-list">
+          <view wx:for="{{result.unlockedPatterns}}" wx:key="id" class="mc-item">
+            <image src="{{item.thumb}}" mode="aspectFill" />
+            <text>{{item.name}}</text>
+          </view>
+        </view>
       </view>
     </view>
   </view>
