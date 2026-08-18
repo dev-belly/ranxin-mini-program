@@ -1,7 +1,7 @@
-/* 归属：B｜核心交互 Owner */
+/* 归属：B｜核心交互 Owner · rx 水彩主题统一 */
 .diy-page {
   min-height: 100vh;
-  background: linear-gradient(180deg, #F5F7FA 0%, #EEF1F6 100%);
+  background: transparent;
   padding-bottom: 160rpx;
 }
 
@@ -18,7 +18,7 @@
   left: 60rpx;
   right: 60rpx;
   height: 2rpx;
-  background: #D8DDE6;
+  background: rgba(75, 110, 230, 0.18);
   z-index: 0;
 }
 .step-item {
@@ -32,8 +32,8 @@
   height: 48rpx;
   border-radius: 50%;
   background: #fff;
-  border: 2rpx solid #D8DDE6;
-  color: #8A94A6;
+  border: 2rpx solid rgba(75, 110, 230, 0.25);
+  color: #8a93a6;
   font-size: 24rpx;
   display: flex;
   align-items: center;
@@ -41,18 +41,19 @@
 }
 .step-item.active .step-dot,
 .step-item.done .step-dot {
-  background: #4A5D7A;
-  border-color: #4A5D7A;
+  background: linear-gradient(135deg, #4b6ee6 0%, #7b5fe0 100%);
+  border-color: transparent;
   color: #fff;
+  box-shadow: 0 6rpx 14rpx rgba(93, 95, 220, 0.28);
 }
 .step-label {
   margin-top: 8rpx;
   font-size: 20rpx;
-  color: #8A94A6;
+  color: #8a93a6;
 }
 .step-item.active .step-label {
-  color: #4A5D7A;
-  font-weight: 500;
+  color: #4b6ee6;
+  font-weight: 600;
 }
 
 .step-panel {
@@ -61,14 +62,16 @@
 .step-title {
   display: block;
   font-size: 38rpx;
-  font-weight: 500;
-  color: #2C3A4F;
+  font-weight: 700;
+  color: #1a2b4d;
   margin-bottom: 10rpx;
+  font-family: "Songti SC", "STSong", serif;
+  letter-spacing: 2rpx;
 }
 .step-subtitle {
   display: block;
   font-size: 26rpx;
-  color: #7D879C;
+  color: #6b7790;
   margin-bottom: 30rpx;
 }
 
@@ -80,18 +83,18 @@
 .mood-card {
   width: 200rpx;
   height: 180rpx;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.92);
   border-radius: 24rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.04);
+  box-shadow: 0 8rpx 22rpx rgba(47, 68, 130, 0.08);
   border: 2rpx solid transparent;
 }
 .mood-card.selected {
-  border-color: #4A5D7A;
-  background: #F0F4FA;
+  border-color: #7b5fe0;
+  background: rgba(123, 95, 224, 0.08);
 }
 .mood-emoji {
   font-size: 56rpx;
@@ -99,7 +102,7 @@
 }
 .mood-label {
   font-size: 26rpx;
-  color: #2C3A4F;
+  color: #2c3a4f;
 }
 
 .fabric-list {
@@ -108,37 +111,39 @@
   gap: 24rpx;
 }
 .fabric-card {
-  background: #fff;
+  background: rgba(255, 255, 255, 0.92);
   border-radius: 28rpx;
   padding: 30rpx;
   display: flex;
   align-items: center;
-  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.04);
+  box-shadow: 0 8rpx 22rpx rgba(47, 68, 130, 0.08);
   border: 2rpx solid transparent;
 }
 .fabric-card.selected {
-  border-color: #4A5D7A;
+  border-color: #7b5fe0;
+  background: rgba(123, 95, 224, 0.06);
 }
 .fabric-icon {
   width: 120rpx;
   height: 120rpx;
   border-radius: 20rpx;
   margin-right: 24rpx;
-  opacity: 0.8;
+  opacity: 0.85;
+  box-shadow: inset 0 0 0 2rpx rgba(255,255,255,0.4);
 }
 .fabric-info {
   flex: 1;
 }
 .fabric-name {
   font-size: 32rpx;
-  font-weight: 500;
-  color: #2C3A4F;
+  font-weight: 600;
+  color: #1a2b4d;
   display: block;
 }
 .fabric-tag {
   display: inline-block;
-  background: #E8EDF5;
-  color: #4A5D7A;
+  background: rgba(75, 110, 230, 0.12);
+  color: #4b6ee6;
   font-size: 22rpx;
   padding: 4rpx 14rpx;
   border-radius: 12rpx;
@@ -146,7 +151,7 @@
 }
 .fabric-desc {
   font-size: 24rpx;
-  color: #7D879C;
+  color: #6b7790;
   display: block;
 }
 
@@ -164,52 +169,56 @@
 .cat-btn {
   padding: 10rpx 26rpx;
   border-radius: 30rpx;
-  background: #fff;
-  color: #5F6B80;
+  background: rgba(255, 255, 255, 0.8);
+  color: #5b6c8a;
   font-size: 26rpx;
-  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.04);
+  border: 1rpx solid rgba(75, 110, 230, 0.18);
 }
 .cat-btn.active {
-  background: #4A5D7A;
+  background: linear-gradient(135deg, #4b6ee6 0%, #7b5fe0 100%);
   color: #fff;
+  border-color: transparent;
+  box-shadow: 0 8rpx 18rpx rgba(93, 95, 220, 0.2);
 }
 .pattern-card {
   width: 300rpx;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.92);
   border-radius: 24rpx;
   padding: 24rpx;
-  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.04);
+  box-shadow: 0 8rpx 22rpx rgba(47, 68, 130, 0.08);
   border: 2rpx solid transparent;
   text-align: center;
 }
 .pattern-card.selected {
-  border-color: #4A5D7A;
+  border-color: #7b5fe0;
+  background: rgba(123, 95, 224, 0.06);
 }
 .pattern-thumb {
   width: 120rpx;
   height: 120rpx;
-  background: #E8EDF5;
+  background: rgba(75, 110, 230, 0.08);
   border-radius: 50%;
   margin: 0 auto 16rpx;
 }
 .pattern-name {
   font-size: 30rpx;
-  font-weight: 500;
-  color: #2C3A4F;
+  font-weight: 600;
+  color: #1a2b4d;
   display: block;
 }
 .pattern-tags {
   font-size: 22rpx;
-  color: #7D879C;
+  color: #6b7790;
 }
 
 .editor-panel {
   padding-bottom: 40rpx;
 }
 .diy-canvas {
-  background: #fff;
+  background: rgba(255, 255, 255, 0.94);
   border-radius: 32rpx;
-  box-shadow: 0 8rpx 30rpx rgba(0,0,0,0.06);
+  box-shadow: 0 8rpx 30rpx rgba(47, 68, 130, 0.1);
+  border: 1rpx solid rgba(255, 255, 255, 0.7);
   display: block;
   margin: 0 auto 30rpx;
 }
@@ -221,23 +230,27 @@
   display: flex;
   gap: 16rpx;
   margin-bottom: 20rpx;
+  flex-wrap: wrap;
 }
 .tab {
   padding: 12rpx 24rpx;
   border-radius: 30rpx;
-  background: #E8EDF5;
-  color: #5F6B80;
+  background: rgba(255, 255, 255, 0.8);
+  color: #5b6c8a;
   font-size: 26rpx;
+  border: 1rpx solid rgba(75, 110, 230, 0.18);
 }
 .tab.active {
-  background: #4A5D7A;
+  background: linear-gradient(135deg, #4b6ee6 0%, #7b5fe0 100%);
   color: #fff;
+  border-color: transparent;
 }
 
 .sliders {
-  background: #fff;
+  background: rgba(255, 255, 255, 0.92);
   border-radius: 24rpx;
   padding: 20rpx 24rpx;
+  box-shadow: 0 8rpx 22rpx rgba(47, 68, 130, 0.06);
 }
 .slider-row {
   display: flex;
@@ -246,19 +259,19 @@
 }
 .slider-row text {
   font-size: 26rpx;
-  color: #2C3A4F;
+  color: #2c3a4f;
   margin-bottom: 6rpx;
 }
 
 .tip-box {
   margin-top: 24rpx;
-  background: rgba(74,93,122,0.08);
+  background: rgba(75, 110, 230, 0.08);
   border-radius: 20rpx;
   padding: 20rpx 24rpx;
 }
 .tip-text {
   font-size: 24rpx;
-  color: #4A5D7A;
+  color: #4b6ee6;
 }
 
 .dye-list {
@@ -273,29 +286,32 @@
   width: 100rpx;
 }
 .dye-item.selected text {
-  color: #4A5D7A;
-  font-weight: 500;
+  color: #4b6ee6;
+  font-weight: 600;
 }
 .dye-circle {
   width: 72rpx;
   height: 72rpx;
   border-radius: 50%;
   margin-bottom: 10rpx;
-  border: 2rpx solid #D8DDE6;
+  border: 3rpx solid #fff;
+  box-shadow: 0 4rpx 12rpx rgba(47, 68, 130, 0.14);
 }
 .dye-item.selected .dye-circle {
-  border-color: #4A5D7A;
+  border-color: #7b5fe0;
 }
 
 .method-card {
-  background: #fff;
+  background: rgba(255, 255, 255, 0.92);
   border-radius: 24rpx;
   padding: 24rpx;
   margin-bottom: 20rpx;
   border: 2rpx solid transparent;
+  box-shadow: 0 8rpx 22rpx rgba(47, 68, 130, 0.06);
 }
 .method-card.selected {
-  border-color: #4A5D7A;
+  border-color: #7b5fe0;
+  background: rgba(123, 95, 224, 0.06);
 }
 .method-main {
   display: flex;
@@ -305,11 +321,11 @@
 }
 .method-name {
   font-size: 30rpx;
-  font-weight: 500;
-  color: #2C3A4F;
+  font-weight: 600;
+  color: #1a2b4d;
 }
 .method-badge {
-  background: #4A5D7A;
+  background: linear-gradient(135deg, #4b6ee6 0%, #7b5fe0 100%);
   color: #fff;
   font-size: 20rpx;
   padding: 2rpx 10rpx;
@@ -317,7 +333,7 @@
 }
 .method-desc {
   font-size: 24rpx;
-  color: #7D879C;
+  color: #6b7790;
   display: block;
 }
 
@@ -326,11 +342,12 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.92);
   padding: 24rpx 30rpx calc(24rpx + env(safe-area-inset-bottom));
   display: flex;
   gap: 20rpx;
-  box-shadow: 0 -4rpx 20rpx rgba(0,0,0,0.04);
+  box-shadow: 0 -4rpx 20rpx rgba(47, 68, 130, 0.08);
+  backdrop-filter: blur(10rpx);
 }
 button {
   margin: 0;
@@ -344,9 +361,10 @@ button {
   line-height: 88rpx;
   text-align: center;
   border-radius: 44rpx;
-  background: #F0F4FA;
-  color: #4A5D7A;
+  background: rgba(255, 255, 255, 0.9);
+  color: #4b6ee6;
   font-size: 30rpx;
+  border: 1rpx solid rgba(75, 110, 230, 0.25);
 }
 .primary-btn {
   flex: 1;
@@ -354,9 +372,11 @@ button {
   line-height: 88rpx;
   text-align: center;
   border-radius: 44rpx;
-  background: linear-gradient(90deg, #4A5D7A, #6A7CA0);
+  background: linear-gradient(135deg, #4b6ee6 0%, #7b5fe0 100%);
   color: #fff;
   font-size: 30rpx;
+  font-weight: 600;
+  box-shadow: 0 10rpx 24rpx rgba(93, 95, 220, 0.25);
 }
 .primary-btn[disabled] {
   opacity: 0.5;

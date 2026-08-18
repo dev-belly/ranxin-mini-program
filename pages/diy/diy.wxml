@@ -1,4 +1,5 @@
 <view class="diy-page">
+  <view class="rx-bg"></view>
   <!-- 顶部步骤条 -->
   <view class="stepper">
     <view class="stepper-line"></view>
