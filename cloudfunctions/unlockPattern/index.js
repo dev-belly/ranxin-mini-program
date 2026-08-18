@@ -2,12 +2,33 @@
 const cloud = require('wx-server-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
-const { MOCK_PATTERNS } = require('../shared/patterns.js')
+const { getPattern } = require('../shared/utils.js')
 
 exports.main = async (event) => {
   const { OPENID } = cloud.getWXContext()
   const patternId = event.patternId
-  const pattern = MOCK_PATTERNS.find(p => p.id === patternId) || null
-  // TODO(C) D2：await db.collection('user_patterns').add({ data: { openid: OPENID, patternId, source: event.source || {} } })
+
+  if (!OPENID || !patternId) {
+    return { isNew: false, pattern: null }
+  }
+
+  const pattern = await getPattern(db, patternId)
+  const exist = await db.collection('user_patterns')
+    .where({ _openid: OPENID, patternId })
+    .limit(1)
+    .get()
+
+  if (exist.data.length > 0) {
+    return { isNew: false, pattern }
+  }
+
+  await db.collection('user_patterns').add({
+    data: {
+      patternId,
+      source: event.source || {},
+      createdAt: Date.now()
+    }
+  })
+
   return { isNew: true, pattern }
 }

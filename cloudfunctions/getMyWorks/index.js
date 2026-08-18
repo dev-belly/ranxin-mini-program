@@ -7,9 +7,20 @@ exports.main = async (event) => {
   const { OPENID } = cloud.getWXContext()
   const page = event.page || 1
   const pageSize = event.pageSize || 10
-  // TODO(C) D3：从 works 集合按 openid 查询并分页：
-  // const res = await db.collection('works').where({ openid: OPENID })
-  //   .skip((page - 1) * pageSize).limit(pageSize).orderBy('createdAt', 'desc').get()
-  // return { list: res.data, hasMore: (page * pageSize) < res.total }
-  return { list: [], hasMore: false }
+  const where = OPENID ? { _openid: OPENID } : {}
+
+  const totalRes = await db.collection('works').where(where).count()
+  const total = totalRes.total || 0
+
+  const listRes = await db.collection('works')
+    .where(where)
+    .orderBy('createdAt', 'desc')
+    .skip((page - 1) * pageSize)
+    .limit(pageSize)
+    .get()
+
+  return {
+    list: listRes.data || [],
+    hasMore: page * pageSize < total
+  }
 }
