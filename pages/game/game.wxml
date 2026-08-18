@@ -51,6 +51,7 @@
       <text class="result-title">奖励收获</text>
       <text class="result-subtitle">你的灵魂扎染之旅又多了一份美好印记</text>
       <view wx:if="{{result.unlock}}" class="unlock-box">
+        <image class="unlock-img" src="{{result.unlock.thumb}}" mode="aspectFill" />
         <text>恭喜你获得</text>
         <text class="unlock-name">{{result.unlock.name}}</text>
         <text>已加入你的纹样库</text>
@@ -59,7 +60,7 @@
       <text class="result-unit">分</text>
       <view class="result-stats">
         <view class="stat"><text>{{result.merges}}</text><text>本局合成</text></view>
-        <view class="stat"><text>{{result.time}}</text><text>分钟</text></view>
+        <view class="stat"><text>{{result.time}}</text><text>秒</text></view>
         <view class="stat"><text>{{result.eliminated}}</text><text>消除纹球</text></view>
       </view>
       <button class="primary-btn" bindtap="collectPattern">收下纹样</button>

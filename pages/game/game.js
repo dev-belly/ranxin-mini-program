@@ -22,7 +22,7 @@ const TOP_LINE = 140;
 Page({
   data: {
     score: 0,
-    best: 3280,
+    best: 0,
     nextLevel: 0,
     powerChange: 3,
     powerRemove: 3,
@@ -38,7 +38,7 @@ Page({
     this.eliminated = 0;
     this.startTime = Date.now();
     this.nextLevel = Math.floor(Math.random() * 3);
-    this.setData({ nextLevel: this.nextLevel });
+    this.setData({ nextLevel: this.nextLevel, best: wx.getStorageSync('ranxin_game_best') || 0 });
   },
 
   onReady() {
@@ -164,6 +164,7 @@ Page({
     this.balls.push(newBall);
     this.merges++;
     this.eliminated += 1;
+    if (!this.data.muted) wx.vibrateShort({ type: 'light' });
     const add = LEVELS[newLevel].score;
     this.setData({ score: this.data.score + add });
   },
@@ -243,10 +244,23 @@ Page({
 
   onBoardTap(e) {
     if (this.data.gameOver) return;
-    if (this.data.removeMode) return this.onBallTap(e);
-    const x = e.detail.x - (this.boardLeft || 0);
-    const clamped = Math.max(LEVELS[this.nextLevel].r, Math.min(this.boardW - LEVELS[this.nextLevel].r, x));
+    const pt = this.tapPoint(e);
+    if (this.data.removeMode) return this.removeBallAt(pt.x, pt.y);
+    const clamped = Math.max(LEVELS[this.nextLevel].r, Math.min(this.boardW - LEVELS[this.nextLevel].r, pt.x));
     this.spawnBall(clamped);
+  },
+
+  tapPoint(e) {
+    const t = (e.changedTouches && e.changedTouches[0]) || (e.touches && e.touches[0]) || e.detail || {};
+    let x, y;
+    if (t.clientX != null) {
+      x = t.clientX - (this.boardLeft || 0);
+      y = t.clientY - (this.boardTop || 0);
+    } else {
+      x = t.x != null ? t.x : 0;
+      y = t.y != null ? t.y : 0;
+    }
+    return { x, y };
   },
 
   onBoardMove(e) {
@@ -271,16 +285,21 @@ Page({
     this.pendingX = x;
   },
 
-  onBallTap(e) {
-    if (!this.data.removeMode || this.data.gameOver) return;
-    // 简化：消除最后一个点击的球（实际应根据坐标命中检测）
-    // 为演示，移除最近生成的同等级球
-    const idx = this.balls.length - 1;
-    if (idx >= 0) {
-      this.balls.splice(idx, 1);
-      this.eliminated++;
-      this.setData({ powerRemove: this.data.powerRemove - 1, removeMode: false });
+  removeBallAt(x, y) {
+    let idx = -1;
+    for (let i = this.balls.length - 1; i >= 0; i--) {
+      const b = this.balls[i];
+      const dx = b.x - x, dy = b.y - y;
+      if (dx * dx + dy * dy <= b.r * b.r) { idx = i; break; }
     }
+    if (idx < 0) {
+      wx.showToast({ title: '点准要消除的球哦', icon: 'none' });
+      return;
+    }
+    this.balls.splice(idx, 1);
+    this.eliminated++;
+    this.setData({ powerRemove: this.data.powerRemove - 1, removeMode: false });
+    if (!this.data.muted) wx.vibrateShort({ type: 'light' });
   },
 
   useChange() {
@@ -303,14 +322,16 @@ Page({
     this.stopLoop();
     const score = this.data.score;
     const best = Math.max(score, this.data.best);
+    wx.setStorageSync('ranxin_game_best', best);
     const unlock = this.pickUnlockPattern(score);
+    if (unlock) unlock.thumb = '/assets/patterns/' + unlock.id + '.png';
     this.setData({
       gameOver: true,
       best,
       result: {
         score,
         merges: this.merges,
-        time: Math.floor((Date.now() - this.startTime) / 60000),
+        time: Math.floor((Date.now() - this.startTime) / 1000),
         eliminated: this.eliminated,
         unlock
       }
