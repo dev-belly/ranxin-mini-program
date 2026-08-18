@@ -133,7 +133,7 @@
 .fold-desc {
   display: block;
   font-size: 22rpx;
-  color: #6b7a99;
+  color: #4f5f7a;
 }
 
 /* 染液 */
@@ -173,7 +173,7 @@
 .dye-desc {
   display: block;
   font-size: 20rpx;
-  color: #6b7a99;
+  color: #4f5f7a;
   text-align: center;
 }
 
@@ -204,14 +204,14 @@
 }
 .timer-unit {
   font-size: 32rpx;
-  color: #6b7a99;
+  color: #4f5f7a;
   margin-left: 12rpx;
 }
 .timer-hint {
   display: block;
   text-align: center;
   font-size: 26rpx;
-  color: #6b7a99;
+  color: #4f5f7a;
   margin-bottom: 30rpx;
 }
 
@@ -275,7 +275,7 @@
   display: block;
   text-align: center;
   font-size: 24rpx;
-  color: #6b7a99;
+  color: #4f5f7a;
   margin-top: 14rpx;
 }
 
@@ -341,7 +341,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #6b7a99;
+  color: #4f5f7a;
   font-size: 28rpx;
 }
 .result-meta {
@@ -357,7 +357,7 @@
 .result-line {
   display: block;
   font-size: 24rpx;
-  color: #6b7a99;
+  color: #4f5f7a;
   margin-bottom: 4rpx;
 }
 .result-story {
@@ -472,7 +472,7 @@
   display: block;
   text-align: center;
   font-size: 26rpx;
-  color: #62749b;
+  color: #4f5f7a;
   line-height: 1.6;
   margin: 0 20rpx 40rpx;
 }
@@ -537,7 +537,7 @@
   font-weight: 600;
   color: #2a44c1;
 }
-.fabric-desc { font-size: 22rpx; color: #62749b; margin-top: 4rpx; }
+.fabric-desc { font-size: 22rpx; color: #4f5f7a; margin-top: 4rpx; }
 
 /* 选纹样 */
 .pattern-grid {

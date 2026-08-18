@@ -10,7 +10,7 @@
   font-weight: 700;
   color: #173d79;
 }
-.works-sub { font-size: 24rpx; color: #6b7a99; margin-top: 8rpx; }
+.works-sub { font-size: 24rpx; color: #4f5f7a; margin-top: 8rpx; }
 
 /* 筛选 */
 .filter-bar { white-space: nowrap; margin-bottom: 24rpx; }
@@ -53,7 +53,7 @@
 .work-meta { font-size: 22rpx; color: #8b97b3; margin: 6rpx 0 10rpx; }
 .work-story {
   font-size: 23rpx;
-  color: #6b7a99;
+  color: #4f5f7a;
   line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -72,7 +72,7 @@
 /* 商城 */
 .mall-block { margin-top: 36rpx; padding: 32rpx; }
 .mall-title { font-size: 30rpx; font-weight: 700; color: #173d79; }
-.mall-desc { font-size: 24rpx; color: #6b7a99; line-height: 1.6; margin: 12rpx 0 24rpx; }
+.mall-desc { font-size: 24rpx; color: #4f5f7a; line-height: 1.6; margin: 12rpx 0 24rpx; }
 .mall-actions { display: flex; gap: 20rpx; }
 .mall-btn { flex: 1; }
 

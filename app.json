@@ -11,14 +11,14 @@
   ],
   "window": {
     "navigationBarTitleText": "染心",
-    "navigationBarBackgroundColor": "#f8f9fc",
+    "navigationBarBackgroundColor": "#fbfaf8",
     "navigationBarTextStyle": "black",
-    "backgroundColor": "#f8f9fc",
+    "backgroundColor": "#fbfaf8",
     "navigationStyle": "default"
   },
   "tabBar": {
     "color": "#8a93a6",
-    "selectedColor": "#4f5fc9",
+    "selectedColor": "#347af0",
     "backgroundColor": "#ffffff",
     "borderStyle": "white",
     "list": [

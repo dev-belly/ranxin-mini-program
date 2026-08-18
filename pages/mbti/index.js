@@ -274,11 +274,11 @@ Page({
       const ctx = canvas.getContext('2d');
       const W = 300, H = 400;
       canvas.width = W; canvas.height = H;
-      ctx.fillStyle = '#edf1f6'; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = '#fbfaf8'; ctx.fillRect(0, 0, W, H);
       ctx.fillStyle = '#173d79';
       ctx.font = 'bold 22px sans-serif'; ctx.textAlign = 'center';
       ctx.fillText('染心 · 灵魂扎染', W / 2, 44);
-      ctx.font = '16px sans-serif'; ctx.fillStyle = '#3a55c8';
+      ctx.font = '16px sans-serif'; ctx.fillStyle = '#2a44c1';
       ctx.fillText('我是 ' + r.type + ' · ' + r.name, W / 2, 78);
       const p = engine.getPatternById(r.patternId);
       if (p) engine.renderBallPattern(ctx, W / 2, 200, 90, {
@@ -287,7 +287,7 @@ Page({
       });
       ctx.fillStyle = '#173d79'; ctx.font = '15px sans-serif';
       ctx.fillText(r.patternName + ' · ' + r.color, W / 2, 330);
-      ctx.fillStyle = '#62749b'; ctx.font = '12px sans-serif';
+      ctx.fillStyle = '#4f5f7a'; ctx.font = '12px sans-serif';
       ctx.fillText(r.story.slice(0, 18), W / 2, 358);
       wx.canvasToTempFilePath({
         canvas,

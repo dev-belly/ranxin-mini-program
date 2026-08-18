@@ -2,7 +2,7 @@
 .art-hero { margin-bottom: 28rpx; }
 .art-spark { font-size: 44rpx; font-weight: 700; color: #173d79; font-family: "Songti SC","STSong",serif; }
 .art-spark .rx-spark { margin-right: 10rpx; }
-.art-sub { font-size: 26rpx; color: #62749b; margin-top: 12rpx; line-height: 1.5; }
+.art-sub { font-size: 26rpx; color: #4f5f7a; margin-top: 12rpx; line-height: 1.5; }
 .art-hero-line {
   display: inline-block;
   margin-top: 20rpx;
@@ -65,7 +65,7 @@
 .art-tip {
   margin-top: 18rpx;
   font-size: 24rpx;
-  color: #62749b;
+  color: #4f5f7a;
   background: rgba(52,122,240,0.06);
   border-left: 6rpx solid #a160ef;
   border-radius: 8rpx;

@@ -213,7 +213,7 @@
 }
 .detail-info { flex: 1; }
 .detail-name { font-size: 30rpx; font-weight: 700; color: #173d79; }
-.detail-story { font-size: 24rpx; color: #62749b; margin-top: 8rpx; line-height: 1.6; }
+.detail-story { font-size: 24rpx; color: #4f5f7a; margin-top: 8rpx; line-height: 1.6; }
 .detail-added {
   margin-top: 16rpx;
   font-size: 24rpx;
