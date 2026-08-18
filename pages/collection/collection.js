@@ -16,6 +16,7 @@ const STORIES = {
 Page({
   data: {
     catalog: engine.PATTERN_CATALOG,
+    viewList: [],
     unlocked: [],
     filter: 'all',
     detail: null,
@@ -37,12 +38,13 @@ Page({
 
   loadUnlocked() {
     const local = wx.getStorageSync('ranxin_unlocked_patterns') || [];
+    const toViewList = (ids) => engine.PATTERN_CATALOG.map(p => ({ ...p, unlocked: ids.indexOf(p.id) >= 0 }));
     api.getPatterns().then(list => {
       const remoteIds = list.map(p => p.id);
       const merged = Array.from(new Set([...local, ...remoteIds]));
-      this.setData({ unlocked: merged }, () => this.renderThumbs());
+      this.setData({ unlocked: merged, viewList: toViewList(merged) }, () => this.renderThumbs());
     }).catch(() => {
-      this.setData({ unlocked: local }, () => this.renderThumbs());
+      this.setData({ unlocked: local, viewList: toViewList(local) }, () => this.renderThumbs());
     });
   },
 
