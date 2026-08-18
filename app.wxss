@@ -1,3 +1,116 @@
-/* 全局样式（轻量，按规范各页面自行管理局部样式） */
-page { background: #f5f5f5; font-family: -apple-system, "PingFang SC", sans-serif; }
-.page { padding: 32rpx; }
+/* 全局主题：水彩蓝紫 · 柔软情绪 */
+page {
+  background: #f4f6fb;
+  font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  color: #1f2a3a;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 模拟水彩晕染背景 */
+.rx-bg {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 80% 50% at 10% 0%, rgba(180, 200, 255, 0.45), transparent 60%),
+    radial-gradient(ellipse 70% 60% at 90% 10%, rgba(200, 190, 255, 0.38), transparent 55%),
+    radial-gradient(ellipse 70% 40% at 60% 25%, rgba(210, 230, 255, 0.55), transparent 50%),
+    radial-gradient(ellipse 80% 50% at 20% 80%, rgba(190, 210, 255, 0.35), transparent 60%),
+    linear-gradient(180deg, #f4f6fb 0%, #f8f9fd 50%, #f1f4fb 100%);
+}
+
+/* 通用容器 */
+.rx-page {
+  padding: 0 32rpx 120rpx;
+  box-sizing: border-box;
+}
+
+/* 通用玻璃卡片 */
+.rx-card {
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 32rpx;
+  box-shadow: 0 8rpx 28rpx rgba(47, 68, 130, 0.08);
+  border: 1rpx solid rgba(255, 255, 255, 0.7);
+  overflow: hidden;
+}
+
+/* 标题字体 */
+.rx-title {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #1a2b4d;
+  letter-spacing: 6rpx;
+  font-family: "Songti SC", "STSong", serif;
+}
+
+.rx-section-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #1a2b4d;
+  margin-bottom: 20rpx;
+}
+
+/* 主按钮：渐变紫蓝 */
+.rx-btn-primary {
+  background: linear-gradient(135deg, #4b6ee6 0%, #7b5fe0 100%);
+  color: #fff;
+  border-radius: 999rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  padding: 20rpx 48rpx;
+  box-shadow: 0 10rpx 24rpx rgba(93, 95, 220, 0.25);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+
+.rx-btn-primary::after { border: none; }
+
+/* 次按钮：白底蓝边 */
+.rx-btn-secondary {
+  background: rgba(255, 255, 255, 0.9);
+  color: #4b6ee6;
+  border-radius: 999rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  padding: 18rpx 40rpx;
+  border: 1rpx solid rgba(75, 110, 230, 0.25);
+}
+
+.rx-btn-secondary::after { border: none; }
+
+/* 标签芯片 */
+.rx-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 14rpx 28rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1rpx solid rgba(75, 110, 230, 0.18);
+  color: #5b6c8a;
+  font-size: 26rpx;
+  margin-right: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.rx-chip.active {
+  background: linear-gradient(135deg, #4b6ee6 0%, #7b5fe0 100%);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 8rpx 18rpx rgba(93, 95, 220, 0.2);
+}
+
+/* 小标签 */
+.rx-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 6rpx 16rpx;
+  border-radius: 999rpx;
+  background: rgba(75, 110, 230, 0.12);
+  color: #4b6ee6;
+  font-size: 22rpx;
+}

@@ -1,20 +1,63 @@
-// 归属：A｜产品前端 Owner
+// 归属：A｜产品前端 Owner（B 按设计稿重制首页）
 Page({
   data: {
-    slogan: '以蓝染，寄情绪',
-    features: [
-      { key: 'collection', name: '纹样库', desc: '六种白族扎染纹样与寓意', tab: 'true', url: '/pages/collection/collection' },
-      { key: 'diy', name: '正念DIY', desc: '七步沉浸式扎染创作', tab: 'true', url: '/pages/diy/diy' },
-      { key: 'game', name: '合成大染缸', desc: '玩着解锁新纹样', tab: 'false', url: '/pages/game/game' },
-      { key: 'works', name: '我的作品', desc: '保存与管理你的染作', tab: 'true', url: '/pages/works/works' }
-    ]
+    // 顶部情绪标签（与设计稿 image1 对齐）
+    emotions: [
+      { key: 'anxious', label: '焦躁', active: true },
+      { key: 'tired', label: '疲惫', active: false },
+      { key: 'calm', label: '平静', active: false },
+      { key: 'happy', label: '开心', active: false },
+      { key: 'messy', label: '有点乱', active: false }
+    ],
+    todayBest: 3280,
+    leaderboard: {
+      active: 'user',
+      scope: 'today',
+      list: [
+        { rank: 1, name: '@inkblue27', score: 128432, avatar: '/assets/patterns/hudie.png' },
+        { rank: 2, name: '@cloud_dye', score: 97310, avatar: '/assets/patterns/tuan.png' },
+        { rank: 3, name: '@xiao_ran77', score: 86540, avatar: '/assets/patterns/shui.png' }
+      ]
+    }
   },
+
+  onLoad() {
+    // 若本地保存了今日最高分则读取
+    try {
+      const best = wx.getStorageSync('ranxin_game_best');
+      if (best) this.setData({ todayBest: best });
+    } catch (e) {}
+  },
+
+  toggleMusic() {
+    wx.showToast({ title: '背景音乐播放中', icon: 'none' });
+  },
+
+  selectEmotion(e) {
+    const { key } = e.currentTarget.dataset;
+    const emotions = this.data.emotions.map(item => ({ ...item, active: item.key === key }));
+    this.setData({ emotions });
+  },
+
   goMbti() {
     wx.navigateTo({ url: '/pages/mbti/index' });
   },
-  go(e) {
-    const { url, tab } = e.currentTarget.dataset;
-    if (tab === 'true') wx.switchTab({ url });
-    else wx.navigateTo({ url });
+
+  goGame() {
+    wx.navigateTo({ url: '/pages/game/game' });
+  },
+
+  goLeaderboard() {
+    wx.navigateTo({ url: '/pages/game/game?scene=leaderboard' });
+  },
+
+  goKnowledge() {
+    wx.navigateTo({ url: '/pages/collection/collection' });
+  },
+
+  switchLeaderboardTab(e) {
+    const { tab } = e.currentTarget.dataset;
+    const leaderboard = { ...this.data.leaderboard, active: tab };
+    this.setData({ leaderboard });
   }
 });
