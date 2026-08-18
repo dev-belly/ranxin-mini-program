@@ -1,129 +1,73 @@
-<!-- 归属：B｜核心交互 Owner（按设计稿 image5/image6 重制） -->
-<view class="rx-bg"></view>
-<view class="game-page">
+<view class="rx-page game-page">
+  <view class="rx-bg"></view>
 
-  <!-- 顶部 HUD -->
+  <!-- HUD -->
   <view class="game-hud">
-    <view class="hud-left">
+    <view class="hud-card">
       <view class="hud-label">得分</view>
-      <view class="hud-score">{{score}}</view>
+      <view class="hud-value">{{score}}</view>
     </view>
-    <view class="hud-center">
-      <view class="hud-title">合成大染缸</view>
-      <view wx:if="{{!gameOver}}" class="hud-next">
-        <text class="hud-next-label">下一颗</text>
-        <view class="hud-next-ball">
-          <image src="{{nextThumb}}" mode="aspectFill" />
-        </view>
-      </view>
+    <view class="hud-card">
+      <view class="hud-label">历史最高</view>
+      <view class="hud-value">{{best}}</view>
     </view>
-    <view class="hud-right">
-      <view class="hud-best-label">历史最高</view>
-      <view class="hud-best">{{best}}</view>
+    <view class="hud-card">
+      <view class="hud-label">剩余步数</view>
+      <view class="hud-value">{{moves}}</view>
     </view>
-  </view>
-
-  <!-- 游戏画布 / 染缸 -->
-  <view class="board-wrap">
-    <view class="board-frame">
-      <canvas
-        type="2d"
-        id="game-canvas"
-        class="game-canvas"
-        style="width:100%;height:100%"
-        bindtap="onBoardTap"
-        bindtouchmove="onBoardMove"
-      ></canvas>
-    </view>
-    <view class="board-hint">
-      <text class="hint-star">✦</text>
-      <text class="hint-text">相同纹样碰在一起，就会慢慢缩小</text>
-      <text class="hint-star">✦</text>
+    <view class="hud-card mute-card" bindtap="toggleMute">
+      <view class="hud-label">音景</view>
+      <view class="hud-value">{{muted ? '静音' : '开'}}</view>
     </view>
   </view>
 
-  <!-- 底部道具栏 -->
-  <view class="power-bar">
-    <view class="power-btn {{powerChange<=0?'disabled':''}}" bindtap="useChange">
-      <view class="power-icon-wrap">↻</view>
-      <text class="power-name">换一次</text>
-      <text class="power-count">×{{powerChange}}</text>
+  <!-- 残片收集进度 -->
+  <view class="frag-bar">
+    <view class="frag-item">
+      <text class="frag-name">蝴蝶纹残片</text>
+      <text class="frag-count">{{fragments.hudie}}/1</text>
     </view>
-    <view class="power-btn {{powerRemove<=0?'disabled':''}} {{removeMode?'active':''}}" bindtap="useRemove">
-      <view class="power-icon-wrap">✂</view>
-      <text class="power-name">消除一个</text>
-      <text class="power-count">×{{powerRemove}}</text>
-    </view>
-    <view class="power-btn {{muted?'active':''}}" bindtap="toggleMute">
-      <view class="power-icon-wrap">{{muted?'🔇':'🔊'}}</view>
-      <text class="power-name">静音</text>
+    <view class="frag-item">
+      <text class="frag-name">万字纹残片</text>
+      <text class="frag-count">{{fragments.wanzi}}/1</text>
     </view>
   </view>
 
-  <!-- 游戏结束 / 奖励收获 -->
-  <view wx:if="{{gameOver}}" class="result-mask">
+  <!-- 棋盘 -->
+  <view class="board-wrap" bindtap="onBoardTap">
+    <canvas type="2d" id="game-canvas" class="game-canvas"></canvas>
+  </view>
+
+  <!-- 正念提示语 -->
+  <view class="quote-toast {{quoteVisible ? 'show' : ''}}">{{quote}}</view>
+
+  <view class="game-tip">交换相邻两块，连成三个及以上同纹样即可消除 · 把「残片」沉到底部即可收集解锁</view>
+
+  <!-- 结果弹窗 -->
+  <view class="result-mask" wx:if="{{gameOver}}">
     <view class="result-card">
-      <view class="result-header">
-        <view class="result-title">奖励收获</view>
-        <view class="result-subtitle">你的灵魂扎染之旅又多了一份美好印记 ✦</view>
-      </view>
-
-      <view wx:if="{{result.unlock}}" class="unlock-box">
-        <view class="unlock-label">恭喜你获得</view>
-        <view class="unlock-name">{{result.unlock.name}}</view>
-        <view class="unlock-meta">已加入你的纹样库 ◎</view>
-        <image class="unlock-img" src="{{result.unlock.thumb}}" mode="aspectFill" />
-      </view>
-
-      <view class="score-panel">
-        <view class="score-row">
-          <view class="star">✦</view>
-          <view class="score-num">{{result.score}}</view>
-          <view class="score-unit">分</view>
-        </view>
-        <view class="score-percent">超过了 {{result.percent}}% 的玩家</view>
-      </view>
-
+      <view class="result-title">这一缸，染成了</view>
       <view class="result-stats">
-        <view class="stat">
-          <view class="stat-icon">✁</view>
-          <view class="stat-num">{{result.merges}}</view>
-          <view class="stat-label">本局合成</view>
-        </view>
-        <view class="stat">
-          <view class="stat-icon">◷</view>
-          <view class="stat-num">{{result.timeMinutes}}</view>
-          <view class="stat-label">分钟</view>
-        </view>
-        <view class="stat">
-          <view class="stat-icon">✦</view>
-          <view class="stat-num">{{result.eliminated}}</view>
-          <view class="stat-label">消除纹球</view>
-        </view>
+        <view class="stat"><text class="stat-num">{{result.score}}</text><text class="stat-label">本局得分</text></view>
+        <view class="stat"><text class="stat-num">{{result.timeMinutes}}</text><text class="stat-label">分钟沉浸</text></view>
+        <view class="stat"><text class="stat-num">{{result.percent}}%</text><text class="stat-label">超过玩家</text></view>
       </view>
 
-      <view class="result-tip">
-        <text class="tip-icon">★</text>
-        <view class="tip-text">每一次专注与选择，都是在靠近更真实的自己。再接再厉，收集更多独特的灵魂纹样吧！</view>
+      <view class="frag-result" wx:if="{{result.fragments.hudie || result.fragments.wanzi}}">
+        <text class="frag-result-label">本局收集残片：</text>
+        <text wx:if="{{result.fragments.hudie}}">蝴蝶纹残片 ×{{result.fragments.hudie}}　</text>
+        <text wx:if="{{result.fragments.wanzi}}">万字纹残片 ×{{result.fragments.wanzi}}</text>
       </view>
 
-      <view class="rx-btn-primary result-btn" bindtap="collectPattern">收下纹样 ✦</view>
-      <view class="result-actions">
-        <view class="rx-btn-secondary result-half" bindtap="replay">再玩一局（30题）</view>
-        <view class="rx-btn-secondary result-half" bindtap="viewRank">查看排行榜</view>
-      </view>
-
+      <view class="result-sub">我的纹样库</view>
       <view class="mini-collection">
-        <view class="mc-header">
-          <text class="mc-title">我的纹样库</text>
-          <text class="mc-count" bindtap="viewCollection">已收集 {{result.unlockedCount}} 个纹样 ></text>
-        </view>
-        <view class="mc-list">
-          <view wx:for="{{result.unlockedPatterns}}" wx:key="id" class="mc-item">
-            <image src="{{item.thumb}}" mode="aspectFill" />
-            <text>{{item.name}}</text>
-          </view>
-        </view>
+        <image wx:for="{{result.unlockedPatterns}}" wx:key="id" class="mini-thumb" src="{{item.thumb}}" mode="aspectFill"/>
+      </view>
+
+      <button class="rx-btn-primary result-btn" bindtap="replay">再染一缸</button>
+      <view class="result-actions">
+        <text class="result-link" bindtap="viewCollection">查看纹样库</text>
+        <text class="result-link" bindtap="viewRank">排行榜</text>
       </view>
     </view>
   </view>
