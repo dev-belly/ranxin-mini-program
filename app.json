@@ -13,6 +13,18 @@
     "navigationBarTextStyle": "black",
     "backgroundColor": "#f5f5f5"
   },
+  "tabBar": {
+    "color": "#8a93a6",
+    "selectedColor": "#2b4c7e",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "首页" },
+      { "pagePath": "pages/collection/collection", "text": "纹样库" },
+      { "pagePath": "pages/diy/diy", "text": "正念DIY" },
+      { "pagePath": "pages/works/works", "text": "作品" }
+    ]
+  },
   "style": "v2",
   "sitemapLocation": "sitemap.json"
 }

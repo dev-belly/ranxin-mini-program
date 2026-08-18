@@ -1,4 +1,19 @@
 <!-- 归属：A｜产品前端 Owner -->
 <view class="page">
-  <text class="title">{title}</text>
+  <view class="section-title">我的作品</view>
+
+  <view wx:if="{{loading}}" class="hint">加载中…</view>
+
+  <view wx:elif="{{list.length === 0}}" class="empty">
+    <view class="empty-emoji">🪡</view>
+    <view class="empty-text">还没有作品，去「正念DIY」创作第一件吧</view>
+  </view>
+
+  <view wx:else class="grid">
+    <view class="work" wx:for="{{list}}" wx:key="workId">
+      <image class="work-img" src="/assets/patterns/{{item.patternId}}.png" mode="aspectFill" />
+      <view class="work-name">{{item.title}}</view>
+      <view class="work-meta">{{item.patternName}} · {{item.date}}</view>
+    </view>
+  </view>
 </view>
