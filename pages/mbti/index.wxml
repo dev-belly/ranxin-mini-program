@@ -1,5 +1,6 @@
 <!-- 归属：A｜产品前端 Owner -->
 <view class="page">
+  <view class="rx-bg"></view>
   <block wx:if="{{!result}}">
     <view class="progress">第 {{step + 1}} / {{questions.length}} 题</view>
     <view class="q-title">{{questions[step].title}}</view>

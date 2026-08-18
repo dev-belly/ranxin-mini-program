@@ -1,19 +1,21 @@
-/* 归属：B｜核心交互 Owner */
+/* 归属：B｜核心交互 Owner · rx 水彩主题统一 */
 .collection-page {
   min-height: 100vh;
-  background: linear-gradient(180deg, #F5F7FA 0%, #EEF1F6 100%);
+  background: transparent;
   padding: 40rpx 30rpx calc(40rpx + env(safe-area-inset-bottom));
 }
 .page-title {
   display: block;
   font-size: 44rpx;
-  font-weight: 500;
-  color: #2C3A4F;
+  font-weight: 700;
+  color: #1a2b4d;
+  font-family: "Songti SC", "STSong", serif;
+  letter-spacing: 4rpx;
 }
 .page-subtitle {
   display: block;
   font-size: 26rpx;
-  color: #7D879C;
+  color: #6b7790;
   margin-bottom: 30rpx;
 }
 
@@ -28,11 +30,12 @@
   align-items: center;
   justify-content: space-between;
   gap: 24rpx;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.92);
   border-radius: 24rpx;
   padding: 24rpx 28rpx;
   margin-bottom: 30rpx;
-  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.04);
+  box-shadow: 0 8rpx 22rpx rgba(47, 68, 130, 0.08);
+  border: 1rpx solid rgba(255, 255, 255, 0.7);
 }
 .unlock-progress {
   flex: 1;
@@ -41,18 +44,18 @@
 .unlock-text {
   display: block;
   font-size: 26rpx;
-  color: #2C3A4F;
+  color: #1a2b4d;
   margin-bottom: 12rpx;
 }
 .progress-bar {
   height: 14rpx;
-  background: #E8EDF5;
+  background: rgba(75, 110, 230, 0.12);
   border-radius: 8rpx;
   overflow: hidden;
 }
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #4A5D7A, #6A7CA0);
+  background: linear-gradient(135deg, #4b6ee6 0%, #7b5fe0 100%);
   border-radius: 8rpx;
   transition: width 0.3s ease;
 }
@@ -62,22 +65,25 @@
   padding: 0 28rpx;
   height: 64rpx;
   line-height: 64rpx;
-  background: linear-gradient(90deg, #4A5D7A, #6A7CA0);
+  background: linear-gradient(135deg, #4b6ee6 0%, #7b5fe0 100%);
   color: #fff;
   border-radius: 32rpx;
   font-size: 24rpx;
+  box-shadow: 0 8rpx 18rpx rgba(93, 95, 220, 0.22);
 }
 .filter-btn {
   padding: 12rpx 28rpx;
   border-radius: 30rpx;
-  background: #fff;
-  color: #5F6B80;
+  background: rgba(255, 255, 255, 0.8);
+  color: #5b6c8a;
   font-size: 26rpx;
-  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.04);
+  border: 1rpx solid rgba(75, 110, 230, 0.18);
 }
 .filter-btn.active {
-  background: #4A5D7A;
+  background: linear-gradient(135deg, #4b6ee6 0%, #7b5fe0 100%);
   color: #fff;
+  border-color: transparent;
+  box-shadow: 0 8rpx 18rpx rgba(93, 95, 220, 0.2);
 }
 
 .pattern-grid {
@@ -87,20 +93,21 @@
 }
 .pattern-card {
   width: 324rpx;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.92);
   border-radius: 28rpx;
   padding: 24rpx;
   text-align: center;
-  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.04);
+  box-shadow: 0 8rpx 22rpx rgba(47, 68, 130, 0.08);
+  border: 1rpx solid rgba(255, 255, 255, 0.7);
   position: relative;
 }
 .pattern-card.locked {
-  opacity: 0.65;
+  opacity: 0.6;
 }
 .pattern-thumb {
   width: 220rpx;
   height: 220rpx;
-  background: #E8EDF5;
+  background: rgba(75, 110, 230, 0.08);
   border-radius: 50%;
   margin: 0 auto 16rpx;
   display: block;
@@ -108,20 +115,20 @@
 .pattern-name {
   display: block;
   font-size: 30rpx;
-  font-weight: 500;
-  color: #2C3A4F;
+  font-weight: 600;
+  color: #1a2b4d;
 }
 .pattern-tags {
   display: block;
   font-size: 22rpx;
-  color: #7D879C;
+  color: #6b7790;
   margin-top: 4rpx;
 }
 .lock-badge {
   position: absolute;
   top: 16rpx;
   right: 16rpx;
-  background: rgba(0,0,0,0.45);
+  background: rgba(26, 43, 77, 0.55);
   color: #fff;
   font-size: 20rpx;
   padding: 4rpx 12rpx;
@@ -134,7 +141,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.45);
+  background: rgba(26, 43, 77, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -142,15 +149,16 @@
 }
 .detail-card {
   width: 560rpx;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.96);
   border-radius: 36rpx;
   padding: 40rpx;
   text-align: center;
+  box-shadow: 0 20rpx 60rpx rgba(26, 43, 77, 0.25);
 }
 .detail-canvas {
   width: 400rpx;
   height: 400rpx;
-  background: #E8EDF5;
+  background: rgba(75, 110, 230, 0.08);
   border-radius: 50%;
   margin: 0 auto 24rpx;
   display: block;
@@ -158,19 +166,20 @@
 .detail-name {
   display: block;
   font-size: 38rpx;
-  font-weight: 500;
-  color: #2C3A4F;
+  font-weight: 700;
+  color: #1a2b4d;
+  font-family: "Songti SC", "STSong", serif;
 }
 .detail-tags {
   display: block;
   font-size: 24rpx;
-  color: #7D879C;
+  color: #6b7790;
   margin: 8rpx 0 20rpx;
 }
 .detail-story {
   display: block;
   font-size: 26rpx;
-  color: #5F6B80;
+  color: #5b6c8a;
   line-height: 1.6;
   margin-bottom: 30rpx;
 }
@@ -183,8 +192,10 @@ button {
   width: 100%;
   height: 84rpx;
   line-height: 84rpx;
-  background: linear-gradient(90deg, #4A5D7A, #6A7CA0);
+  background: linear-gradient(135deg, #4b6ee6 0%, #7b5fe0 100%);
   color: #fff;
   border-radius: 42rpx;
   font-size: 30rpx;
+  font-weight: 600;
+  box-shadow: 0 10rpx 24rpx rgba(93, 95, 220, 0.25);
 }

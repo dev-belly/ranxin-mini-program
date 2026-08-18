@@ -1,4 +1,5 @@
 <view class="collection-page">
+  <view class="rx-bg"></view>
   <text class="page-title">纹样收集</text>
   <text class="page-subtitle">你在游戏与 DIY 中解锁的灵魂纹样</text>
 

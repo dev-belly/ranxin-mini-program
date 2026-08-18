@@ -21,5 +21,8 @@ Page({
       }));
       this.setData({ list, loading: false });
     }).catch(() => this.setData({ list: [], loading: false }));
+  },
+  goDiy() {
+    wx.switchTab({ url: '/pages/diy/diy' });
   }
 });
