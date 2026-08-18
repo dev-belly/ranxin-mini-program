@@ -2,6 +2,16 @@
   <text class="page-title">纹样收集</text>
   <text class="page-subtitle">你在游戏与 DIY 中解锁的灵魂纹样</text>
 
+  <view class="unlock-banner">
+    <view class="unlock-progress">
+      <text class="unlock-text">已收集纹样 {{unlockedCount}}/{{total}}</text>
+      <view class="progress-bar">
+        <view class="progress-fill" style="width:{{unlockedCount / total * 100}}%"></view>
+      </view>
+    </view>
+    <button class="banner-btn" bindtap="goGame">玩合成大染缸，解锁更多纹样</button>
+  </view>
+
   <view class="filter-bar">
     <view class="filter-btn {{filter==='all'?'active':''}}" data-key="all" bindtap="setFilter">全部</view>
     <view class="filter-btn {{filter==='unlocked'?'active':''}}" data-key="unlocked" bindtap="setFilter">已解锁</view>
