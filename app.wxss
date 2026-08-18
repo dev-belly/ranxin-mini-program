@@ -1,12 +1,20 @@
-/* 全局主题：染心 · 蓝紫水彩（对齐 A 设计稿） */
+/* 全局主题：染心 · 液态玻璃（Liquid Glass，参考 iOS 26） */
 page {
-  background: linear-gradient(180deg, #fbfaf8 0%, #faf9f6 76%, #f8f7f4 100%);
+  background: #f6f7fb;
   font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   color: #173d79;
   -webkit-font-smoothing: antialiased;
+  /* —— 玻璃设计令牌 —— */
+  --glass-bg: rgba(255, 255, 255, 0.46);
+  --glass-bg-strong: rgba(255, 255, 255, 0.62);
+  --glass-border: rgba(255, 255, 255, 0.72);
+  --glass-shadow: 0 14rpx 44rpx rgba(31, 45, 90, 0.16);
+  --glass-inner: inset 0 1.5rpx 0 rgba(255, 255, 255, 0.92);
+  --glass-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.10));
+  --brand-grad: linear-gradient(90deg, #347af0 0%, #5d78fd 42%, #a160ef 100%);
 }
 
-/* 对齐 A 首页 .page：暖白纸感 + 网点纹理 + 水彩晕染 + 气泡光点 */
+/* 折射底层：暖白 + 多团品牌色光晕（让玻璃可见、可折射） */
 .rx-bg {
   position: fixed;
   left: 0;
@@ -15,14 +23,14 @@ page {
   bottom: 0;
   z-index: -1;
   background:
-    radial-gradient(circle at 2px 2px, rgba(45,82,136,.16) 0 .6px, transparent .8px) 0 0 / 21px 21px,
-    radial-gradient(ellipse 380rpx 320rpx at 82% 10%, rgba(145,185,240,.34), transparent 62%),
-    radial-gradient(ellipse 300rpx 260rpx at 92% 24%, rgba(133,176,234,.28), transparent 58%),
-    radial-gradient(ellipse 240rpx 200rpx at 74% 6%, rgba(162,193,242,.22), transparent 60%),
-    radial-gradient(circle 130rpx at 28% 22%, rgba(170,147,239,.20), transparent 70%),
-    radial-gradient(circle 64rpx at 60% 38%, rgba(119,161,221,.16), transparent 70%),
-    radial-gradient(circle 40rpx at 40% 60%, rgba(168,197,237,.14), transparent 70%),
-    linear-gradient(180deg, #fbfaf8 0%, #faf9f6 76%, #f8f7f4 100%);
+    radial-gradient(circle at 2px 2px, rgba(45, 82, 136, .08) 0 .6px, transparent .8px) 0 0 / 22px 22px,
+    radial-gradient(440rpx 400rpx at 80% 6%, rgba(94, 143, 247, .42), transparent 60%),
+    radial-gradient(380rpx 340rpx at 94% 28%, rgba(120, 108, 247, .34), transparent 60%),
+    radial-gradient(320rpx 300rpx at 68% 20%, rgba(150, 196, 247, .30), transparent 62%),
+    radial-gradient(300rpx 280rpx at 14% 12%, rgba(255, 176, 214, .22), transparent 64%),
+    radial-gradient(260rpx 240rpx at 26% 72%, rgba(120, 200, 247, .20), transparent 64%),
+    radial-gradient(220rpx 200rpx at 84% 86%, rgba(161, 96, 239, .18), transparent 66%),
+    linear-gradient(180deg, #fbfaf8 0%, #f7f8fc 60%, #f3f4fa 100%);
 }
 
 /* 通用容器 */
@@ -31,16 +39,18 @@ page {
   box-sizing: border-box;
 }
 
-/* 通用玻璃卡片 */
+/* 通用玻璃卡 */
 .rx-card {
-  background: rgba(255, 255, 255, 0.94);
+  background: var(--glass-sheen), var(--glass-bg);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
   border-radius: 32rpx;
-  box-shadow: 0 10rpx 30rpx rgba(25, 49, 88, 0.10);
-  border: 1rpx solid rgba(255, 255, 255, 0.7);
+  border: 1.5rpx solid var(--glass-border);
+  box-shadow: var(--glass-shadow), var(--glass-inner);
   overflow: hidden;
 }
 
-/* 标题字体（宋体，对齐 A） */
+/* 标题字体（宋体） */
 .rx-title {
   font-size: 48rpx;
   font-weight: 700;
@@ -56,55 +66,63 @@ page {
   margin-bottom: 20rpx;
 }
 
-/* 主按钮：渐变蓝紫（对齐 A: #347af0→#5d78fd→#a160ef） */
+/* 主按钮：玻璃品牌渐变 */
 .rx-btn-primary {
-  background: linear-gradient(90deg, #347af0 0%, #5d78fd 42%, #a160ef 100%);
+  background: linear-gradient(90deg, rgba(52, 122, 240, .92), rgba(93, 120, 253, .92), rgba(161, 96, 239, .92));
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   color: #fff;
   border-radius: 999rpx;
   font-size: 30rpx;
   font-weight: 600;
   padding: 20rpx 48rpx;
-  box-shadow: 0 10rpx 24rpx rgba(101, 124, 253, 0.28);
+  border: 1.5rpx solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 10rpx 26rpx rgba(52, 122, 240, 0.34), inset 0 1rpx 0 rgba(255, 255, 255, 0.6);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: none;
 }
 
 .rx-btn-primary::after { border: none; }
 
-/* 次按钮：白底蓝边 */
+/* 次按钮：白玻璃 */
 .rx-btn-secondary {
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   color: #2a44c1;
   border-radius: 999rpx;
   font-size: 28rpx;
   font-weight: 600;
   padding: 18rpx 40rpx;
-  border: 1rpx solid rgba(52, 122, 240, 0.22);
+  border: 1.5rpx solid var(--glass-border);
+  box-shadow: var(--glass-shadow), var(--glass-inner);
 }
 
 .rx-btn-secondary::after { border: none; }
 
-/* 标签芯片 */
+/* 玻璃芯片 */
 .rx-chip {
   display: inline-flex;
   align-items: center;
   padding: 16rpx 32rpx;
   border-radius: 999rpx;
-  background: rgba(255, 255, 255, 0.82);
-  border: 1rpx solid rgba(52, 122, 240, 0.16);
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1.5rpx solid var(--glass-border);
   color: #4f5f7a;
   font-size: 28rpx;
+  box-shadow: var(--glass-inner);
   margin-right: 16rpx;
   margin-bottom: 16rpx;
 }
 
 .rx-chip.active {
-  background: linear-gradient(90deg, #347af0 0%, #5d78fd 42%, #a160ef 100%);
+  background: var(--brand-grad);
   color: #fff;
   border-color: transparent;
-  box-shadow: 0 8rpx 18rpx rgba(101, 124, 253, 0.22);
+  box-shadow: 0 8rpx 18rpx rgba(101, 124, 253, 0.30), inset 0 1rpx 0 rgba(255, 255, 255, 0.5);
 }
 
 /* 小标签 */
@@ -113,9 +131,42 @@ page {
   align-items: center;
   padding: 6rpx 16rpx;
   border-radius: 999rpx;
-  background: rgba(52, 122, 240, 0.10);
+  background: rgba(52, 122, 240, 0.12);
   color: #2a44c1;
   font-size: 22rpx;
+}
+
+/* —— 液态玻璃扩展类 —— */
+/* 深蓝品牌玻璃（hero / 深色卡） */
+.glass-hero {
+  background: linear-gradient(90deg, rgba(8, 45, 109, .66), rgba(10, 50, 119, .58), rgba(24, 73, 136, .66));
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+  border-radius: 31rpx;
+  border: 1.5rpx solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 16rpx 50rpx rgba(8, 30, 80, 0.28), inset 0 1rpx 0 rgba(255, 255, 255, 0.35);
+  overflow: hidden;
+}
+
+/* 浅色品牌玻璃（淡蓝/淡紫信息块） */
+.glass-tint {
+  background: linear-gradient(135deg, rgba(52, 122, 240, .14), rgba(161, 96, 239, .14)), rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(18px) saturate(170%);
+  backdrop-filter: blur(18px) saturate(170%);
+  border: 1.5rpx solid var(--glass-border);
+  border-radius: 28rpx;
+  box-shadow: var(--glass-shadow), var(--glass-inner);
+}
+
+/* 白玻璃按钮（用于浅底上的次按钮 / 关闭） */
+.glass-btn-light {
+  background: rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1.5rpx solid var(--glass-border);
+  border-radius: 999rpx;
+  color: #2a44c1;
+  box-shadow: var(--glass-shadow), var(--glass-inner);
 }
 
 /* A 风格装饰星 */
