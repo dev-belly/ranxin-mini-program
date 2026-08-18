@@ -94,7 +94,7 @@ page {
   border-radius: 999rpx;
   background: rgba(255, 255, 255, 0.82);
   border: 1rpx solid rgba(52, 122, 240, 0.16);
-  color: #62749b;
+  color: #4f5f7a;
   font-size: 28rpx;
   margin-right: 16rpx;
   margin-bottom: 16rpx;

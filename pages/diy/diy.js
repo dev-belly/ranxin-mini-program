@@ -343,13 +343,13 @@ Page({
       const canvas = this.canvas;
       canvas.width = W; canvas.height = H;
       const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#edf1f6'; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = '#fbfaf8'; ctx.fillRect(0, 0, W, H);
       ctx.fillStyle = '#173d79'; ctx.font = 'bold 26px sans-serif'; ctx.textAlign = 'center';
       ctx.fillText('染心 · 我的扎染', W / 2, 48);
       this.drawCurrent(ctx, W, H);
       ctx.fillStyle = '#173d79'; ctx.font = '18px sans-serif';
       ctx.fillText(r.patternName + ' · ' + r.fabric, W / 2, H - 64);
-      ctx.fillStyle = '#62749b'; ctx.font = '14px sans-serif';
+      ctx.fillStyle = '#4f5f7a'; ctx.font = '14px sans-serif';
       const note = (r.mindfulNote || r.story).slice(0, 20);
       ctx.fillText(note, W / 2, H - 36);
       wx.canvasToTempFilePath({

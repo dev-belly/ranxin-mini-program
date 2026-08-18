@@ -65,20 +65,20 @@ Page({
       const ctx = canvas.getContext('2d');
       const W = 320, H = 420;
       canvas.width = W; canvas.height = H;
-      ctx.fillStyle = '#f4f6fb'; ctx.fillRect(0, 0, W, H);
-      ctx.fillStyle = '#1a2b4d'; ctx.textAlign = 'center';
+      ctx.fillStyle = '#fbfaf8'; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = '#173d79'; ctx.textAlign = 'center';
       ctx.font = 'bold 22px sans-serif'; ctx.fillText('染心 · 我的作品', W / 2, 46);
-      ctx.font = '16px sans-serif'; ctx.fillStyle = '#4b6ee6';
+      ctx.font = '16px sans-serif'; ctx.fillStyle = '#347af0';
       ctx.fillText(w.title, W / 2, 82);
       const p = engine.getPatternById(w.patternId);
       if (p) engine.renderBallPattern(ctx, W / 2, 210, 100, {
         type: p.type, petals: p.petals, tightness: 0.45, whitespace: 0.32,
         rotation: 0, dyeName: w.dyeName || '板蓝根', concentration: 0.7, seed: 7
       });
-      ctx.fillStyle = '#1a2b4d'; ctx.font = '15px sans-serif';
+      ctx.fillStyle = '#173d79'; ctx.font = '15px sans-serif';
       ctx.fillText(w.patternName, W / 2, 350);
       if (w.mindfulNote) {
-        ctx.fillStyle = '#6b7a99'; ctx.font = '13px sans-serif';
+        ctx.fillStyle = '#4f5f7a'; ctx.font = '13px sans-serif';
         ctx.fillText('“' + w.mindfulNote.slice(0, 16) + '”', W / 2, 384);
       }
       wx.canvasToTempFilePath({

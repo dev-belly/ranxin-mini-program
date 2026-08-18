@@ -31,7 +31,7 @@
 .kn-head { margin-bottom: 32rpx; }
 .kn-spark { font-size: 42rpx; font-weight: 700; color: #173d79; font-family: "Songti SC","STSong",serif; }
 .kn-spark .rx-spark { margin-right: 10rpx; }
-.kn-sub { font-size: 26rpx; color: #62749b; margin-top: 12rpx; }
+.kn-sub { font-size: 26rpx; color: #4f5f7a; margin-top: 12rpx; }
 
 .kn-list { display: flex; flex-direction: column; gap: 24rpx; }
 .kn-card {
@@ -62,5 +62,5 @@
   margin-bottom: 12rpx;
 }
 .kn-title { font-size: 30rpx; font-weight: 700; color: #173d79; line-height: 1.4; }
-.kn-desc { font-size: 24rpx; color: #62749b; margin-top: 8rpx; line-height: 1.5; }
+.kn-desc { font-size: 24rpx; color: #4f5f7a; margin-top: 8rpx; line-height: 1.5; }
 .kn-arrow { font-size: 44rpx; color: #b9c2d6; margin-left: 12rpx; }
