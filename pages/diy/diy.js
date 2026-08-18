@@ -81,12 +81,13 @@ Page({
   },
 
   onReady() {
-    this.initCanvas();
+    // 画布在 step>=3 才出现，由 afterStepChange 按需初始化
   },
 
-  initCanvas() {
+  // 按当前步骤的画布 id 初始化并绘制（每步画布 id 唯一）
+  initCanvasById(id) {
     const query = wx.createSelectorQuery();
-    query.select('#diy-preview').fields({ node: true, size: true }).exec((res) => {
+    query.select('#' + id).fields({ node: true, size: true }).exec((res) => {
       if (!res[0]) return;
       const canvas = res[0].node;
       const { width, height } = res[0];
@@ -98,9 +99,12 @@ Page({
       this.canvasH = height;
       this.ctx = canvas.getContext('2d');
       this.ctx.scale(dpr, dpr);
-      query.select('#diy-preview').boundingClientRect(rect => {
-        this.previewRect = rect;
-      }).exec();
+      if (id === 'diy-preview') {
+        // 编辑器画布需要记录屏幕坐标，用于拖拽旋转
+        query.select('#diy-preview').boundingClientRect(rect => {
+          this.previewRect = rect;
+        }).exec();
+      }
       this.drawPreview();
     });
   },
@@ -127,11 +131,16 @@ Page({
 
   drawPreview() {
     if (!this.ctx) return;
-    const { patternId, params, dyeName, concentration } = this.data;
+    const { patternId, params, dyeName, concentration, step, oxidationTime } = this.data;
     const pattern = engine.getPatternById(patternId);
     const dpr = wx.getSystemInfoSync().pixelRatio;
     const w = this.canvas.width / dpr;
     const h = this.canvas.height / dpr;
+    // 氧化步骤：氧化时长越长，靛蓝越深（视觉反馈）
+    let conc = concentration / 100;
+    if (step === 5) {
+      conc = Math.min(1, conc + (oxidationTime - 1) * 0.06);
+    }
     engine.renderTieDye(this.ctx, w, h, {
       type: pattern.type,
       petals: params.petals,
@@ -139,7 +148,7 @@ Page({
       whitespace: params.whitespace / 100,
       rotation: params.rotation,
       dyeName,
-      concentration: concentration / 100,
+      concentration: conc,
       seed: 42
     });
   },
@@ -206,7 +215,7 @@ Page({
   },
 
   onOxidationChange(e) {
-    this.setData({ oxidationTime: e.detail.value });
+    this.setData({ oxidationTime: e.detail.value }, () => this.drawPreview());
   },
 
   chooseUntieMethod(e) {
@@ -230,9 +239,16 @@ Page({
   },
 
   afterStepChange() {
-    if (this.data.step >= 3) {
-      wx.nextTick(() => this.initCanvas());
-    } else if (this.data.step === 2) {
+    const step = this.data.step;
+    if (step === 3) {
+      wx.nextTick(() => this.initCanvasById('diy-preview'));
+    } else if (step === 4) {
+      wx.nextTick(() => this.initCanvasById('dye-preview'));
+    } else if (step === 5) {
+      wx.nextTick(() => this.initCanvasById('oxi-preview'));
+    } else if (step === 6) {
+      wx.nextTick(() => this.initCanvasById('untie-preview'));
+    } else if (step === 2) {
       wx.nextTick(() => this.renderPatternThumbs());
     }
   },

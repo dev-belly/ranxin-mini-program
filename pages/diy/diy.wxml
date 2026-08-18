@@ -109,7 +109,7 @@
       </view>
       <text class="method-desc">{{item.desc}}</text>
     </view>
-    <canvas type="2d" id="diy-preview" class="diy-canvas small" style="width:680rpx;height:400rpx"></canvas>
+    <canvas type="2d" id="dye-preview" class="diy-canvas small" style="width:680rpx;height:400rpx"></canvas>
   </view>
 
   <!-- 5 氧化 -->
@@ -120,7 +120,7 @@
       <slider min="1" max="5" step="1" value="{{oxidationTime}}" bindchange="onOxidationChange" show-value/>
     </view>
     <text class="step-subtitle">氧化过程中，靛蓝色会随着与空气接触逐渐加深。</text>
-    <canvas type="2d" id="diy-preview" class="diy-canvas" style="width:680rpx;height:680rpx"></canvas>
+    <canvas type="2d" id="oxi-preview" class="diy-canvas" style="width:680rpx;height:680rpx"></canvas>
   </view>
 
   <!-- 6 拆结 -->
@@ -131,7 +131,7 @@
       <text class="method-name">{{item.name}}</text>
       <text class="method-desc">{{item.desc}}</text>
     </view>
-    <canvas type="2d" id="diy-preview" class="diy-canvas" style="width:680rpx;height:680rpx"></canvas>
+    <canvas type="2d" id="untie-preview" class="diy-canvas" style="width:680rpx;height:680rpx"></canvas>
     <button class="primary-btn" bindtap="saveWork">把作品变成实物</button>
   </view>
 
