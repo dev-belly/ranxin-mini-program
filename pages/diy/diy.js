@@ -72,6 +72,12 @@ Page({
 
   onLoad() {
     this.setData({ tip: this.randomTip(), filteredCatalog: engine.PATTERN_CATALOG });
+    // 接受「情绪测试」页推荐的预填纹样（A 的 mbti 页写入）
+    const prefill = wx.getStorageSync('ranxin_diy_prefill');
+    if (prefill && engine.getPatternById(prefill)) {
+      this.setData({ patternId: prefill });
+      wx.removeStorageSync('ranxin_diy_prefill');
+    }
   },
 
   onReady() {

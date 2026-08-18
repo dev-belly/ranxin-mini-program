@@ -1,1 +1,47 @@
-.title { font-size: 36rpx; font-weight: 600; }
+/* 归属：A｜产品前端 Owner */
+.page { padding: 40rpx 36rpx 60rpx; }
+.progress { font-size: 24rpx; color: #8a93a6; text-align: center; }
+.q-title {
+  margin: 24rpx 0 36rpx;
+  font-size: 38rpx;
+  font-weight: 600;
+  color: #1f2a3a;
+  text-align: center;
+}
+.options { display: flex; flex-direction: column; gap: 20rpx; }
+.opt {
+  background: #fff;
+  color: #2b4c7e;
+  font-size: 30rpx;
+  border-radius: 16rpx;
+  padding: 28rpx 0;
+  box-shadow: 0 4rpx 14rpx rgba(31, 42, 58, 0.06);
+}
+.opt::after { border: none; }
+
+.result { text-align: center; padding-top: 40rpx; }
+.result-img {
+  width: 360rpx;
+  height: 360rpx;
+  border-radius: 24rpx;
+  background: #f3f6fb;
+}
+.result-tag { margin-top: 28rpx; font-size: 24rpx; color: #8a93a6; }
+.result-name { margin-top: 8rpx; font-size: 44rpx; font-weight: 700; color: #1f2a3a; }
+.result-story {
+  margin: 24rpx 20rpx 0;
+  font-size: 28rpx;
+  color: #5a6party;
+  color: #4a5468;
+  line-height: 1.7;
+}
+.cta {
+  margin: 40rpx 20rpx 0;
+  background: #2b4c7e;
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 600;
+  border-radius: 999rpx;
+  padding: 18rpx 0;
+}
+.link { margin-top: 24rpx; font-size: 26rpx; color: #8a93a6; }

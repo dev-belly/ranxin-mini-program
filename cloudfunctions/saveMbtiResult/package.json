@@ -1,0 +1,9 @@
+{
+  "name": "ranxin-cf",
+  "version": "1.0.0",
+  "description": "染心云函数（C 负责）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

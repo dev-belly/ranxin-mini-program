@@ -1,4 +1,20 @@
 <!-- 归属：A｜产品前端 Owner -->
 <view class="page">
-  <text class="title">{title}</text>
+  <view class="hero">
+    <view class="brand">染心</view>
+    <view class="slogan">{{slogan}}</view>
+    <view class="hero-sub">白族扎染 × 情绪表达 · 七天创作计划</view>
+    <button class="cta" bindtap="goMbti">开始我的扎染之旅</button>
+  </view>
+
+  <view class="section-title">逛逛看</view>
+  <view class="grid">
+    <view class="card" wx:for="{{features}}" wx:key="key"
+          data-url="{{item.url}}" data-tab="{{item.tab}}" bindtap="go">
+      <view class="card-name">{{item.name}}</view>
+      <view class="card-desc">{{item.desc}}</view>
+    </view>
+  </view>
+
+  <view class="foot">情绪很轻，染进布里就留得住了。</view>
 </view>
