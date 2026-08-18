@@ -3,19 +3,22 @@
 
   <block wx:if="{{!result}}">
     <view class="mbti-head">
-      <view class="mbti-title">MBTI 灵魂扎染</view>
-      <view class="mbti-sub">12 题，找到你的专属扎染纹样与色彩</view>
+      <view class="mbti-title">灵魂扎染纹样测试</view>
+      <view class="mbti-sub">30 道情境题，找到属于你的白族扎染纹样</view>
     </view>
     <view class="progress">
       <view class="progress-bar" style="width:{{step / total * 100}}%"></view>
     </view>
-    <view class="q-counter">{{step + 1}} / {{total}}</view>
+    <view class="q-counter">情境题 {{step + 1}} / {{total}}</view>
 
     <view class="q-card rx-card" wx:for="{{questions}}" wx:key="title" wx:if="{{index === step}}">
       <view class="q-title">{{item.title}}</view>
       <view class="q-options">
-        <button class="q-opt" wx:for="{{item.options}}" wx:for-item="opt" wx:key="label"
-                data-q="{{step}}" data-o="{{index}}" bindtap="choose">{{opt.label}}</button>
+        <view class="q-opt" wx:for="{{item.options}}" wx:for-item="opt" wx:for-index="oi" wx:key="label"
+              data-q="{{step}}" data-o="{{oi}}" bindtap="choose">
+          <text class="q-letter">{{letters[oi]}}</text>
+          <text class="q-label">{{opt.label}}</text>
+        </view>
       </view>
     </view>
   </block>

@@ -88,12 +88,28 @@
     </view>
   </view>
 
-  <!-- 一分钟非遗 -->
-  <view class="knowledge-card" bindtap="goKnowledge">
-    <view class="knowledge-tag">一分钟非遗</view>
-    <view class="knowledge-title">刚从染缸里取出的布，为什么不是蓝色？</view>
-    <view class="knowledge-desc">板蓝根染液接触空气后，会经历一场缓慢的氧化变色。</view>
-    <view class="knowledge-link">看看它怎样变蓝 →</view>
+  <!-- 一分钟非遗（对齐 A：三张知识卡 + 更多知识） -->
+  <view class="knowledge-section">
+    <view class="knowledge-head">
+      <view class="knowledge-h-title">
+        <text class="rx-spark">✦</text> 一分钟非遗
+      </view>
+      <view class="knowledge-more" bindtap="goKnowledge">更多知识 ›</view>
+    </view>
+    <view class="knowledge-list">
+      <view
+        wx:for="{{knowledge}}"
+        wx:key="id"
+        class="rx-card knowledge-card"
+        data-art="{{item.art}}"
+        bindtap="goArticle"
+      >
+        <view class="knowledge-tag">{{item.tag}}</view>
+        <view class="knowledge-title">{{item.title}}</view>
+        <view class="knowledge-desc">{{item.desc}}</view>
+        <view class="knowledge-link">探索更多 →</view>
+      </view>
+    </view>
   </view>
 
 </view>

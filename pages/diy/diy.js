@@ -1,5 +1,4 @@
-// 归属：B｜核心交互 Owner
-// 正念 DIY 工坊：扎 → 染 → 等（氧化） → 拆（展开）
+// 归属：B｜核心交互 Owner（按 A 设计稿：正念DIY = 状态 → 选布料 → 选纹样 → 扎染等拆 → 分享海报）
 const engine = require('../../utils/pattern-engine.js');
 const api = require('../../utils/api.js');
 
@@ -50,16 +49,22 @@ const QUOTES = {
 };
 
 const FABRICS = [
-  { id: 'bag', name: '帆布袋' },
-  { id: 'scarf', name: '方巾' },
-  { id: 'pillow', name: '抱枕' },
-  { id: 'mat', name: '茶席' }
+  { id: 'bag', name: '帆布袋', tag: '挺括', desc: '纹样边缘更清晰' },
+  { id: 'scarf', name: '方巾', tag: '轻柔', desc: '颜色扩散自然' },
+  { id: 'pillow', name: '抱枕', tag: '柔软', desc: '适合大面积纹样' }
 ];
 
 Page({
   data: {
+    stage: 'mood',        // mood → fabric → pattern → craft → result
     steps: STEPS,
     step: 0,
+    moods: MOODS,
+    mood: 'quiet',
+    fabrics: FABRICS,
+    fabric: 'scarf',
+    patterns: engine.PATTERN_CATALOG.map(p => ({ id: p.id, name: p.name, thumb: '/assets/patterns/' + p.id + '.png' })),
+    patternId: 'tuan',
     foldTypes: FOLD_TYPES,
     foldType: 'symmetric',
     tightness: 3,
@@ -71,11 +76,6 @@ Page({
     oxidizing: false,
     oxidationDone: false,
     unfoldProgress: 0,
-    patternId: 'tuan',
-    fabric: 'scarf',
-    fabrics: FABRICS,
-    moods: MOODS,
-    mood: 'quiet',
     quote: '',
     soundOn: false,
     soundHint: '白噪音：洱海水声、扎花布料声、苍山风声',
@@ -88,9 +88,7 @@ Page({
   },
 
   onLoad() {
-    const quote = this.randomQuote(0);
-    this.setData({ quote });
-    // 接受「情绪测试」页推荐的预填纹样
+    this.setData({ quote: this.randomQuote(0) });
     const prefill = wx.getStorageSync('ranxin_diy_prefill');
     if (prefill && engine.getPatternById(prefill)) {
       this.setData({ patternId: prefill });
@@ -99,7 +97,9 @@ Page({
   },
 
   onReady() {
-    wx.nextTick(() => this.initCanvasById('diy-canvas'));
+    if (this.data.stage === 'craft') {
+      wx.nextTick(() => this.initCanvasById('diy-canvas'));
+    }
   },
 
   onUnload() {
@@ -111,6 +111,24 @@ Page({
   randomQuote(stepIdx) {
     const list = QUOTES[stepIdx] || QUOTES[0];
     return list[Math.floor(Math.random() * list.length)];
+  },
+
+  // —— 前置流程：状态 / 布料 / 纹样 ——
+  chooseMood(e) {
+    this.setData({ mood: e.currentTarget.dataset.id }, () => {
+      this.setData({ stage: 'fabric' });
+    });
+  },
+  chooseFabric(e) {
+    this.setData({ fabric: e.currentTarget.dataset.id }, () => {
+      this.setData({ stage: 'pattern' });
+    });
+  },
+  choosePattern(e) {
+    const id = e.currentTarget.dataset.id;
+    this.setData({ patternId: id, stage: 'craft', step: 0, quote: this.randomQuote(0) }, () => {
+      wx.nextTick(() => this.initCanvasById('diy-canvas'));
+    });
   },
 
   initCanvasById(id) {
@@ -178,7 +196,6 @@ Page({
   chooseFold(e) {
     this.setData({ foldType: e.currentTarget.dataset.id }, () => this.drawCurrent());
   },
-
   onTightnessChange(e) {
     this.setData({ tightness: e.detail.value }, () => this.drawCurrent());
   },
@@ -187,7 +204,6 @@ Page({
   chooseDye(e) {
     this.setData({ dyeName: e.currentTarget.dataset.name }, () => this.drawCurrent());
   },
-
   onConcentrationChange(e) {
     this.setData({ concentration: e.detail.value }, () => this.drawCurrent());
   },
@@ -202,19 +218,13 @@ Page({
       const done = s >= this.data.oxidationTotal;
       this.setData({ oxidationSeconds: s, oxidationDone: done, oxidizing: !done }, () => {
         this.drawCurrent();
-        if (this.data.soundOn && s % 4 === 0) {
-          wx.vibrateShort({ type: 'light' });
-        }
+        if (this.data.soundOn && s % 4 === 0) wx.vibrateShort({ type: 'light' });
       });
       if (done) this.stopOxidation();
     }, 1000);
   },
-
   stopOxidation() {
-    if (this.oxiTimer) {
-      clearInterval(this.oxiTimer);
-      this.oxiTimer = null;
-    }
+    if (this.oxiTimer) { clearInterval(this.oxiTimer); this.oxiTimer = null; }
     this.setData({ oxidizing: false });
   },
 
@@ -242,13 +252,12 @@ Page({
     this.setData({ unfoldProgress: e.detail.value }, () => this.drawCurrent());
   },
 
-  // 导航
+  // 扎染等拆导航
   next() {
     if (this.data.step < STEPS.length - 1) {
       this.setData({ step: this.data.step + 1 }, () => this.afterStepChange());
     }
   },
-
   prev() {
     if (this.data.step > 0) {
       this.setData({ step: this.data.step - 1 }, () => this.afterStepChange());
@@ -264,6 +273,8 @@ Page({
     const { patternId, dyeName, concentration, foldType, tightness, fabric, mood, mindfulNote } = this.data;
     const pattern = engine.getPatternById(patternId);
     const foldLabel = FOLD_TYPES.find(f => f.id === foldType).name;
+    const fabricLabel = FABRICS.find(f => f.id === fabric).name;
+    const moodLabel = (MOODS.find(m => m.id === mood) || {}).label || '';
     const work = {
       workId: 'work_' + Date.now(),
       title: pattern.name + ' · ' + foldLabel,
@@ -274,8 +285,8 @@ Page({
       concentration,
       foldType,
       tightness,
-      fabric,
-      mood,
+      fabric: fabricLabel,
+      mood: moodLabel,
       mindfulNote,
       source: 'diy',
       createdAt: new Date().toISOString()
@@ -283,10 +294,7 @@ Page({
     const captureAndPersist = () => {
       this.unlockPattern(patternId);
       api.saveWork(work).then(() => {
-        this.setData({
-          showResult: true,
-          result: work
-        });
+        this.setData({ showResult: true, result: work });
       }).catch(() => {
         wx.showToast({ title: '保存失败，请重试', icon: 'none' });
       });
@@ -299,10 +307,7 @@ Page({
         height: this.canvas.height,
         destWidth: this.canvas.width,
         destHeight: this.canvas.height,
-        success: (res) => {
-          work.thumb = res.tempFilePath;
-          captureAndPersist();
-        },
+        success: (res) => { work.thumb = res.tempFilePath; captureAndPersist(); },
         fail: () => captureAndPersist()
       });
     } else {
@@ -327,14 +332,48 @@ Page({
     wx.switchTab({ url: '/pages/works/works' });
   },
 
-  // 15 秒创作回溯：canvas 复现 扎→染→等→拆，无需外部视频素材
+  // 分享海报（对齐 A：1.1分享海报）
+  makePoster() {
+    const r = this.data.result;
+    if (!r) return;
+    const query = wx.createSelectorQuery();
+    query.select('#diy-canvas').fields({ node: true, size: true }).exec((res) => {
+      if (!res[0] || !this.canvas) { wx.showToast({ title: '海报生成失败', icon: 'none' }); return; }
+      const W = 320, H = 440;
+      const canvas = this.canvas;
+      canvas.width = W; canvas.height = H;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#edf1f6'; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = '#173d79'; ctx.font = 'bold 26px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('染心 · 我的扎染', W / 2, 48);
+      this.drawCurrent(ctx, W, H);
+      ctx.fillStyle = '#173d79'; ctx.font = '18px sans-serif';
+      ctx.fillText(r.patternName + ' · ' + r.fabric, W / 2, H - 64);
+      ctx.fillStyle = '#62749b'; ctx.font = '14px sans-serif';
+      const note = (r.mindfulNote || r.story).slice(0, 20);
+      ctx.fillText(note, W / 2, H - 36);
+      wx.canvasToTempFilePath({
+        canvas,
+        x: 0, y: 0, width: W, height: H,
+        destWidth: W, destHeight: H,
+        success: (res2) => {
+          wx.saveImageToPhotosAlbum({
+            filePath: res2.tempFilePath,
+            success: () => wx.showToast({ title: '已存到相册', icon: 'success' }),
+            fail: () => wx.showToast({ title: '请授权相册', icon: 'none' })
+          });
+        }
+      });
+    });
+  },
+
+  // 15 秒创作回溯：canvas 复现 扎→染→等→拆
   startReview() {
     if (!this.data.result) return;
     this.setData({ reviewMode: true, reviewProgress: 0, reviewPhase: '扎', showResult: false }, () => {
       wx.nextTick(() => this.initReviewCanvas());
     });
   },
-
   initReviewCanvas() {
     const query = wx.createSelectorQuery();
     query.select('#review-canvas').fields({ node: true, size: true }).exec((res) => {
@@ -342,17 +381,12 @@ Page({
       const canvas = res[0].node;
       const { width, height } = res[0];
       const dpr = wx.getSystemInfoSync().pixelRatio;
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      this.rcanvas = canvas;
-      this.rcanvasW = width;
-      this.rcanvasH = height;
-      this.rctx = canvas.getContext('2d');
-      this.rctx.scale(dpr, dpr);
+      canvas.width = width * dpr; canvas.height = height * dpr;
+      this.rcanvas = canvas; this.rcanvasW = width; this.rcanvasH = height;
+      this.rctx = canvas.getContext('2d'); this.rctx.scale(dpr, dpr);
       this.runReview();
     });
   },
-
   runReview() {
     if (this.reviewTimer) clearInterval(this.reviewTimer);
     const totalMs = 15000, tick = 100;
@@ -361,51 +395,33 @@ Page({
       elapsed += tick;
       const p = Math.min(100, Math.round(elapsed / totalMs * 100));
       this.applyReview(p);
-      if (p >= 100) {
-        clearInterval(this.reviewTimer);
-        this.reviewTimer = null;
-      }
+      if (p >= 100) { clearInterval(this.reviewTimer); this.reviewTimer = null; }
     }, tick);
   },
-
   applyReview(p) {
     let step, oxidationSeconds = 0, unfoldProgress = 0, phase = '扎';
     if (p < 25) { step = 0; phase = '扎'; }
     else if (p < 50) { step = 1; phase = '染'; }
     else if (p < 75) { step = 2; oxidationSeconds = Math.round((p - 50) / 25 * 30); phase = '等'; }
     else { step = 3; unfoldProgress = Math.round((p - 75) / 25 * 100); phase = '拆'; }
-    const quote = (QUOTES[step] || QUOTES[0])[0];
-    this.setData({ step, oxidationSeconds, unfoldProgress, reviewPhase: phase, reviewProgress: p, quote }, () => {
+    this.setData({ step, oxidationSeconds, unfoldProgress, reviewPhase: phase, reviewProgress: p, quote: (QUOTES[step] || QUOTES[0])[0] }, () => {
       this.drawCurrent(this.rctx, this.rcanvasW, this.rcanvasH);
     });
   },
-
   exitReview() {
     if (this.reviewTimer) { clearInterval(this.reviewTimer); this.reviewTimer = null; }
     this.setData({
-      reviewMode: false,
-      reviewProgress: 0,
-      reviewPhase: '',
-      step: 3,
-      oxidationSeconds: 30,
-      oxidationDone: true,
-      unfoldProgress: 100,
-      showResult: true
+      reviewMode: false, reviewProgress: 0, reviewPhase: '',
+      step: 3, oxidationSeconds: 30, oxidationDone: true, unfoldProgress: 100, showResult: true
     });
   },
 
   replay() {
     this.setData({
-      step: 0,
-      oxidationSeconds: 0,
-      oxidationDone: false,
-      unfoldProgress: 0,
-      showResult: false,
-      mindfulNote: '',
-      quote: this.randomQuote(0)
+      stage: 'mood', step: 0, oxidationSeconds: 0, oxidationDone: false,
+      unfoldProgress: 0, showResult: false, mindfulNote: '', quote: this.randomQuote(0)
     }, () => {
       this.stopOxidation();
-      this.afterStepChange();
     });
   }
 });

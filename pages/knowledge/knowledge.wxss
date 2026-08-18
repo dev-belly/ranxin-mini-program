@@ -1,0 +1,37 @@
+.kn-page { padding-top: 40rpx; }
+.kn-head { margin-bottom: 32rpx; }
+.kn-spark { font-size: 42rpx; font-weight: 700; color: #173d79; font-family: "Songti SC","STSong",serif; }
+.kn-spark .rx-spark { margin-right: 10rpx; }
+.kn-sub { font-size: 26rpx; color: #62749b; margin-top: 12rpx; }
+
+.kn-list { display: flex; flex-direction: column; gap: 24rpx; }
+.kn-card {
+  display: flex;
+  align-items: center;
+  padding: 32rpx 28rpx;
+}
+.kn-icon {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 24rpx;
+  background: linear-gradient(135deg, rgba(52,122,240,0.12), rgba(161,96,239,0.12));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44rpx;
+  margin-right: 24rpx;
+  flex: 0 0 auto;
+}
+.kn-body { flex: 1; }
+.kn-tag {
+  display: inline-block;
+  font-size: 22rpx;
+  color: #3a55c8;
+  background: rgba(75,110,230,0.10);
+  border-radius: 999rpx;
+  padding: 4rpx 16rpx;
+  margin-bottom: 12rpx;
+}
+.kn-title { font-size: 30rpx; font-weight: 700; color: #173d79; line-height: 1.4; }
+.kn-desc { font-size: 24rpx; color: #62749b; margin-top: 8rpx; line-height: 1.5; }
+.kn-arrow { font-size: 44rpx; color: #b9c2d6; margin-left: 12rpx; }
