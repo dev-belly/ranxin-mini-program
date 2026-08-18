@@ -149,6 +149,14 @@
   color: #4A5D7A !important;
   font-weight: 500;
 }
+.unlock-img {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 16rpx;
+  margin: 0 auto 16rpx;
+  display: block;
+  background: #fff;
+}
 .result-score {
   font-size: 80rpx;
   font-weight: 600;
