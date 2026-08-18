@@ -1,78 +1,93 @@
 // 归属：B｜核心交互 Owner
-// 正念 DIY：情绪 → 布料 → 纹样 → 参数化编辑 → 入染 → 氧化 → 拆结 → 保存
+// 正念 DIY 工坊：扎 → 染 → 等（氧化） → 拆（展开）
 const engine = require('../../utils/pattern-engine.js');
 const api = require('../../utils/api.js');
 
-const STEPS = ['情绪', '布料', '纹样', '纹样DIY', '入染', '氧化', '拆结'];
+const STEPS = ['扎', '染', '等', '拆'];
+
+const FOLD_TYPES = [
+  { id: 'symmetric', name: '对称折叠', desc: '规整图案，秩序之美' },
+  { id: 'fan', name: '扇形折叠', desc: '放射纹路，如扇轻展' },
+  { id: 'random', name: '随机折叠', desc: '不可预测的自然肌理' }
+];
+
+const DYES = [
+  { label: '板蓝根靛蓝', name: '板蓝根', desc: '大理白族经典靛蓝', color: '#1E4D8C' },
+  { label: '姜黄', name: '栀子黄', desc: '温暖明亮的植物黄', color: '#D99E2B' },
+  { label: '茜草红', name: '茜草', desc: '取自茜草的赤红', color: '#B83B3B' }
+];
 
 const MOODS = [
-  { id: 'anxious', label: '有点焦躁', emoji: '😣', color: '#F4A8A8' },
-  { id: 'tired', label: '有些疲惫', emoji: '😔', color: '#A8C4F4' },
-  { id: 'messy', label: '脑子很乱', emoji: '😵', color: '#C9A8F4' },
-  { id: 'quiet', label: '需要安静', emoji: '😌', color: '#A8D8F4' },
-  { id: 'calm', label: '很平静', emoji: '😊', color: '#A8E0D0' },
-  { id: 'good', label: '今天不错', emoji: '😄', color: '#F4D18C' }
+  { id: 'anxious', label: '有点焦躁', pattern: 'shui' },
+  { id: 'tired', label: '有些疲惫', pattern: 'cang' },
+  { id: 'messy', label: '脑子很乱', pattern: 'ling' },
+  { id: 'quiet', label: '需要安静', pattern: 'tuan' },
+  { id: 'calm', label: '很平静', pattern: 'he' },
+  { id: 'good', label: '今天不错', pattern: 'hudie' }
 ];
+
+const QUOTES = {
+  0: [
+    '此刻，只关注你手里的线与布。',
+    '这一针的力度，决定了布的未来。',
+    '扎得越紧，留白的边界越清晰。'
+  ],
+  1: [
+    '你已做了你能做的，剩下的，交给缸。',
+    '急也没有用——它有自己的节奏。',
+    '染料会找到它该去的地方。'
+  ],
+  2: [
+    '有些变化，看不见，但正在发生。',
+    '30秒，在数字时代，这可能是你唯一主动选择的等待。',
+    '空气正在替你把颜色固定下来。'
+  ],
+  3: [
+    '无论你看到什么——它都是唯一的那一块。',
+    '没有"错"的花纹——只有你的花纹。',
+    '拆开褶皱，让惊喜绽放。'
+  ]
+};
 
 const FABRICS = [
-  { id: 'bag', name: '帆布袋', tag: '挺括', desc: '纹样边缘更清晰' },
-  { id: 'scarf', name: '方巾', tag: '轻柔', desc: '颜色扩散自然' },
-  { id: 'pillow', name: '抱枕', tag: '柔软', desc: '适合大面积纹样' },
-  { id: 'mat', name: '茶席', tag: '雅致', desc: '留白更有禅意' }
-];
-
-const DYES = ['板蓝根', '靛青', '紫草', '茜草', '栀子黄'];
-const DYE_METHODS = [
-  { id: 'full', name: '整体浸染', desc: '将布料完全浸入染液，适合基础图案' },
-  { id: 'partial', name: '局部入染', desc: '仅浸入局部区域，适合创造层次', badge: '推荐' },
-  { id: 'drop', name: '点染滴落', desc: '适合创造自然随性的纹样效果' }
-];
-const UNTIE_METHODS = [
-  { id: 'hand', name: '手工拆结', desc: '轻柔拆解，保留细节' },
-  { id: 'scissor', name: '剪刀辅助', desc: '更快速，适合较紧结扣' }
+  { id: 'bag', name: '帆布袋' },
+  { id: 'scarf', name: '方巾' },
+  { id: 'pillow', name: '抱枕' },
+  { id: 'mat', name: '茶席' }
 ];
 
 Page({
   data: {
     steps: STEPS,
     step: 0,
-    moods: MOODS,
-    fabrics: FABRICS,
+    foldTypes: FOLD_TYPES,
+    foldType: 'symmetric',
+    tightness: 3,
     dyes: DYES,
-    dyeMethods: DYE_METHODS,
-    untieMethods: UNTIE_METHODS,
-    catalog: engine.PATTERN_CATALOG,
-    cats: ['推荐', '自然', '几何', '白族传统'],
-    currentCat: '推荐',
-    filteredCatalog: engine.PATTERN_CATALOG,
-    mood: 'quiet',
-    fabric: 'scarf',
-    patternId: 'tuan',
-    activeTab: '结构',
-    params: {
-      petals: 8,
-      tightness: 50,
-      whitespace: 40,
-      rotation: 15
-    },
     dyeName: '板蓝根',
-    concentration: 60,
-    dyeMethod: 'partial',
-    oxidationTime: 3,
-    untieMethod: 'hand',
-    tip: '',
-    dyeColors: {
-      '板蓝根': '#1E4D8C',
-      '靛青': '#2E5AAC',
-      '紫草': '#6B3FA0',
-      '茜草': '#B83B3B',
-      '栀子黄': '#D99E2B'
-    }
+    concentration: 70,
+    oxidationSeconds: 0,
+    oxidationTotal: 30,
+    oxidizing: false,
+    oxidationDone: false,
+    unfoldProgress: 0,
+    patternId: 'tuan',
+    fabric: 'scarf',
+    fabrics: FABRICS,
+    moods: MOODS,
+    mood: 'quiet',
+    quote: '',
+    soundOn: false,
+    soundHint: '白噪音：洱海水声、扎花布料声、苍山风声',
+    showResult: false,
+    mindfulNote: '',
+    result: null
   },
 
   onLoad() {
-    this.setData({ tip: this.randomTip(), filteredCatalog: engine.PATTERN_CATALOG });
-    // 接受「情绪测试」页推荐的预填纹样（A 的 mbti 页写入）
+    const quote = this.randomQuote(0);
+    this.setData({ quote });
+    // 接受「情绪测试」页推荐的预填纹样
     const prefill = wx.getStorageSync('ranxin_diy_prefill');
     if (prefill && engine.getPatternById(prefill)) {
       this.setData({ patternId: prefill });
@@ -81,14 +96,22 @@ Page({
   },
 
   onReady() {
-    // 画布在 step>=3 才出现，由 afterStepChange 按需初始化
+    wx.nextTick(() => this.initCanvasById('diy-canvas'));
   },
 
-  // 按当前步骤的画布 id 初始化并绘制（每步画布 id 唯一）
+  onUnload() {
+    this.stopOxidation();
+  },
+
+  randomQuote(stepIdx) {
+    const list = QUOTES[stepIdx] || QUOTES[0];
+    return list[Math.floor(Math.random() * list.length)];
+  },
+
   initCanvasById(id) {
     const query = wx.createSelectorQuery();
     query.select('#' + id).fields({ node: true, size: true }).exec((res) => {
-      if (!res[0]) return;
+      if (!res || !res[0]) return;
       const canvas = res[0].node;
       const { width, height } = res[0];
       const dpr = wx.getSystemInfoSync().pixelRatio;
@@ -99,222 +122,172 @@ Page({
       this.canvasH = height;
       this.ctx = canvas.getContext('2d');
       this.ctx.scale(dpr, dpr);
-      if (id === 'diy-preview') {
-        // 编辑器画布需要记录屏幕坐标，用于拖拽旋转
-        query.select('#diy-preview').boundingClientRect(rect => {
-          this.previewRect = rect;
-        }).exec();
-      }
-      this.drawPreview();
+      this.drawCurrent();
     });
   },
 
-  onEditorTouch(e) {
-    if (!this.previewRect) return;
-    const t = e.touches[0];
-    const cx = this.previewRect.left + this.canvasW / 2;
-    const cy = this.previewRect.top + this.canvasH / 2;
-    let deg = Math.atan2(t.clientY - cy, t.clientX - cx) * 180 / Math.PI;
-    deg = Math.max(-180, Math.min(180, Math.round(deg)));
-    this.setData({ 'params.rotation': deg, activeTab: '旋转' }, () => this.drawPreview());
-  },
-
-  randomTip() {
-    const tips = [
-      '扎得更紧，染色边界会更清晰。',
-      '入染时间越长，颜色越深。',
-      '氧化过程中，靛蓝色会随着空气接触逐渐加深。',
-      '保持布料湿润并通风，有助于获得更均匀的蓝色效果。'
-    ];
-    return tips[Math.floor(Math.random() * tips.length)];
-  },
-
-  drawPreview() {
+  drawCurrent() {
     if (!this.ctx) return;
-    const { patternId, params, dyeName, concentration, step, oxidationTime } = this.data;
+    const { step, patternId, foldType, tightness, dyeName, concentration, oxidationSeconds, oxidationTotal, unfoldProgress } = this.data;
     const pattern = engine.getPatternById(patternId);
-    const dpr = wx.getSystemInfoSync().pixelRatio;
-    const w = this.canvas.width / dpr;
-    const h = this.canvas.height / dpr;
-    // 氧化步骤：氧化时长越长，靛蓝越深（视觉反馈）
-    let conc = concentration / 100;
-    if (step === 5) {
-      conc = Math.min(1, conc + (oxidationTime - 1) * 0.06);
-    }
-    engine.renderTieDye(this.ctx, w, h, {
-      type: pattern.type,
-      petals: params.petals,
-      tightness: params.tightness / 100,
-      whitespace: params.whitespace / 100,
-      rotation: params.rotation,
-      dyeName,
-      concentration: conc,
-      seed: 42
-    });
-  },
+    const w = this.canvasW, h = this.canvasH;
+    const engineTightness = 0.25 + (tightness / 5) * 0.65;
+    const engineConc = concentration / 100;
 
-  chooseMood(e) {
-    const mood = e.currentTarget.dataset.id;
-    const rec = this.moodToPattern(mood);
-    this.setData({
-      mood,
-      patternId: rec.id,
-      'params.petals': rec.petals,
-      tip: this.randomTip()
-    }, () => this.drawPreview());
-  },
-
-  moodToPattern(mood) {
-    const map = {
-      anxious: { id: 'shui', petals: 6 },
-      tired: { id: 'cang', petals: 1 },
-      messy: { id: 'ling', petals: 4 },
-      quiet: { id: 'tuan', petals: 8 },
-      calm: { id: 'he', petals: 12 },
-      good: { id: 'hudie', petals: 2 }
-    };
-    return map[mood] || { id: 'tuan', petals: 8 };
-  },
-
-  chooseFabric(e) {
-    this.setData({ fabric: e.currentTarget.dataset.id });
-  },
-
-  choosePattern(e) {
-    const patternId = e.currentTarget.dataset.id;
-    const pattern = engine.getPatternById(patternId);
-    this.setData({ patternId, 'params.petals': pattern.petals }, () => this.drawPreview());
-  },
-
-  setCat(e) {
-    const cat = e.currentTarget.dataset.cat;
-    const list = cat === '推荐' ? engine.PATTERN_CATALOG : engine.PATTERN_CATALOG.filter(p => p.cat === cat);
-    this.setData({ currentCat: cat, filteredCatalog: list }, () => this.renderPatternThumbs());
-  },
-
-  switchTab(e) {
-    this.setData({ activeTab: e.currentTarget.dataset.tab });
-  },
-
-  onParamChange(e) {
-    const key = e.currentTarget.dataset.key;
-    const val = e.detail.value;
-    this.setData({ [`params.${key}`]: val }, () => this.drawPreview());
-  },
-
-  chooseDye(e) {
-    this.setData({ dyeName: e.currentTarget.dataset.name }, () => this.drawPreview());
-  },
-
-  onConcentrationChange(e) {
-    this.setData({ concentration: e.detail.value }, () => this.drawPreview());
-  },
-
-  chooseDyeMethod(e) {
-    this.setData({ dyeMethod: e.currentTarget.dataset.id });
-  },
-
-  onOxidationChange(e) {
-    this.setData({ oxidationTime: e.detail.value }, () => this.drawPreview());
-  },
-
-  chooseUntieMethod(e) {
-    this.setData({ untieMethod: e.currentTarget.dataset.id });
-  },
-
-  next() {
-    if (this.data.step < STEPS.length - 1) {
-      this.setData({ step: this.data.step + 1 }, () => {
-        this.afterStepChange();
-      });
-    }
-  },
-
-  prev() {
-    if (this.data.step > 0) {
-      this.setData({ step: this.data.step - 1 }, () => {
-        this.afterStepChange();
+    if (step === 0) {
+      engine.renderFoldedFabric(this.ctx, w, h, { foldType, tightness });
+    } else if (step === 1) {
+      engine.renderDyeBath(this.ctx, w, h, { dyeName, concentration: engineConc });
+    } else if (step === 2) {
+      engine.renderOxidation(this.ctx, w, h, { dyeName, concentration: engineConc, progress: oxidationSeconds / oxidationTotal });
+    } else if (step === 3) {
+      engine.renderUnfold(this.ctx, w, h, {
+        type: pattern.type,
+        petals: pattern.petals,
+        tightness: engineTightness,
+        whitespace: 0.35,
+        rotation: 0,
+        dyeName,
+        concentration: engineConc,
+        progress: unfoldProgress / 100,
+        seed: 42
       });
     }
   },
 
   afterStepChange() {
     const step = this.data.step;
-    if (step === 3) {
-      wx.nextTick(() => this.initCanvasById('diy-preview'));
-    } else if (step === 4) {
-      wx.nextTick(() => this.initCanvasById('dye-preview'));
-    } else if (step === 5) {
-      wx.nextTick(() => this.initCanvasById('oxi-preview'));
-    } else if (step === 6) {
-      wx.nextTick(() => this.initCanvasById('untie-preview'));
-    } else if (step === 2) {
-      wx.nextTick(() => this.renderPatternThumbs());
+    this.setData({ quote: this.randomQuote(step) });
+    wx.nextTick(() => this.initCanvasById('diy-canvas'));
+    if (step === 2 && !this.data.oxidationDone && this.data.oxidationSeconds === 0) {
+      this.startOxidation();
+    }
+    if (step !== 2) {
+      this.stopOxidation();
     }
   },
 
-  renderPatternThumbs() {
-    const dpr = wx.getSystemInfoSync().pixelRatio;
-    engine.PATTERN_CATALOG.forEach(p => {
-      wx.createSelectorQuery().select('#pat-' + p.id).fields({ node: true, size: true }).exec(res => {
-        if (!res[0]) return;
-        const canvas = res[0].node;
-        const { width, height } = res[0];
-        canvas.width = width * dpr;
-        canvas.height = height * dpr;
-        const ctx = canvas.getContext('2d');
-        ctx.scale(dpr, dpr);
-        engine.renderTieDye(ctx, width, height, {
-          type: p.type,
-          petals: p.petals,
-          tightness: 0.45,
-          whitespace: 0.35,
-          rotation: 0,
-          dyeName: '板蓝根',
-          concentration: 0.65,
-          seed: 42
-        });
-      });
-    });
+  // Step 0: 扎
+  chooseFold(e) {
+    this.setData({ foldType: e.currentTarget.dataset.id }, () => this.drawCurrent());
   },
 
+  onTightnessChange(e) {
+    this.setData({ tightness: e.detail.value }, () => this.drawCurrent());
+  },
+
+  // Step 1: 染
+  chooseDye(e) {
+    this.setData({ dyeName: e.currentTarget.dataset.name }, () => this.drawCurrent());
+  },
+
+  onConcentrationChange(e) {
+    this.setData({ concentration: e.detail.value }, () => this.drawCurrent());
+  },
+
+  // Step 2: 等（氧化）
+  startOxidation() {
+    if (this.oxiTimer) return;
+    this.setData({ oxidizing: true });
+    this.oxiTimer = setInterval(() => {
+      let s = this.data.oxidationSeconds + 1;
+      if (s > this.data.oxidationTotal) s = this.data.oxidationTotal;
+      const done = s >= this.data.oxidationTotal;
+      this.setData({ oxidationSeconds: s, oxidationDone: done, oxidizing: !done }, () => {
+        this.drawCurrent();
+        if (this.data.soundOn && s % 4 === 0) {
+          wx.vibrateShort({ type: 'light' });
+        }
+      });
+      if (done) this.stopOxidation();
+    }, 1000);
+  },
+
+  stopOxidation() {
+    if (this.oxiTimer) {
+      clearInterval(this.oxiTimer);
+      this.oxiTimer = null;
+    }
+    this.setData({ oxidizing: false });
+  },
+
+  toggleSound() {
+    const soundOn = !this.data.soundOn;
+    this.setData({ soundOn });
+    if (soundOn) {
+      // 音频资源待补充：此处仅做触觉/视觉反馈
+      wx.showToast({ title: '白噪音资源待补充', icon: 'none' });
+    }
+  },
+
+  // Step 3: 拆
+  onUnfoldChange(e) {
+    this.setData({ unfoldProgress: e.detail.value }, () => this.drawCurrent());
+  },
+
+  // 导航
+  next() {
+    if (this.data.step < STEPS.length - 1) {
+      this.setData({ step: this.data.step + 1 }, () => this.afterStepChange());
+    }
+  },
+
+  prev() {
+    if (this.data.step > 0) {
+      this.setData({ step: this.data.step - 1 }, () => this.afterStepChange());
+    }
+  },
+
+  // 保存
   saveWork() {
-    const { patternId, params, fabric, dyeName, concentration, oxidationTime, untieMethod, mood } = this.data;
+    if (this.data.unfoldProgress < 80) {
+      wx.showToast({ title: '再展开一点，让纹样完全呈现', icon: 'none' });
+      return;
+    }
+    const { patternId, dyeName, concentration, foldType, tightness, fabric, mood, mindfulNote } = this.data;
     const pattern = engine.getPatternById(patternId);
+    const foldLabel = FOLD_TYPES.find(f => f.id === foldType).name;
     const work = {
       workId: 'work_' + Date.now(),
-      title: pattern.name + ' · ' + FABRICS.find(f => f.id === fabric).name,
+      title: pattern.name + ' · ' + foldLabel,
       patternId,
-      params: { ...params },
-      fabric,
       dyeName,
       concentration,
-      oxidationTime,
-      untieMethod,
+      foldType,
+      tightness,
+      fabric,
       mood,
+      mindfulNote,
       source: 'diy',
       createdAt: new Date().toISOString()
     };
-    // 统一经 api.saveWork 落库（带 workId，避免重复写入与过滤丢弃）
-    const persist = () => {
+    const captureAndPersist = () => {
       this.unlockPattern(patternId);
       api.saveWork(work).then(() => {
-        wx.showToast({ title: '作品已保存', icon: 'success' });
-        setTimeout(() => wx.navigateBack(), 1200);
+        this.setData({
+          showResult: true,
+          result: work
+        });
       }).catch(() => {
         wx.showToast({ title: '保存失败，请重试', icon: 'none' });
       });
     };
-    // 生成缩略图（当前画布可用时），失败也照常保存
     if (this.canvas) {
       wx.canvasToTempFilePath({
         canvas: this.canvas,
-        success: (res) => { work.thumb = res.tempFilePath; persist(); },
-        fail: () => persist()
+        success: (res) => {
+          work.thumb = res.tempFilePath;
+          captureAndPersist();
+        },
+        fail: () => captureAndPersist()
       });
     } else {
-      persist();
+      captureAndPersist();
     }
+  },
+
+  onMindfulNoteInput(e) {
+    this.setData({ mindfulNote: e.detail.value });
   },
 
   unlockPattern(id) {
@@ -323,5 +296,25 @@ Page({
       unlocked.push(id);
       wx.setStorageSync('ranxin_unlocked_patterns', unlocked);
     }
+  },
+
+  closeResult() {
+    this.setData({ showResult: false });
+    wx.switchTab({ url: '/pages/works/works' });
+  },
+
+  replay() {
+    this.setData({
+      step: 0,
+      oxidationSeconds: 0,
+      oxidationDone: false,
+      unfoldProgress: 0,
+      showResult: false,
+      mindfulNote: '',
+      quote: this.randomQuote(0)
+    }, () => {
+      this.stopOxidation();
+      this.afterStepChange();
+    });
   }
 });

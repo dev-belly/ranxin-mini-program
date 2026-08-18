@@ -12,6 +12,13 @@ const DYE_COLORS = {
   栀子黄: { main: '#D99E2B', light: '#EAC469', dark: '#8F6513' }
 };
 
+// 正念 DIY 文档中的染液名称映射到内部染料
+const DYE_LABELS = {
+  '板蓝根靛蓝': '板蓝根',
+  '姜黄': '栀子黄',
+  '茜草红': '茜草'
+};
+
 // 主题对齐：以白族扎染正统纹样为基准（蝴蝶纹/团花纹/水波纹/山水纹/几何纹/卷草纹）
 const PATTERN_CATALOG = [
   { id: 'hudie', name: '蝴蝶纹', tags: '多子多福', type: 'butterfly', petals: 2, cat: '白族传统' },
@@ -39,6 +46,15 @@ function randomSeed(seed) {
     s = (s * 9301 + 49297) % 233280;
     return s / 233280;
   };
+}
+
+function lerpChannel(a, b, t) { return Math.round(a + (b - a) * t); }
+function lerpColor(hexA, hexB, t) {
+  const a = hexToRgb(hexA), b = hexToRgb(hexB);
+  const r = lerpChannel(a.r, b.r, t);
+  const g = lerpChannel(a.g, b.g, t);
+  const bl = lerpChannel(a.b, b.b, t);
+  return `rgb(${r},${g},${bl})`;
 }
 
 // 在矩形画布上绘制扎染纹样
@@ -164,6 +180,199 @@ function renderTieDye(ctx, width, height, opts) {
   ctx.restore();
 }
 
+// ============================================================
+// 正念 DIY 新增渲染：折叠、染缸、氧化、拆展
+// ============================================================
+
+// 绘制折叠/捆扎后的布料
+function renderFoldedFabric(ctx, width, height, opts) {
+  const { foldType = 'symmetric', tightness = 3, fabricColor = '#F8F6F2' } = opts || {};
+  const cx = width / 2, cy = height / 2;
+  const size = Math.min(width, height) * 0.62;
+  ctx.save();
+  ctx.fillStyle = '#EFEBE5';
+  ctx.fillRect(0, 0, width, height);
+
+  if (foldType === 'symmetric') {
+    const folds = 4 + Math.round(tightness);
+    const step = size / folds;
+    const amp = size * 0.08 * (tightness / 3);
+    ctx.beginPath();
+    ctx.moveTo(cx - size / 2, cy - size / 2);
+    for (let i = 0; i <= folds; i++) {
+      const x = cx - size / 2 + i * step;
+      const y = cy - size / 2 + (i % 2 === 0 ? 0 : amp);
+      ctx.lineTo(x, y);
+    }
+    for (let i = folds; i >= 0; i--) {
+      const x = cx - size / 2 + i * step;
+      const y = cy + size / 2 - (i % 2 === 0 ? 0 : amp);
+      ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = fabricColor;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+    ctx.lineWidth = 1;
+    for (let i = 1; i < folds; i++) {
+      const x = cx - size / 2 + i * step;
+      ctx.beginPath(); ctx.moveTo(x, cy - size / 2); ctx.lineTo(x, cy + size / 2); ctx.stroke();
+    }
+  } else if (foldType === 'fan') {
+    const sectors = 5 + Math.round(tightness);
+    const r = size * 0.55;
+    ctx.translate(cx, cy);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.arc(0, 0, r, -Math.PI / 2 - 0.6, -Math.PI / 2 + 0.6);
+    ctx.closePath();
+    ctx.fillStyle = fabricColor;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= sectors; i++) {
+      const a = -Math.PI / 2 - 0.6 + (1.2 * i / sectors);
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r); ctx.stroke();
+    }
+    ctx.translate(-cx, -cy);
+  } else {
+    // random
+    ctx.beginPath();
+    ctx.moveTo(cx - size / 2, cy - size / 2);
+    ctx.lineTo(cx + size / 3, cy - size / 2 + 10);
+    ctx.lineTo(cx + size / 2, cy - size / 5);
+    ctx.lineTo(cx + size / 2 - 10, cy + size / 3);
+    ctx.lineTo(cx, cy + size / 2);
+    ctx.lineTo(cx - size / 3, cy + size / 2 - 15);
+    ctx.lineTo(cx - size / 2, cy + size / 4);
+    ctx.closePath();
+    ctx.fillStyle = fabricColor;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(cx - size / 3, cy - size / 2); ctx.lineTo(cx + size / 4, cy + size / 2);
+    ctx.moveTo(cx + size / 2, cy - size / 4); ctx.lineTo(cx - size / 4, cy - size / 4);
+    ctx.stroke();
+  }
+
+  // 捆扎绳/橡皮筋
+  const bands = Math.max(2, Math.round(tightness) + 1);
+  ctx.strokeStyle = 'rgba(80,60,50,0.55)';
+  ctx.lineWidth = 2 + tightness;
+  for (let i = 0; i < bands; i++) {
+    const t = (i + 1) / (bands + 1);
+    ctx.beginPath();
+    ctx.ellipse(cx, cy - size / 2 + t * size, size * 0.36, size * 0.04, 0, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+// 绘制染缸中浸泡的布料
+function renderDyeBath(ctx, width, height, opts) {
+  const { dyeName = '板蓝根', concentration = 0.6, fabricColor = '#F8F6F2' } = opts || {};
+  const palette = DYE_COLORS[dyeName] || DYE_COLORS['板蓝根'];
+  const cx = width / 2, cy = height / 2;
+  const size = Math.min(width, height) * 0.6;
+  ctx.save();
+  const bg = ctx.createLinearGradient(0, 0, 0, height);
+  bg.addColorStop(0, rgba(palette.light, 0.25));
+  bg.addColorStop(1, rgba(palette.main, 0.75));
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, width, height);
+  // 缸沿
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.fillRect(cx - size * 0.7, cy - size * 0.55, size * 1.4, size * 0.12);
+  // 布料
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, size * 0.5, size * 0.45, 0, 0, Math.PI * 2);
+  ctx.fillStyle = fabricColor;
+  ctx.fill();
+  // 染料渗透
+  ctx.globalCompositeOperation = 'multiply';
+  const soak = ctx.createRadialGradient(cx, cy + size * 0.1, 0, cx, cy, size * 0.5);
+  soak.addColorStop(0, rgba(palette.main, concentration));
+  soak.addColorStop(1, rgba(palette.main, 0));
+  ctx.fillStyle = soak;
+  ctx.beginPath(); ctx.ellipse(cx, cy, size * 0.5, size * 0.45, 0, 0, Math.PI * 2); ctx.fill();
+  // 气泡
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.fillStyle = 'rgba(255,255,255,0.45)';
+  for (let i = 0; i < 12; i++) {
+    const bx = cx + Math.sin(i * 1.7) * size * 0.35;
+    const by = cy + Math.cos(i * 2.3) * size * 0.3 - (i % 3) * 10;
+    const br = 2 + (i % 4);
+    ctx.beginPath(); ctx.arc(bx, by, br, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.restore();
+}
+
+// 绘制氧化过程：布料由黄绿向靛蓝转变
+function renderOxidation(ctx, width, height, opts) {
+  const { dyeName = '板蓝根', concentration = 0.6, progress = 0, fabricColor = '#F8F6F2' } = opts || {};
+  const palette = DYE_COLORS[dyeName] || DYE_COLORS['板蓝根'];
+  const cx = width / 2, cy = height / 2;
+  const size = Math.min(width, height) * 0.6;
+  const unoxidized = '#C8D66A';
+  const current = lerpColor(unoxidized, palette.main, progress);
+  ctx.save();
+  ctx.fillStyle = '#E8E6E2';
+  ctx.fillRect(0, 0, width, height);
+  // 布料
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, size * 0.5, size * 0.42, 0, 0, Math.PI * 2);
+  ctx.fillStyle = fabricColor;
+  ctx.fill();
+  // 氧化色变
+  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, size * 0.5);
+  grad.addColorStop(0, rgba(current, 0.7 + progress * 0.25));
+  grad.addColorStop(1, rgba(current, 0));
+  ctx.globalCompositeOperation = 'multiply';
+  ctx.fillStyle = grad;
+  ctx.beginPath(); ctx.ellipse(cx, cy, size * 0.5, size * 0.42, 0, 0, Math.PI * 2); ctx.fill();
+  // 空气波纹
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.strokeStyle = rgba(palette.main, 0.12);
+  ctx.lineWidth = 2;
+  for (let i = 0; i < 4; i++) {
+    const r = size * 0.2 + i * size * 0.08 + progress * size * 0.15;
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+// 拆开展示最终纹样：progress 0..1，折痕逐渐消失
+function renderUnfold(ctx, width, height, opts) {
+  const { progress = 0, ...tieOpts } = opts || {};
+  renderTieDye(ctx, width, height, tieOpts);
+  const cx = width / 2, cy = height / 2;
+  const maxR = Math.min(width, height) * 0.5;
+  ctx.save();
+  const alpha = 0.45 * (1 - progress);
+  if (alpha > 0.01) {
+    ctx.strokeStyle = `rgba(60,50,40,${alpha})`;
+    ctx.lineWidth = 2;
+    const n = 6;
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI + progress * 0.2;
+      ctx.beginPath();
+      ctx.moveTo(cx + Math.cos(a) * maxR * 0.2, cy + Math.sin(a) * maxR * 0.2);
+      ctx.lineTo(cx + Math.cos(a) * maxR * 0.9, cy + Math.sin(a) * maxR * 0.9);
+      ctx.stroke();
+    }
+  }
+  if (progress > 0.85) {
+    ctx.globalCompositeOperation = 'screen';
+    const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, maxR);
+    glow.addColorStop(0, 'rgba(255,255,255,0.18)');
+    glow.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath(); ctx.arc(cx, cy, maxR, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.restore();
+}
+
 // 绘制游戏球：圆形裁剪后的扎染球
 function renderBallPattern(ctx, x, y, r, opts) {
   ctx.save();
@@ -192,11 +401,21 @@ function getDyeColor(name) {
   return DYE_COLORS[name] || DYE_COLORS['板蓝根'];
 }
 
+function resolveDyeName(label) {
+  return DYE_LABELS[label] || label;
+}
+
 module.exports = {
   DYE_COLORS,
+  DYE_LABELS,
   PATTERN_CATALOG,
   renderTieDye,
+  renderFoldedFabric,
+  renderDyeBath,
+  renderOxidation,
+  renderUnfold,
   renderBallPattern,
   getPatternById,
-  getDyeColor
+  getDyeColor,
+  resolveDyeName
 };
