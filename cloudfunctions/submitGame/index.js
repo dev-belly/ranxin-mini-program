@@ -2,7 +2,7 @@
 const cloud = require('wx-server-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
-const { getPattern, getUnlockedPatternIds, SEED_PATTERNS } = require('../shared/utils.js')
+const { getPattern, getUnlockedPatternIds, SEED_PATTERNS } = require('./shared/utils.js')
 
 // 游戏解锁顺序：分数≥100 时按顺序解锁下一个未解锁纹样
 const UNLOCK_ORDER = ['shui', 'cang', 'ling', 'he']

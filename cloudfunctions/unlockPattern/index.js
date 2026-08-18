@@ -2,7 +2,7 @@
 const cloud = require('wx-server-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
-const { getPattern } = require('../shared/utils.js')
+const { getPattern } = require('./shared/utils.js')
 
 exports.main = async (event) => {
   const { OPENID } = cloud.getWXContext()

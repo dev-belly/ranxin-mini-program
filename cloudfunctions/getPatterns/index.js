@@ -3,7 +3,7 @@
 const cloud = require('wx-server-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
-const { seedPatterns, getUnlockedPatternIds } = require('../shared/utils.js')
+const { seedPatterns, getUnlockedPatternIds } = require('./shared/utils.js')
 
 exports.main = async (event) => {
   // 自动初始化纹样主数据（幂等）
