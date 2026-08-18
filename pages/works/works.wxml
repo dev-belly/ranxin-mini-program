@@ -1,26 +1,52 @@
-<!-- 归属：A｜产品前端 Owner -->
-<view class="page">
+<view class="rx-page works-page">
   <view class="rx-bg"></view>
-  <view class="section-title">我的作品</view>
-  <view class="section-sub">每一件，都是此刻情绪的印记</view>
+
+  <view class="works-head">
+    <view class="works-title">我的作品</view>
+    <view class="works-sub">正念 DIY 的每一件，都是唯一的那一块</view>
+  </view>
+
+  <!-- 分类筛选 -->
+  <scroll-view scroll-x class="filter-bar" wx:if="{{filterOptions.length > 1}}">
+    <view class="filter-chip {{filter === item.id ? 'active' : ''}}"
+          wx:for="{{filterOptions}}" wx:key="id" data-id="{{item.id}}" bindtap="setFilter">
+      {{item.name}}
+    </view>
+  </scroll-view>
 
   <view wx:if="{{loading}}" class="hint">加载中…</view>
 
-  <view wx:elif="{{list.length === 0}}" class="empty">
+  <view wx:elif="{{displayList.length === 0}}" class="empty">
     <view class="empty-emoji">🪡</view>
     <view class="empty-text">还没有作品，去「正念DIY」创作第一件吧</view>
+    <button class="rx-btn-primary empty-btn" bindtap="goDiy">去创作</button>
   </view>
 
-  <view wx:else>
-    <view class="grid">
-      <view class="work" wx:for="{{list}}" wx:key="workId">
-        <image class="work-img" src="{{item.thumb ? item.thumb : '/assets/patterns/' + item.patternId + '.png'}}" mode="aspectFill" />
+  <view wx:else class="work-list">
+    <view class="work-card rx-card" wx:for="{{displayList}}" wx:key="workId" wx:for-index="i">
+      <image class="work-img" src="/assets/patterns/{{item.patternId}}.png" mode="aspectFill"/>
+      <view class="work-body">
         <view class="work-name">{{item.title}}</view>
-        <view class="work-meta">{{item.patternName}} · {{item.date}}</view>
+        <view class="work-meta">{{item.patternName}} · {{item.date}}{{item.fabric ? ' · ' + item.fabric : ''}}</view>
+        <view class="work-story">{{item.story}}</view>
+        <view class="work-note" wx:if="{{item.mindfulNote}}">“{{item.mindfulNote}}”</view>
+        <view class="work-actions">
+          <text class="work-link" data-i="{{i}}" bindtap="shareWork">分享卡</text>
+          <text class="work-link" bindtap="customize">定制实物</text>
+        </view>
       </view>
     </view>
-    <view class="create-bar">
-      <button class="create-btn" bindtap="goDiy">再创作一件</button>
+  </view>
+
+  <!-- 商城 / 实物转化（C 后端职责，前端入口） -->
+  <view class="mall-block rx-card">
+    <view class="mall-title">商城 · 实物转化</view>
+    <view class="mall-desc">把数字作品变成能摸到的扎染：C2M 定制、四季 DIY 订阅盒、大理工坊成品。</view>
+    <view class="mall-actions">
+      <button class="rx-btn-secondary mall-btn" bindtap="customize">定制我的作品</button>
+      <button class="rx-btn-secondary mall-btn" bindtap="openMall">逛逛商城</button>
     </view>
   </view>
+
+  <canvas type="2d" id="share-canvas" class="share-canvas"></canvas>
 </view>

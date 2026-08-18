@@ -250,6 +250,8 @@ Page({
     const work = {
       workId: 'work_' + Date.now(),
       title: pattern.name + ' · ' + foldLabel,
+      patternName: pattern.name,
+      story: pattern.story,
       patternId,
       dyeName,
       concentration,

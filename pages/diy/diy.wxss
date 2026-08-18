@@ -360,6 +360,10 @@
   color: #6b7a99;
   margin-bottom: 4rpx;
 }
+.result-story {
+  color: #4b6ee6;
+  line-height: 1.5;
+}
 .mindful-input {
   width: 100%;
   height: 120rpx;
