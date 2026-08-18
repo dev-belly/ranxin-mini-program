@@ -10,10 +10,10 @@
 
   <view class="pattern-grid">
     <view
-      wx:for="{{catalog}}"
+      wx:for="{{viewList}}"
       wx:key="id"
-      wx:if="{{filter==='all' || (filter==='unlocked' && unlocked.includes(item.id)) || (filter==='locked' && !unlocked.includes(item.id))}}"
-      class="pattern-card {{unlocked.includes(item.id)?'':'locked'}}"
+      wx:if="{{filter==='all' || (filter==='unlocked' && item.unlocked) || (filter==='locked' && !item.unlocked)}}"
+      class="pattern-card {{item.unlocked?'':'locked'}}"
       data-id="{{item.id}}"
       bindtap="openDetail"
     >
@@ -21,7 +21,7 @@
       <canvas wx:else type="2d" id="col-{{item.id}}" class="pattern-thumb" style="width:220rpx;height:220rpx"></canvas>
       <text class="pattern-name">{{item.name}}</text>
       <text class="pattern-tags">{{item.tags}}</text>
-      <view wx:if="{{!unlocked.includes(item.id)}}" class="lock-badge">未解锁</view>
+      <view wx:if="{{!item.unlocked}}" class="lock-badge">未解锁</view>
     </view>
   </view>
 

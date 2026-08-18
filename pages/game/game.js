@@ -235,7 +235,11 @@ Page({
 
   checkGameOver() {
     for (let b of this.balls) {
-      if (b.y - b.r < TOP_LINE && Math.abs(b.vy) < 0.5 && Math.abs(b.vx) < 0.5) {
+      // 仅当球停在死亡线之上且基本静止（持续约 0.6s）才判负，
+      // 否则刚落下的球（初速≈0）会被误判为「堆到顶」而秒结束。
+      const stuck = (b.y - b.r < TOP_LINE) && Math.abs(b.vy) < 0.6 && Math.abs(b.vx) < 0.6;
+      b.overFrames = stuck ? (b.overFrames || 0) + 1 : 0;
+      if (b.overFrames > 40) {
         this.gameOver();
         break;
       }
@@ -278,7 +282,8 @@ Page({
       vy: 0,
       r: LEVELS[lvl].r,
       level: lvl,
-      pattern: this.randomPattern()
+      pattern: this.randomPattern(),
+      overFrames: 0
     });
     this.nextLevel = Math.floor(Math.random() * 3);
     this.setData({ nextLevel: this.nextLevel });
