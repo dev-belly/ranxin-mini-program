@@ -10,6 +10,12 @@ Page({
       { key: 'messy', label: '有点乱', active: false }
     ],
     todayBest: 3280,
+    // 一分钟非遗（对齐 A：三张知识卡）
+    knowledge: [
+      { id: 'why-blue', tag: '为什么不是蓝色？', title: '刚出缸的布，为何不蓝？', desc: '板蓝根染液接触空气后，会经历一场缓慢的氧化变色。', art: 'oxidation' },
+      { id: 'oxidation', tag: '氧化的魔法', title: '板蓝根染液为什么会变蓝？', desc: '从无色到微绿，再到蓝色，氧化像一场时间的魔法。', art: 'oxidation' },
+      { id: 'pattern', tag: '纹样的秘密', title: '不同扎结方式，会形成怎样的纹样？', desc: '扎、缝、夹、缠，每一种都是独一无二的自然印记。', art: 'pattern' }
+    ],
     leaderboard: {
       active: 'user',
       scope: 'today',
@@ -52,7 +58,12 @@ Page({
   },
 
   goKnowledge() {
-    wx.navigateTo({ url: '/pages/collection/collection' });
+    wx.navigateTo({ url: '/pages/knowledge/knowledge' });
+  },
+
+  goArticle(e) {
+    const { art } = e.currentTarget.dataset;
+    wx.navigateTo({ url: '/pages/article/article?type=' + art });
   },
 
   switchLeaderboardTab(e) {

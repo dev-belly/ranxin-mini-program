@@ -5,7 +5,9 @@
     "pages/works/works",
     "pages/game/game",
     "pages/collection/collection",
-    "pages/diy/diy"
+    "pages/diy/diy",
+    "pages/knowledge/knowledge",
+    "pages/article/article"
   ],
   "window": {
     "navigationBarTitleText": "染心",

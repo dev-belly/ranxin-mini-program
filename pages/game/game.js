@@ -222,13 +222,16 @@ Page({
     const percent = Math.min(99, 30 + Math.floor(score / 60));
     const win = w.maxLevel >= MAX_LEVEL;
     this._startTime = this._startTime || Date.now();
+    const topId = UNLOCK_BY_LEVEL[w.maxLevel] || (unlockedPatterns[0] && unlockedPatterns[0].id);
+    const topP = engine.PATTERN_CATALOG.find(x => x.id === topId);
+    const topPattern = topP ? { id: topP.id, name: topP.name, thumb: '/assets/patterns/' + topP.id + '.png', story: topP.story } : null;
     this.setData({
       gameOver: true,
       best,
       result: {
         score, time: seconds, timeMinutes: minutes, percent,
         topLevel: w.maxLevel, topName: LEVELS[w.maxLevel].name,
-        unlockedNow, unlockedPatterns, win
+        topPattern, unlockedNow, unlockedPatterns, win
       }
     });
     // 上报成绩（Mock 下幂等无害）

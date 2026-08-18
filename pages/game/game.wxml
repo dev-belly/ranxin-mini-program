@@ -32,26 +32,33 @@
 
   <view class="game-tip">移动手指瞄准，松手投下扎染球 · 相同纹样相撞即合体升级 · 一直合到「大染缸」</view>
 
-  <!-- 结果弹窗 -->
+  <!-- 结果弹窗（对齐 A：奖励收获 / 已完成 / 纹样详情 / 已加入纹样库） -->
   <view class="result-mask" wx:if="{{gameOver}}">
     <view class="result-card">
-      <view class="result-title">{{result.win ? '这一缸，染成了' : '差一点点，再染一缸'}}</view>
+      <view class="result-eyebrow"><text class="rx-spark">✦</text> 奖励收获</view>
+      <view class="result-done">{{result.win ? '已合成大染缸 · 完成' : '已完成'}}</view>
+
       <view class="result-stats">
         <view class="stat"><text class="stat-num">{{result.score}}</text><text class="stat-label">本局得分</text></view>
         <view class="stat"><text class="stat-num">{{result.timeMinutes}}</text><text class="stat-label">分钟沉浸</text></view>
         <view class="stat"><text class="stat-num">{{result.percent}}%</text><text class="stat-label">超过玩家</text></view>
       </view>
 
-      <view class="result-sub">本局最高染出了「{{result.topName}}」</view>
-
-      <view class="result-sub" wx:if="{{result.unlockedNow.length}}">新解锁纹样</view>
-      <view class="mini-collection" wx:if="{{result.unlockedNow.length}}">
-        <text wx:for="{{result.unlockedNow}}" wx:key="*this" class="unlock-tag">{{item}}</text>
+      <view class="result-detail" wx:if="{{result.topPattern}}">
+        <view class="detail-label">纹样详情</view>
+        <view class="detail-row">
+          <image class="detail-thumb" src="{{result.topPattern.thumb}}" mode="aspectFill"/>
+          <view class="detail-info">
+            <view class="detail-name">{{result.topPattern.name}}</view>
+            <view class="detail-story">{{result.topPattern.story}}</view>
+          </view>
+        </view>
+        <view class="detail-added">已加入你的纹样库。</view>
       </view>
 
-      <view class="result-sub">我的纹样库</view>
-      <view class="mini-collection">
-        <image wx:for="{{result.unlockedPatterns}}" wx:key="id" class="mini-thumb" src="{{item.thumb}}" mode="aspectFill"/>
+      <view class="result-sub" wx:if="{{result.unlockedNow.length}}">本局新解锁</view>
+      <view class="mini-collection" wx:if="{{result.unlockedNow.length}}">
+        <text wx:for="{{result.unlockedNow}}" wx:key="*this" class="unlock-tag">{{item}}</text>
       </view>
 
       <button class="rx-btn-primary result-btn" bindtap="replay">再染一缸</button>
