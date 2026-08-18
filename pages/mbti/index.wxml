@@ -1,25 +1,39 @@
-<!-- 归属：A｜产品前端 Owner -->
-<view class="page">
+<view class="rx-page mbti-page">
   <view class="rx-bg"></view>
+
   <block wx:if="{{!result}}">
-    <view class="progress">第 {{step + 1}} / {{questions.length}} 题</view>
-    <view class="q-title">{{questions[step].title}}</view>
-    <view class="options">
-      <button class="opt" wx:for="{{questions[step].options}}" wx:key="pid"
-              data-q="{{step}}" data-pid="{{item.pid}}" bindtap="choose">
-        {{item.label}}
-      </button>
+    <view class="mbti-head">
+      <view class="mbti-title">MBTI 灵魂扎染</view>
+      <view class="mbti-sub">12 题，找到你的专属扎染纹样与色彩</view>
+    </view>
+    <view class="progress">
+      <view class="progress-bar" style="width:{{step / total * 100}}%"></view>
+    </view>
+    <view class="q-counter">{{step + 1}} / {{total}}</view>
+
+    <view class="q-card rx-card" wx:for="{{questions}}" wx:key="title" wx:if="{{index === step}}">
+      <view class="q-title">{{item.title}}</view>
+      <view class="q-options">
+        <button class="q-opt" wx:for="{{item.options}}" wx:for-item="opt" wx:key="label"
+                data-q="{{step}}" data-o="{{index}}" bindtap="choose">{{opt.label}}</button>
+      </view>
     </view>
   </block>
 
   <block wx:else>
-    <view class="result">
-      <image class="result-img" src="{{result.thumb}}" mode="aspectFit" />
-      <view class="result-tag">为你推荐的纹样</view>
+    <view class="result-card rx-card">
+      <view class="result-eyebrow">你的灵魂扎染色彩</view>
+      <view class="result-type">{{result.type}}</view>
       <view class="result-name">{{result.name}}</view>
+      <image class="result-pattern" src="{{result.thumb}}" mode="aspectFill"/>
+      <view class="result-color">{{result.patternName}} · {{result.color}}</view>
       <view class="result-story">{{result.story}}</view>
-      <button class="cta" bindtap="goDiy">用这个纹样去创作</button>
-      <view class="link" bindtap="restart">重新测一次</view>
+      <view class="result-tip">专属纹样已解锁，去正念 DIY 用起来 →</view>
+      <button class="rx-btn-primary" bindtap="goDiy">开始创作</button>
+      <button class="rx-btn-secondary" bindtap="makePoster">生成分享卡</button>
+      <button class="rx-btn-text" bindtap="restart">重新测一次</button>
     </view>
   </block>
+
+  <canvas type="2d" id="share-canvas" class="share-canvas"></canvas>
 </view>

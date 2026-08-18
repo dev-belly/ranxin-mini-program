@@ -1,85 +1,83 @@
-/* 归属：A｜产品前端 Owner · rx 水彩主题统一 */
-.page {
-  padding: 40rpx 36rpx 60rpx;
-  background: transparent;
+.mbti-page {
   min-height: 100vh;
+  padding: 40rpx 32rpx 60rpx;
   box-sizing: border-box;
 }
+.mbti-head { text-align: center; margin-bottom: 28rpx; }
+.mbti-title {
+  font-family: "Songti SC", serif;
+  font-size: 46rpx;
+  font-weight: 700;
+  color: #1a2b4d;
+}
+.mbti-sub { font-size: 24rpx; color: #6b7a99; margin-top: 10rpx; }
+
 .progress {
-  font-size: 24rpx;
-  color: #8a93a6;
-  text-align: center;
+  height: 12rpx;
+  background: rgba(75,110,230,0.15);
+  border-radius: 999rpx;
+  overflow: hidden;
+  margin-bottom: 12rpx;
+}
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #4b6ee6, #7b5fe0);
+  border-radius: 999rpx;
+  transition: width .3s;
+}
+.q-counter { text-align: right; font-size: 22rpx; color: #8b97b3; margin-bottom: 20rpx; }
+
+.q-card {
+  padding: 36rpx 32rpx;
 }
 .q-title {
-  margin: 24rpx 0 36rpx;
-  font-size: 40rpx;
-  font-weight: 700;
+  font-size: 34rpx;
+  font-weight: 600;
   color: #1a2b4d;
-  text-align: center;
-  font-family: "Songti SC", "STSong", serif;
-  letter-spacing: 2rpx;
+  margin-bottom: 28rpx;
   line-height: 1.5;
 }
-.options {
-  display: flex;
-  flex-direction: column;
-  gap: 20rpx;
-}
-.opt {
-  background: rgba(255, 255, 255, 0.92);
-  color: #1a2b4d;
-  font-size: 30rpx;
-  font-weight: 500;
+.q-options { display: flex; flex-direction: column; gap: 18rpx; }
+.q-opt {
+  background: #fff;
+  border: 2rpx solid rgba(75,110,230,0.25);
   border-radius: 20rpx;
-  padding: 30rpx 0;
-  box-shadow: 0 8rpx 22rpx rgba(47, 68, 130, 0.08);
-  border: 2rpx solid transparent;
-}
-.opt::after { border: none; }
-
-.result {
-  text-align: center;
-  padding-top: 40rpx;
-}
-.result-img {
-  width: 360rpx;
-  height: 360rpx;
-  border-radius: 50%;
-  background: rgba(75, 110, 230, 0.08);
-  box-shadow: 0 12rpx 30rpx rgba(47, 68, 130, 0.12);
-}
-.result-tag {
-  margin-top: 28rpx;
-  font-size: 24rpx;
-  color: #6b7790;
-}
-.result-name {
-  margin-top: 8rpx;
-  font-size: 44rpx;
-  font-weight: 700;
-  color: #1a2b4d;
-  font-family: "Songti SC", "STSong", serif;
-  letter-spacing: 4rpx;
-}
-.result-story {
-  margin: 24rpx 20rpx 0;
+  padding: 26rpx 28rpx;
   font-size: 28rpx;
-  color: #5b6c8a;
-  line-height: 1.7;
+  color: #1a2b4d;
+  text-align: left;
+  line-height: 1.4;
 }
-.cta {
-  margin: 40rpx 20rpx 0;
-  background: linear-gradient(135deg, #4b6ee6 0%, #7b5fe0 100%);
-  color: #fff;
-  font-size: 30rpx;
-  font-weight: 600;
-  border-radius: 999rpx;
-  padding: 22rpx 0;
-  box-shadow: 0 10rpx 24rpx rgba(93, 95, 220, 0.25);
+.q-opt::after { border: none; }
+.q-opt:active { background: rgba(75,110,230,0.10); }
+
+/* 结果 */
+.result-card { padding: 48rpx 36rpx; text-align: center; }
+.result-eyebrow { font-size: 24rpx; color: #6b7a99; }
+.result-type {
+  font-size: 64rpx;
+  font-weight: 800;
+  color: #4b6ee6;
+  letter-spacing: 4rpx;
+  margin: 8rpx 0;
 }
-.cta::after { border: none; }
-.link {
-  margin-top: 24rpx;
-  font-size: 26rpx;
-  color: #8a93a6;
+.result-name { font-size: 32rpx; font-weight: 600; color: #1a2b4d; }
+.result-pattern {
+  width: 220rpx;
+  height: 220rpx;
+  border-radius: 50%;
+  margin: 28rpx auto;
+  border: 4rpx solid rgba(75,110,230,0.2);
+}
+.result-color { font-size: 28rpx; color: #4b6ee6; font-weight: 600; }
+.result-story { font-size: 26rpx; color: #6b7a99; margin: 16rpx 0 8rpx; line-height: 1.6; }
+.result-tip { font-size: 24rpx; color: #8b97b3; margin-bottom: 28rpx; }
+.result-card .rx-btn-primary { margin-bottom: 18rpx; }
+
+.share-canvas {
+  position: fixed;
+  left: -9999rpx;
+  top: -9999rpx;
+  width: 300px;
+  height: 400px;
 }
