@@ -81,7 +81,10 @@ Page({
     soundHint: '白噪音：洱海水声、扎花布料声、苍山风声',
     showResult: false,
     mindfulNote: '',
-    result: null
+    result: null,
+    reviewMode: false,
+    reviewPhase: '',
+    reviewProgress: 0
   },
 
   onLoad() {
@@ -101,6 +104,8 @@ Page({
 
   onUnload() {
     this.stopOxidation();
+    if (this.reviewTimer) { clearInterval(this.reviewTimer); this.reviewTimer = null; }
+    if (this.audioCtx) { this.audioCtx.destroy(); this.audioCtx = null; }
   },
 
   randomQuote(stepIdx) {
@@ -126,11 +131,13 @@ Page({
     });
   },
 
-  drawCurrent() {
-    if (!this.ctx) return;
+  drawCurrent(ctx, w, h) {
+    ctx = ctx || this.ctx;
+    if (!ctx) return;
     const { step, patternId, foldType, tightness, dyeName, concentration, oxidationSeconds, oxidationTotal, unfoldProgress } = this.data;
     const pattern = engine.getPatternById(patternId);
-    const w = this.canvasW, h = this.canvasH;
+    if (w == null) w = this.canvasW;
+    if (h == null) h = this.canvasH;
     const engineTightness = 0.25 + (tightness / 5) * 0.65;
     const engineConc = concentration / 100;
 
@@ -215,8 +222,18 @@ Page({
     const soundOn = !this.data.soundOn;
     this.setData({ soundOn });
     if (soundOn) {
-      // 音频资源待补充：此处仅做触觉/视觉反馈
-      wx.showToast({ title: '白噪音资源待补充', icon: 'none' });
+      if (!this.audioCtx) {
+        this.audioCtx = wx.createInnerAudioContext();
+        this.audioCtx.src = '/assets/audio/ambient.mp3';
+        this.audioCtx.loop = true;
+        this.audioCtx.onError(() => {
+          wx.showToast({ title: '白噪音资源待补充', icon: 'none' });
+          this.setData({ soundOn: false });
+        });
+      }
+      this.audioCtx.play();
+    } else if (this.audioCtx) {
+      this.audioCtx.pause();
     }
   },
 
@@ -308,6 +325,73 @@ Page({
   closeResult() {
     this.setData({ showResult: false });
     wx.switchTab({ url: '/pages/works/works' });
+  },
+
+  // 15 秒创作回溯：canvas 复现 扎→染→等→拆，无需外部视频素材
+  startReview() {
+    if (!this.data.result) return;
+    this.setData({ reviewMode: true, reviewProgress: 0, reviewPhase: '扎', showResult: false }, () => {
+      wx.nextTick(() => this.initReviewCanvas());
+    });
+  },
+
+  initReviewCanvas() {
+    const query = wx.createSelectorQuery();
+    query.select('#review-canvas').fields({ node: true, size: true }).exec((res) => {
+      if (!res || !res[0]) return;
+      const canvas = res[0].node;
+      const { width, height } = res[0];
+      const dpr = wx.getSystemInfoSync().pixelRatio;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      this.rcanvas = canvas;
+      this.rcanvasW = width;
+      this.rcanvasH = height;
+      this.rctx = canvas.getContext('2d');
+      this.rctx.scale(dpr, dpr);
+      this.runReview();
+    });
+  },
+
+  runReview() {
+    if (this.reviewTimer) clearInterval(this.reviewTimer);
+    const totalMs = 15000, tick = 100;
+    let elapsed = 0;
+    this.reviewTimer = setInterval(() => {
+      elapsed += tick;
+      const p = Math.min(100, Math.round(elapsed / totalMs * 100));
+      this.applyReview(p);
+      if (p >= 100) {
+        clearInterval(this.reviewTimer);
+        this.reviewTimer = null;
+      }
+    }, tick);
+  },
+
+  applyReview(p) {
+    let step, oxidationSeconds = 0, unfoldProgress = 0, phase = '扎';
+    if (p < 25) { step = 0; phase = '扎'; }
+    else if (p < 50) { step = 1; phase = '染'; }
+    else if (p < 75) { step = 2; oxidationSeconds = Math.round((p - 50) / 25 * 30); phase = '等'; }
+    else { step = 3; unfoldProgress = Math.round((p - 75) / 25 * 100); phase = '拆'; }
+    const quote = (QUOTES[step] || QUOTES[0])[0];
+    this.setData({ step, oxidationSeconds, unfoldProgress, reviewPhase: phase, reviewProgress: p, quote }, () => {
+      this.drawCurrent(this.rctx, this.rcanvasW, this.rcanvasH);
+    });
+  },
+
+  exitReview() {
+    if (this.reviewTimer) { clearInterval(this.reviewTimer); this.reviewTimer = null; }
+    this.setData({
+      reviewMode: false,
+      reviewProgress: 0,
+      reviewPhase: '',
+      step: 3,
+      oxidationSeconds: 30,
+      oxidationDone: true,
+      unfoldProgress: 100,
+      showResult: true
+    });
   },
 
   replay() {

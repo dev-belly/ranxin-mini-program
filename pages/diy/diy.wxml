@@ -105,7 +105,22 @@
       </view>
       <textarea class="mindful-input" placeholder="此时此刻的感受是什么？（会存入正念日志）" value="{{mindfulNote}}" bindinput="onMindfulNoteInput" maxlength="60"/>
       <button class="rx-btn-primary" bindtap="closeResult">查看我的作品</button>
+      <button class="rx-btn-secondary" bindtap="startReview">回溯创作（15秒）</button>
       <button class="rx-btn-secondary" bindtap="replay">再染一件</button>
     </view>
+  </view>
+
+  <!-- 15 秒创作回溯 -->
+  <view wx:if="{{reviewMode}}" class="review-mask">
+    <view class="review-header">
+      <text class="review-title">创作回溯 · {{reviewPhase}}</text>
+      <view class="review-close" bindtap="exitReview">✕</view>
+    </view>
+    <canvas type="2d" id="review-canvas" class="review-canvas"></canvas>
+    <text class="review-quote">{{quote}}</text>
+    <view class="review-progress">
+      <view class="review-bar" style="width:{{reviewProgress}}%"></view>
+    </view>
+    <text class="review-tip">15 秒，重温你亲手扎染的每一刻</text>
   </view>
 </view>
