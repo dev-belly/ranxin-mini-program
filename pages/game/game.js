@@ -1,74 +1,51 @@
 // 归属：B｜核心交互 Owner
-// 合成大染缸·情绪疗愈版：三消/连连看（对齐染心第二章 2.1.1）
-// 玩法：交换相邻纹样元素，3+ 同色消除；稀有「残片」降至底部收集解锁纹样；
-//       每次消除浮现正念提示语；限步数（3—5 分钟碎片场景）。
+// 合成大染缸·情绪疗愈版（对齐染心第二章「合成大染缸」玩法）
+// 机制：顶部落扎染球 → 重力下落 → 同级相碰合并升级 → 终极「大染缸」
 const engine = require('../../utils/pattern-engine.js');
 const api = require('../../utils/api.js');
-
-const TYPES = ['hudie', 'tuan', 'shui', 'cang', 'ling', 'he'];
-const COLS = 8;
-const ROWS = 8;
-const MOVES_TOTAL = 28;
-const SPECIAL_RATE = 0.08; // 补充时生成残片的概率
-
-// 稀有纹样残片：收集后解锁对应纹样
-const SPECIALS = [
-  { key: 'hudie', name: '蝴蝶纹残片', unlock: 'hudie' },
-  { key: 'wanzi', name: '万字纹残片', unlock: 'tuan' }
-];
+const { LEVELS, MAX_LEVEL, DANGER_Y, PhysicsWorld } = require('./game-physics.js');
 
 const QUOTES = [
   '不急，一块布有一块布的节奏。',
   '此刻，只关注落下的位置。',
-  '每一块布，都有自己的呼吸。',
+  '每一缸，都有自己的呼吸。',
   '慢一点，颜色会更稳。',
+  '两个相同，便合成新的样子。',
   '你做的，已经足够好。'
 ];
 
-function randType() { return Math.floor(Math.random() * TYPES.length); }
-
-function makeTile() {
-  let t = { type: randType(), special: null };
-  if (Math.random() < SPECIAL_RATE) {
-    t.special = SPECIALS[Math.floor(Math.random() * SPECIALS.length)].key;
-  }
-  return t;
-}
+// 玩得越高级，解锁越多纹样
+const UNLOCK_BY_LEVEL = { 2: 'hudie', 3: 'tuan', 4: 'shui', 5: 'cang', 6: 'ling', 7: 'he' };
 
 Page({
   data: {
     score: 0,
     best: 0,
-    moves: MOVES_TOTAL,
-    movesTotal: MOVES_TOTAL,
-    selected: null, // {r,c}
-    quote: '',
-    quoteVisible: false,
+    topName: '染珠',
+    topLevel: 0,
     gameOver: false,
     muted: false,
-    fragments: { hudie: 0, wanzi: 0 }, // 本局已收集残片数
+    ready: false,
+    quote: '',
+    quoteVisible: false,
     result: {}
   },
 
   onLoad() {
-    this.board = [];
-    this.busy = false;
-    this.fragments = { hudie: 0, wanzi: 0 };
-    this.unlockedThisGame = [];
-    this.startTime = Date.now();
-    this.setData({
-      best: wx.getStorageSync('ranxin_game_best') || 0,
-      fragments: { hudie: 0, wanzi: 0 }
-    });
+    this._lastScore = 0;
+    this._lastMax = 0;
+    this._lastQuote = 0;
+    this._startTime = Date.now();
+    this.setData({ best: wx.getStorageSync('ranxin_game_best') || 0 });
   },
 
   onReady() {
     const query = wx.createSelectorQuery();
     query.select('#game-canvas').fields({ node: true, size: true }).exec((res) => {
-      if (!res[0]) return;
+      if (!res[0] || !res[0].node) return;
       const canvas = res[0].node;
       const { width, height } = res[0];
-      const dpr = wx.getSystemInfoSync().pixelRatio;
+      const dpr = (wx.getSystemInfoSync && wx.getSystemInfoSync().pixelRatio) || 2;
       canvas.width = width * dpr;
       canvas.height = height * dpr;
       this.canvas = canvas;
@@ -76,274 +53,131 @@ Page({
       this.ctx.scale(dpr, dpr);
       this.boardW = width;
       this.boardH = height;
-      this.cell = width / COLS;
-      wx.createSelectorQuery().select('.board-wrap').boundingClientRect(rect => {
-        this.boardLeft = rect ? rect.left : 0;
-        this.boardTop = rect ? rect.top : 0;
-      }).exec();
-      this.buildBoard();
-      this.draw();
+      this.world = new PhysicsWorld(width, height);
+      this.setData({ ready: true });
+      this._last = 0;
+      this._loop();
     });
   },
 
-  onUnload() { this.busy = true; },
-
-  // ---- 棋盘构建 ----
-  buildBoard() {
-    const board = [];
-    for (let r = 0; r < ROWS; r++) {
-      board[r] = [];
-      for (let c = 0; c < COLS; c++) {
-        let type;
-        do { type = randType(); }
-        while (this.wouldMatchAt(board, r, c, type));
-        board[r][c] = { type, special: null };
-      }
-    }
-    this.board = board;
-    if (!this.hasPossibleMove()) this.shuffle();
+  onUnload() {
+    this._stop = true;
+    if (this._raf && typeof cancelAnimationFrame === 'function') cancelAnimationFrame(this._raf);
   },
 
-  wouldMatchAt(board, r, c, type) {
-    // 左两格
-    if (c >= 2 && board[r][c - 1] && board[r][c - 2] &&
-        board[r][c - 1].type === type && board[r][c - 2].type === type) return true;
-    // 上两格
-    if (r >= 2 && board[r - 1] && board[r - 2] &&
-        board[r - 1][c] && board[r - 2][c] &&
-        board[r - 1][c].type === type && board[r - 2][c].type === type) return true;
-    return false;
-  },
-
-  // ---- 匹配检测 ----
-  findMatches() {
-    const b = this.board;
-    const clear = {};
-    const mark = (r, c) => { clear[r + '_' + c] = true; };
-    // 横向
-    for (let r = 0; r < ROWS; r++) {
-      let run = 1;
-      for (let c = 1; c <= COLS; c++) {
-        const same = c < COLS && b[r][c] && b[r][c - 1] && b[r][c].type === b[r][c - 1].type;
-        if (same) run++;
-        else {
-          if (run >= 3) for (let k = c - run; k < c; k++) mark(r, k);
-          run = 1;
-        }
+  _loop() {
+    if (this._stop) return;
+    const now = Date.now();
+    const dt = this._last ? (now - this._last) / 1000 : 0;
+    this._last = now;
+    const w = this.world;
+    if (w && !this.data.gameOver) {
+      w.step(dt);
+      // 分数/最高级变化才 setData，避免每帧刷新掉帧
+      if (w.score !== this._lastScore || w.maxLevel !== this._lastMax) {
+        this._lastScore = w.score;
+        this._lastMax = w.maxLevel;
+        this.setData({
+          score: w.score,
+          topName: LEVELS[w.maxLevel].name,
+          topLevel: w.maxLevel
+        });
       }
-    }
-    // 纵向
-    for (let c = 0; c < COLS; c++) {
-      let run = 1;
-      for (let r = 1; r <= ROWS; r++) {
-        const same = r < ROWS && b[r][c] && b[r - 1][c] && b[r][c].type === b[r - 1][c].type;
-        if (same) run++;
-        else {
-          if (run >= 3) for (let k = r - run; k < r; k++) mark(k, c);
-          run = 1;
-        }
+      // 合成时偶发正念提示
+      if (w.score > this._lastQuote && Math.random() < 0.5) {
+        this._lastQuote = w.score;
+        this.showQuote();
       }
+      if (w.over) this._endGame();
     }
-    return Object.keys(clear).map(k => {
-      const [r, c] = k.split('_').map(Number);
-      return { r, c };
-    });
-  },
-
-  // ---- 重力 + 补充 + 残片收集 ----
-  applyGravity() {
-    for (let c = 0; c < COLS; c++) {
-      const stack = [];
-      for (let r = ROWS - 1; r >= 0; r--) {
-        if (this.board[r][c]) stack.push(this.board[r][c]);
-      }
-      const newCol = new Array(ROWS).fill(null);
-      for (let i = 0; i < stack.length; i++) newCol[ROWS - 1 - i] = stack[i];
-      // 底部残片收集
-      const bottom = newCol[ROWS - 1];
-      if (bottom && bottom.special) {
-        this.collectFragment(bottom.special);
-        newCol[ROWS - 1] = null;
-      }
-      // 顶部补充
-      for (let r = 0; r < ROWS; r++) {
-        if (!newCol[r]) newCol[r] = makeTile();
-      }
-      for (let r = 0; r < ROWS; r++) this.board[r][c] = newCol[r];
-    }
-  },
-
-  collectFragment(key) {
-    this.fragments[key] = (this.fragments[key] || 0) + 1;
-    const spec = SPECIALS.find(s => s.key === key);
-    if (spec && !this.unlockedThisGame.includes(spec.unlock)) {
-      this.unlockedThisGame.push(spec.unlock);
-      this.unlockPattern(spec.unlock);
-    }
-    this.setData({ fragments: Object.assign({}, this.fragments) });
-  },
-
-  // ---- 交换与连锁 ----
-  swap(r1, c1, r2, c2) {
-    const t = this.board[r1][c1];
-    this.board[r1][c1] = this.board[r2][c2];
-    this.board[r2][c2] = t;
-  },
-
-  attemptSwap(r1, c1, r2, c2) {
-    if (this.busy || this.data.gameOver) return;
-    this.busy = true;
-    this.swap(r1, c1, r2, c2);
-    const matches = this.findMatches();
-    if (matches.length === 0) {
-      this.swap(r1, c1, r2, c2); // 无匹配，换回
-      this.busy = false;
-      this.draw();
-      wx.showToast({ title: '这两块凑不成，换一对', icon: 'none' });
-      return;
-    }
-    // 有效移动，扣步数
-    let moves = this.data.moves - 1;
-    this.setData({ moves, selected: null });
-    let combo = 1;
-    let total = 0;
-    while (matches.length) {
-      total += matches.length * 10 * combo;
-      this.showQuote();
-      for (const m of matches) this.board[m.r][m.c] = null;
-      this.applyGravity();
-      const next = this.findMatches();
-      combo++;
-      matches.length = 0;
-      next.forEach(m => matches.push(m));
-    }
-    if (!this.data.muted) wx.vibrateShort({ type: 'light' });
-    this.setData({ score: this.data.score + total });
-    if (!this.hasPossibleMove()) this.shuffle();
-    this.busy = false;
     this.draw();
-    if (moves <= 0) this.gameOver();
+    this._raf = requestAnimationFrame(() => this._loop());
   },
 
-  hasPossibleMove() {
-    const b = this.board;
-    for (let r = 0; r < ROWS; r++) {
-      for (let c = 0; c < COLS; c++) {
-        // 右
-        if (c + 1 < COLS) {
-          this.swap(r, c, r, c + 1);
-          const ok = this.findMatches().length > 0;
-          this.swap(r, c, r, c + 1);
-          if (ok) return true;
-        }
-        // 下
-        if (r + 1 < ROWS) {
-          this.swap(r, c, r + 1, c);
-          const ok = this.findMatches().length > 0;
-          this.swap(r, c, r + 1, c);
-          if (ok) return true;
-        }
-      }
-    }
-    return false;
+  // ---- 输入：移动瞄准 + 松手投放 ----
+  onTouchMove(e) {
+    if (!this.world || this.data.gameOver) return;
+    const t = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]);
+    if (!t) return;
+    const x = t.x != null ? t.x : (t.clientX != null ? t.clientX - this.boardLeft : this.boardW / 2);
+    this.world.setAim(x);
   },
 
-  shuffle() {
-    const flat = [];
-    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) flat.push(this.board[r][c]);
-    do {
-      for (let i = flat.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [flat[i], flat[j]] = [flat[j], flat[i]];
-      }
-      let k = 0;
-      for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) this.board[r][c] = flat[k++];
-    } while (this.findMatches().length > 0 || !this.hasPossibleMove());
-  },
-
-  // ---- 输入 ----
-  onBoardTap(e) {
-    if (this.busy || this.data.gameOver || !this.canvas) return;
-    const t = (e.changedTouches && e.changedTouches[0]) || e.detail || {};
-    const x = (t.x != null ? t.x : (t.clientX != null ? t.clientX - this.boardLeft : 0));
-    const y = (t.y != null ? t.y : (t.clientY != null ? t.clientY - this.boardTop : 0));
-    const c = Math.floor(x / this.cell);
-    const r = Math.floor(y / this.cell);
-    if (r < 0 || r >= ROWS || c < 0 || c >= COLS) return;
-    const sel = this.data.selected;
-    if (!sel) { this.setData({ selected: { r, c } }); this.draw(); return; }
-    if (sel.r === r && sel.c === c) { this.setData({ selected: null }); this.draw(); return; }
-    const adjacent = Math.abs(sel.r - r) + Math.abs(sel.c - c) === 1;
-    if (adjacent) {
-      this.attemptSwap(sel.r, sel.c, r, c);
-    } else {
-      this.setData({ selected: { r, c } }); this.draw();
-    }
+  onTouchEnd(e) {
+    if (!this.world || this.data.gameOver) return;
+    const t = (e.changedTouches && e.changedTouches[0]) || (e.touches && e.touches[0]);
+    let x = this.world.aimX;
+    if (t) x = t.x != null ? t.x : (t.clientX != null ? t.clientX - this.boardLeft : x);
+    this.world.drop(x);
   },
 
   // ---- 绘制 ----
   draw() {
-    if (!this.ctx) return;
-    const ctx = this.ctx, w = this.boardW, h = this.boardH, cell = this.cell;
-    ctx.clearRect(0, 0, w, h);
-    // 棋盘玻璃底
+    const w = this.world;
+    if (!w || !this.ctx) return;
+    const ctx = this.ctx, W = this.boardW, H = this.boardH;
+    ctx.clearRect(0, 0, W, H);
+
+    // 玻璃底
     ctx.save();
     ctx.fillStyle = 'rgba(30, 77, 140, 0.10)';
-    this.roundRect(ctx, 0, 0, w, h, 20); ctx.fill();
+    this.roundRect(ctx, 0, 0, W, H, 20); ctx.fill();
     ctx.restore();
-    // 网格线
+
+    // 顶部红色警戒线
     ctx.save();
-    ctx.strokeStyle = 'rgba(255,255,255,0.25)';
-    ctx.lineWidth = 1;
-    for (let i = 1; i < COLS; i++) {
-      ctx.beginPath(); ctx.moveTo(i * cell, 0); ctx.lineTo(i * cell, h); ctx.stroke();
-    }
-    for (let i = 1; i < ROWS; i++) {
-      ctx.beginPath(); ctx.moveTo(0, i * cell); ctx.lineTo(w, i * cell); ctx.stroke();
-    }
+    ctx.strokeStyle = 'rgba(230,80,80,0.7)';
+    ctx.setLineDash([6, 6]);
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0, DANGER_Y); ctx.lineTo(W, DANGER_Y); ctx.stroke();
     ctx.restore();
-    // 选中高亮
-    const sel = this.data.selected;
-    if (sel) {
+
+    // 球
+    for (const b of w.balls) {
+      const cfg = LEVELS[b.level];
+      engine.renderBallPattern(ctx, b.x, b.y, cfg.r, {
+        type: cfg.type, petals: cfg.petals, tightness: cfg.tightness,
+        dyeName: cfg.dye, concentration: cfg.concentration, level: b.level + 1, whitespace: 0.3
+      });
+      if (b.level === MAX_LEVEL) {
+        ctx.save();
+        ctx.strokeStyle = 'rgba(255,211,107,0.95)';
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(b.x, b.y, cfg.r + 3, 0, Math.PI * 2); ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    // 合成扩散特效
+    for (const ef of w.effects) {
       ctx.save();
-      ctx.strokeStyle = '#ffd36b';
-      ctx.lineWidth = 4;
-      this.roundRect(ctx, sel.c * cell + 4, sel.r * cell + 4, cell - 8, cell - 8, 12); ctx.stroke();
+      ctx.globalAlpha = Math.max(0, ef.life);
+      ctx.strokeStyle = 'rgba(255,211,107,0.9)';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(ef.x, ef.y, ef.r + (1 - ef.life) * 30, 0, Math.PI * 2);
+      ctx.stroke();
       ctx.restore();
     }
-    // 纹样块
-    for (let r = 0; r < ROWS; r++) {
-      for (let c = 0; c < COLS; c++) {
-        const tile = this.board[r][c];
-        if (!tile) continue;
-        const cx = c * cell + cell / 2;
-        const cy = r * cell + cell / 2;
-        const p = engine.getPatternById(TYPES[tile.type]);
-        engine.renderBallPattern(ctx, cx, cy, cell * 0.42, {
-          type: p ? p.type : 'spiral',
-          petals: p ? p.petals : 6,
-          tightness: 0.45,
-          whitespace: 0.32,
-          rotation: 0,
-          dyeName: ['板蓝根', '栀子黄', '茜草', '靛青', '紫草', '板蓝根'][tile.type % 6],
-          concentration: 0.7,
-          seed: tile.type + 1
-        });
-        if (tile.special) {
-          const spec = SPECIALS.find(s => s.key === tile.special);
-          ctx.save();
-          ctx.strokeStyle = '#ffd36b';
-          ctx.setLineDash([4, 3]);
-          ctx.lineWidth = 2;
-          this.roundRect(ctx, c * cell + 3, r * cell + 3, cell - 6, cell - 6, 12); ctx.stroke();
-          ctx.setLineDash([]);
-          ctx.fillStyle = 'rgba(255,211,107,0.92)';
-          ctx.font = (cell * 0.22) + 'px sans-serif';
-          ctx.textAlign = 'center';
-          ctx.fillText('残', cx, cy + cell * 0.34);
-          ctx.restore();
-        }
-      }
+
+    // 预览球 + 落点指示线
+    if (!this.data.gameOver && !w.over) {
+      const lv = w.spawnLevel;
+      const cfg = LEVELS[lv];
+      const px = w.aimX;
+      ctx.save();
+      ctx.globalAlpha = 0.55;
+      engine.renderBallPattern(ctx, px, cfg.r + 2, cfg.r, {
+        type: cfg.type, petals: cfg.petals, tightness: cfg.tightness,
+        dyeName: cfg.dye, concentration: cfg.concentration, level: lv + 1, whitespace: 0.3
+      });
+      ctx.restore();
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+      ctx.setLineDash([4, 6]);
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(px, cfg.r * 2 + 6); ctx.lineTo(px, H - 4); ctx.stroke();
+      ctx.restore();
     }
   },
 
@@ -357,73 +191,74 @@ Page({
   toggleMute() { this.setData({ muted: !this.data.muted }); },
 
   // ---- 结束 ----
-  gameOver() {
-    const score = this.data.score;
+  _endGame() {
+    if (this.data.gameOver) return;
+    const w = this.world;
+    const score = w.score;
     const best = Math.max(score, this.data.best);
     wx.setStorageSync('ranxin_game_best', best);
-    const unlocked = wx.getStorageSync('ranxin_unlocked_patterns') || [];
-    const unlockedPatterns = unlocked.slice(-3).reverse().map(id => {
-      const p = engine.PATTERN_CATALOG.find(x => x.id === id);
-      return p ? { id, name: p.name, thumb: '/assets/patterns/' + id + '.png' } : null;
-    }).filter(Boolean);
-    const defaults = engine.PATTERN_CATALOG.filter(p => p.unlockedByDefault).map(p => ({
-      id: p.id, name: p.name, thumb: '/assets/patterns/' + p.id + '.png'
-    }));
+    // 按最高等级解锁纹样（本地，不依赖后端）
+    const unlockedNow = [];
+    for (const lv in UNLOCK_BY_LEVEL) {
+      if (w.maxLevel >= Number(lv)) {
+        const id = UNLOCK_BY_LEVEL[lv];
+        if (this.unlockPattern(id)) unlockedNow.push(id);
+      }
+    }
+    const unlockedPatterns = (wx.getStorageSync('ranxin_unlocked_patterns') || [])
+      .slice(-3).reverse()
+      .map(id => {
+        const p = engine.PATTERN_CATALOG.find(x => x.id === id);
+        return p ? { id, name: p.name, thumb: '/assets/patterns/' + id + '.png' } : null;
+      })
+      .filter(Boolean);
+    const defaults = engine.PATTERN_CATALOG.slice(0, 3).map(p => ({ id: p.id, name: p.name, thumb: '/assets/patterns/' + p.id + '.png' }));
     while (unlockedPatterns.length < 3 && defaults.length) {
       const d = defaults.shift();
       if (!unlockedPatterns.find(u => u.id === d.id)) unlockedPatterns.push(d);
     }
-    const percent = Math.min(99, 40 + Math.floor(score / 80));
-    const seconds = Math.floor((Date.now() - this.startTime) / 1000);
+    const seconds = Math.floor((Date.now() - this._startTime) / 1000);
     const minutes = Math.max(1, Math.floor(seconds / 60));
+    const percent = Math.min(99, 30 + Math.floor(score / 60));
+    const win = w.maxLevel >= MAX_LEVEL;
+    this._startTime = this._startTime || Date.now();
     this.setData({
       gameOver: true,
       best,
       result: {
-        score,
-        time: seconds,
-        timeMinutes: minutes,
-        percent,
-        fragments: this.fragments,
-        unlockedCount: unlocked.length || 1,
-        unlockedPatterns
+        score, time: seconds, timeMinutes: minutes, percent,
+        topLevel: w.maxLevel, topName: LEVELS[w.maxLevel].name,
+        unlockedNow, unlockedPatterns, win
       }
     });
-    // 上报成绩并领取云端奖励（C 真实接口；Mock 下返回固定奖励，幂等无害）
-    if (typeof api !== 'undefined') {
-      api.submitGame({ score, duration: seconds }).then(res => {
-        const reward = res && res.reward;
-        if (reward && reward.patternId) {
-          api.unlockPattern(reward.patternId, { sourceType: 'game' }).then(r => {
-            if (r && r.isNew && r.pattern) {
-              wx.showToast({ title: '游戏解锁：' + r.pattern.name, icon: 'none' });
-            }
-          }).catch(() => {});
-        }
-      }).catch(() => {});
+    // 上报成绩（Mock 下幂等无害）
+    if (typeof api !== 'undefined' && api.submitGame) {
+      api.submitGame({ score, duration: seconds }).catch(() => {});
     }
   },
 
-  collectPattern() {
-    wx.showToast({ title: '纹样已收入库', icon: 'success' });
-    setTimeout(() => wx.switchTab({ url: '/pages/works/works' }), 600);
+  unlockPattern(id) {
+    const list = wx.getStorageSync('ranxin_unlocked_patterns') || [];
+    if (list.indexOf(id) >= 0) return false;
+    list.push(id);
+    wx.setStorageSync('ranxin_unlocked_patterns', list);
+    return true;
   },
 
   viewCollection() { wx.navigateTo({ url: '/pages/collection/collection' }); },
   viewRank() { wx.showToast({ title: '排行榜由 C 接入', icon: 'none' }); },
 
   replay() {
-    this.board = [];
-    this.busy = false;
-    this.fragments = { hudie: 0, wanzi: 0 };
-    this.unlockedThisGame = [];
-    this.startTime = Date.now();
+    if (!this.world) return;
+    this.world = new PhysicsWorld(this.boardW, this.boardH);
+    this._lastScore = 0;
+    this._lastMax = 0;
+    this._lastQuote = 0;
+    this._startTime = Date.now();
     this.setData({
-      score: 0, moves: MOVES_TOTAL, selected: null,
-      gameOver: false, result: {}, fragments: { hudie: 0, wanzi: 0 }
+      score: 0, topName: '染珠', topLevel: 0,
+      gameOver: false, result: {}, quoteVisible: false
     });
-    this.buildBoard();
-    this.draw();
   },
 
   roundRect(ctx, x, y, w, h, r) {

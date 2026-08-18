@@ -12,8 +12,8 @@
       <view class="hud-value">{{best}}</view>
     </view>
     <view class="hud-card">
-      <view class="hud-label">剩余步数</view>
-      <view class="hud-value">{{moves}}</view>
+      <view class="hud-label">目前最高</view>
+      <view class="hud-value">{{topName}}</view>
     </view>
     <view class="hud-card mute-card" bindtap="toggleMute">
       <view class="hud-label">音景</view>
@@ -21,42 +21,32 @@
     </view>
   </view>
 
-  <!-- 残片收集进度 -->
-  <view class="frag-bar">
-    <view class="frag-item">
-      <text class="frag-name">蝴蝶纹残片</text>
-      <text class="frag-count">{{fragments.hudie}}/1</text>
-    </view>
-    <view class="frag-item">
-      <text class="frag-name">万字纹残片</text>
-      <text class="frag-count">{{fragments.wanzi}}/1</text>
-    </view>
-  </view>
-
   <!-- 棋盘 -->
-  <view class="board-wrap" bindtap="onBoardTap">
-    <canvas type="2d" id="game-canvas" class="game-canvas"></canvas>
+  <view class="board-wrap">
+    <canvas type="2d" id="game-canvas" class="game-canvas"
+      bindtouchstart="onTouchMove" bindtouchmove="onTouchMove" bindtouchend="onTouchEnd"></canvas>
   </view>
 
   <!-- 正念提示语 -->
   <view class="quote-toast {{quoteVisible ? 'show' : ''}}">{{quote}}</view>
 
-  <view class="game-tip">交换相邻两块，连成三个及以上同纹样即可消除 · 把「残片」沉到底部即可收集解锁</view>
+  <view class="game-tip">移动手指瞄准，松手投下扎染球 · 相同纹样相撞即合体升级 · 一直合到「大染缸」</view>
 
   <!-- 结果弹窗 -->
   <view class="result-mask" wx:if="{{gameOver}}">
     <view class="result-card">
-      <view class="result-title">这一缸，染成了</view>
+      <view class="result-title">{{result.win ? '这一缸，染成了' : '差一点点，再染一缸'}}</view>
       <view class="result-stats">
         <view class="stat"><text class="stat-num">{{result.score}}</text><text class="stat-label">本局得分</text></view>
         <view class="stat"><text class="stat-num">{{result.timeMinutes}}</text><text class="stat-label">分钟沉浸</text></view>
         <view class="stat"><text class="stat-num">{{result.percent}}%</text><text class="stat-label">超过玩家</text></view>
       </view>
 
-      <view class="frag-result" wx:if="{{result.fragments.hudie || result.fragments.wanzi}}">
-        <text class="frag-result-label">本局收集残片：</text>
-        <text wx:if="{{result.fragments.hudie}}">蝴蝶纹残片 ×{{result.fragments.hudie}}　</text>
-        <text wx:if="{{result.fragments.wanzi}}">万字纹残片 ×{{result.fragments.wanzi}}</text>
+      <view class="result-sub">本局最高染出了「{{result.topName}}」</view>
+
+      <view class="result-sub" wx:if="{{result.unlockedNow.length}}">新解锁纹样</view>
+      <view class="mini-collection" wx:if="{{result.unlockedNow.length}}">
+        <text wx:for="{{result.unlockedNow}}" wx:key="*this" class="unlock-tag">{{item}}</text>
       </view>
 
       <view class="result-sub">我的纹样库</view>

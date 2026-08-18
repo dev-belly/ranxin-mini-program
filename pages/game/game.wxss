@@ -49,10 +49,10 @@
 .frag-name { font-size: 24rpx; color: #1a2b4d; }
 .frag-count { font-size: 26rpx; font-weight: 700; color: #c08a16; }
 
-/* 棋盘 */
+/* 棋盘：竖屏更高的落球区 */
 .board-wrap {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 3 / 4;
   background: linear-gradient(160deg, #5c8df5, #2b5bc7);
   border-radius: 28rpx;
   padding: 12rpx;
@@ -150,6 +150,13 @@
   height: 96rpx;
   border-radius: 50%;
   border: 3rpx solid rgba(75,110,230,0.25);
+}
+.unlock-tag {
+  font-size: 24rpx;
+  color: #c08a16;
+  background: rgba(255,211,107,0.16);
+  border-radius: 999rpx;
+  padding: 8rpx 22rpx;
 }
 .result-btn { width: 100%; }
 .result-actions {
