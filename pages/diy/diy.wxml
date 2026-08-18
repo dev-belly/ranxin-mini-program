@@ -78,7 +78,7 @@
       </view>
       <view class="slider-row">
         <text class="slider-label">捆扎松紧度 {{tightness}}/5</text>
-        <slider min="1" max="5" step="1" value="{{tightness}}" bindchange="onTightnessChange" show-value block-size="20" activeColor="#4b6ee6" backgroundColor="#dbe4f5"/>
+        <slider min="1" max="5" step="1" value="{{tightness}}" bindchange="onTightnessChange" show-value block-size="20" activeColor="#347af0" backgroundColor="#dbe4f5"/>
       </view>
     </view>
 
@@ -96,7 +96,7 @@
       </view>
       <view class="slider-row">
         <text class="slider-label">染液浓度 {{concentration}}%</text>
-        <slider min="10" max="100" value="{{concentration}}" bindchange="onConcentrationChange" show-value block-size="20" activeColor="#4b6ee6" backgroundColor="#dbe4f5"/>
+        <slider min="10" max="100" value="{{concentration}}" bindchange="onConcentrationChange" show-value block-size="20" activeColor="#347af0" backgroundColor="#dbe4f5"/>
       </view>
     </view>
 
@@ -123,7 +123,7 @@
       <text class="control-title">慢慢拆开棉线</text>
       <view class="slider-row">
         <text class="slider-label">展开程度 {{unfoldProgress}}%</text>
-        <slider min="0" max="100" value="{{unfoldProgress}}" bindchange="onUnfoldChange" show-value block-size="20" activeColor="#4b6ee6" backgroundColor="#dbe4f5"/>
+        <slider min="0" max="100" value="{{unfoldProgress}}" bindchange="onUnfoldChange" show-value block-size="20" activeColor="#347af0" backgroundColor="#dbe4f5"/>
       </view>
       <button class="rx-btn-primary save-btn" bindtap="saveWork" disabled="{{unfoldProgress<80}}">收下这块纹样</button>
       <text wx:if="{{unfoldProgress<80}}" class="save-hint">展开到 80% 以上即可保存</text>

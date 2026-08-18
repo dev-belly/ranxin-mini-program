@@ -47,15 +47,15 @@
   justify-content: center;
 }
 .step-item.done .step-dot {
-  background: #3a55c8;
-  border-color: #3a55c8;
+  background: #2a44c1;
+  border-color: #2a44c1;
   color: #fff;
 }
 .step-item.active .step-dot {
   background: #fff;
-  border-color: #4b6ee6;
-  color: #3a55c8;
-  box-shadow: 0 0 0 8rpx rgba(75,110,230,0.15);
+  border-color: #347af0;
+  color: #2a44c1;
+  box-shadow: 0 0 0 8rpx rgba(52,122,240,0.15);
 }
 
 /* 正念语录 */
@@ -65,10 +65,10 @@
   background: rgba(255,255,255,0.88);
   border-radius: 28rpx;
   text-align: center;
-  box-shadow: 0 8rpx 32rpx rgba(75,110,230,0.08);
+  box-shadow: 0 8rpx 32rpx rgba(52,122,240,0.08);
 }
 .quote-mark {
-  color: #7b5fe0;
+  color: #a160ef;
   font-size: 36rpx;
   font-family: Georgia, serif;
   margin: 0 10rpx;
@@ -95,13 +95,13 @@
   padding: 28rpx;
   background: rgba(255,255,255,0.92);
   border-radius: 32rpx;
-  box-shadow: 0 8rpx 32rpx rgba(75,110,230,0.08);
+  box-shadow: 0 8rpx 32rpx rgba(52,122,240,0.08);
 }
 .control-title {
   display: block;
   font-size: 32rpx;
   font-weight: 700;
-  color: #1a2b4d;
+  color: #173d79;
   margin-bottom: 24rpx;
 }
 
@@ -121,13 +121,13 @@
 }
 .fold-card.selected {
   background: #eef2ff;
-  border-color: #3a55c8;
+  border-color: #2a44c1;
 }
 .fold-name {
   display: block;
   font-size: 28rpx;
   font-weight: 600;
-  color: #1a2b4d;
+  color: #173d79;
   margin-bottom: 8rpx;
 }
 .fold-desc {
@@ -154,7 +154,7 @@
 }
 .dye-card.selected {
   background: #eef2ff;
-  border-color: #3a55c8;
+  border-color: #2a44c1;
 }
 .dye-circle {
   width: 56rpx;
@@ -167,7 +167,7 @@
   display: block;
   font-size: 26rpx;
   font-weight: 600;
-  color: #1a2b4d;
+  color: #173d79;
   margin-bottom: 4rpx;
 }
 .dye-desc {
@@ -199,7 +199,7 @@
 .timer-count {
   font-size: 96rpx;
   font-weight: 200;
-  color: #1a2b4d;
+  color: #173d79;
   line-height: 1;
 }
 .timer-unit {
@@ -245,7 +245,7 @@
 }
 .breath-text {
   font-size: 28rpx;
-  color: #4b6ee6;
+  color: #347af0;
   font-weight: 600;
 }
 
@@ -324,7 +324,7 @@
   display: block;
   font-size: 38rpx;
   font-weight: 700;
-  color: #1a2b4d;
+  color: #173d79;
   margin-bottom: 24rpx;
   font-family: 'Songti SC', 'SimSun', serif;
 }
@@ -351,7 +351,7 @@
   display: block;
   font-size: 32rpx;
   font-weight: 600;
-  color: #1a2b4d;
+  color: #173d79;
   margin-bottom: 8rpx;
 }
 .result-line {
@@ -361,7 +361,7 @@
   margin-bottom: 4rpx;
 }
 .result-story {
-  color: #4b6ee6;
+  color: #347af0;
   line-height: 1.5;
 }
 .mindful-input {
@@ -495,7 +495,7 @@
   width: 30%;
   padding: 40rpx 0;
   background: rgba(255,255,255,0.9);
-  border: 2rpx solid rgba(75,110,230,0.16);
+  border: 2rpx solid rgba(52,122,240,0.16);
   border-radius: 28rpx;
   text-align: center;
   box-shadow: 0 8rpx 24rpx rgba(25,49,88,0.06);
@@ -519,7 +519,7 @@
   justify-content: space-between;
   padding: 32rpx 36rpx;
   background: rgba(255,255,255,0.92);
-  border: 2rpx solid rgba(75,110,230,0.16);
+  border: 2rpx solid rgba(52,122,240,0.16);
   border-radius: 28rpx;
   box-shadow: 0 8rpx 24rpx rgba(25,49,88,0.06);
 }
@@ -535,7 +535,7 @@
 .fabric-tag {
   font-size: 26rpx;
   font-weight: 600;
-  color: #3a55c8;
+  color: #2a44c1;
 }
 .fabric-desc { font-size: 22rpx; color: #62749b; margin-top: 4rpx; }
 
@@ -550,14 +550,14 @@
   width: 30%;
   padding: 24rpx 0;
   background: rgba(255,255,255,0.92);
-  border: 2rpx solid rgba(75,110,230,0.16);
+  border: 2rpx solid rgba(52,122,240,0.16);
   border-radius: 28rpx;
   text-align: center;
   box-shadow: 0 8rpx 24rpx rgba(25,49,88,0.06);
 }
 .pattern-card.selected {
-  border-color: #4b6ee6;
-  box-shadow: 0 0 0 6rpx rgba(75,110,230,0.18);
+  border-color: #347af0;
+  box-shadow: 0 0 0 6rpx rgba(52,122,240,0.18);
 }
 .pattern-thumb {
   width: 120rpx;

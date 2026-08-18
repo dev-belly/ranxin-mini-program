@@ -1,6 +1,12 @@
 <view class="rx-page game-page">
   <view class="rx-bg"></view>
 
+  <!-- 标题（对齐 A：✦合成大染缸✦ + ✿副标题✿） -->
+  <view class="title-wrap">
+    <view class="title">合成大染缸</view>
+    <view class="subtitle">把烦恼一颗颗合掉</view>
+  </view>
+
   <!-- HUD -->
   <view class="game-hud">
     <view class="hud-card">

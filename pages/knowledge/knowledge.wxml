@@ -1,5 +1,14 @@
 <view class="rx-page kn-page">
   <view class="rx-bg"></view>
+  <view class="kn-hero">
+    <view class="kn-hero-copy">
+      <view class="kn-hero-pill">非遗小知识</view>
+      <view class="kn-hero-title">一分钟，读懂</view>
+      <view class="kn-hero-title">扎染里的自然与科学</view>
+      <view class="kn-hero-desc">板蓝根、扎结与氧化，每一道工序都是时间的魔法</view>
+    </view>
+  </view>
+
   <view class="kn-head">
     <view class="kn-spark"><text class="rx-spark">✦</text> 非遗小知识</view>
     <view class="kn-sub">一分钟，认识扎染里的自然与科学</view>

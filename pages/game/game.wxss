@@ -4,7 +4,40 @@
   box-sizing: border-box;
 }
 
-/* HUD */
+/* 标题（对齐 A：✦合成大染缸✦ + ✿副标题✿） */
+.title-wrap {
+  text-align: center;
+  margin: 8rpx 0 20rpx;
+}
+.title {
+  font-family: "Songti SC", "STSong", serif;
+  font-size: 60rpx;
+  font-weight: 700;
+  letter-spacing: 6rpx;
+  color: #203e9c;
+}
+.title::before, .title::after {
+  content: "✦";
+  font: 20rpx Arial;
+  color: #8887f2;
+  margin: 0 17rpx;
+  vertical-align: middle;
+}
+.subtitle {
+  margin-top: 16rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+  letter-spacing: 3rpx;
+  color: #5e6ea7;
+}
+.subtitle::before, .subtitle::after {
+  content: "✿";
+  font: 18rpx Arial;
+  color: #6e77dd;
+  margin: 0 21rpx;
+}
+
+/* HUD（对齐 A .stat 白卡圆角 + 深蓝数字） */
 .game-hud {
   display: flex;
   gap: 16rpx;
@@ -12,20 +45,24 @@
 }
 .hud-card {
   flex: 1;
-  background: rgba(255,255,255,0.92);
-  border-radius: 24rpx;
+  background: linear-gradient(160deg, rgba(255,255,255,0.96), rgba(244,248,255,0.90));
+  border: 1.5rpx solid rgba(203,214,238,0.90);
+  border-radius: 34rpx;
   padding: 18rpx 10rpx;
   text-align: center;
-  box-shadow: 0 8rpx 24rpx rgba(43,91,199,0.10);
+  box-shadow: 0 9rpx 24rpx rgba(37,63,111,0.07), inset 0 1rpx 0 rgba(255,255,255,0.98);
 }
 .hud-label {
   font-size: 22rpx;
-  color: #6b7a99;
+  font-weight: 700;
+  letter-spacing: 2rpx;
+  color: #3153aa;
 }
 .hud-value {
   font-size: 38rpx;
-  font-weight: 700;
-  color: #173d79;
+  font-weight: 500;
+  color: #2944c1;
+  letter-spacing: 2rpx;
   margin-top: 6rpx;
 }
 .mute-card { display: flex; flex-direction: column; justify-content: center; }
@@ -46,7 +83,7 @@
   justify-content: space-between;
   align-items: center;
 }
-.frag-name { font-size: 24rpx; color: #1a2b4d; }
+.frag-name { font-size: 24rpx; color: #173d79; }
 .frag-count { font-size: 26rpx; font-weight: 700; color: #c08a16; }
 
 /* 棋盘：竖屏更高的落球区 */
@@ -72,7 +109,7 @@
   max-width: 90%;
   text-align: center;
   font-size: 26rpx;
-  color: #3a55c8;
+  color: #2a44c1;
   background: rgba(255,255,255,0.85);
   border-radius: 999rpx;
   padding: 14rpx 28rpx;
@@ -114,7 +151,7 @@
   font-family: "Songti SC", serif;
   font-size: 38rpx;
   font-weight: 700;
-  color: #1a2b4d;
+  color: #173d79;
   margin-bottom: 28rpx;
 }
 .result-stats {
@@ -123,7 +160,7 @@
   margin-bottom: 24rpx;
 }
 .stat { display: flex; flex-direction: column; }
-.stat-num { font-size: 44rpx; font-weight: 800; color: #3a55c8; }
+.stat-num { font-size: 44rpx; font-weight: 800; color: #2a44c1; }
 .stat-label { font-size: 22rpx; color: #8b97b3; margin-top: 4rpx; }
 .frag-result {
   font-size: 24rpx;
@@ -144,16 +181,16 @@
 .result-done {
   display: inline-block;
   font-size: 22rpx;
-  color: #3a55c8;
+  color: #2a44c1;
   background: linear-gradient(90deg, rgba(52,122,240,0.12), rgba(161,96,239,0.12));
-  border: 1rpx solid rgba(75,110,230,0.25);
+  border: 1rpx solid rgba(52,122,240,0.25);
   border-radius: 999rpx;
   padding: 6rpx 22rpx;
   margin-bottom: 28rpx;
 }
 .result-detail {
-  background: rgba(75,110,230,0.06);
-  border: 1rpx solid rgba(75,110,230,0.14);
+  background: rgba(52,122,240,0.06);
+  border: 1rpx solid rgba(52,122,240,0.14);
   border-radius: 24rpx;
   padding: 24rpx;
   margin-bottom: 24rpx;
@@ -170,7 +207,7 @@
   width: 120rpx;
   height: 120rpx;
   border-radius: 50%;
-  border: 3rpx solid rgba(75,110,230,0.25);
+  border: 3rpx solid rgba(52,122,240,0.25);
   flex: 0 0 auto;
   margin-right: 20rpx;
 }
@@ -180,7 +217,7 @@
 .detail-added {
   margin-top: 16rpx;
   font-size: 24rpx;
-  color: #3a55c8;
+  color: #2a44c1;
   font-weight: 600;
   text-align: center;
 }
@@ -200,7 +237,7 @@
   width: 96rpx;
   height: 96rpx;
   border-radius: 50%;
-  border: 3rpx solid rgba(75,110,230,0.25);
+  border: 3rpx solid rgba(52,122,240,0.25);
 }
 .unlock-tag {
   font-size: 24rpx;
@@ -218,5 +255,5 @@
 }
 .result-link {
   font-size: 26rpx;
-  color: #3a55c8;
+  color: #2a44c1;
 }
