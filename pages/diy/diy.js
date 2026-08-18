@@ -277,6 +277,11 @@ Page({
     if (this.canvas) {
       wx.canvasToTempFilePath({
         canvas: this.canvas,
+        x: 0, y: 0,
+        width: this.canvas.width,
+        height: this.canvas.height,
+        destWidth: this.canvas.width,
+        destHeight: this.canvas.height,
         success: (res) => {
           work.thumb = res.tempFilePath;
           captureAndPersist();

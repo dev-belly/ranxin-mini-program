@@ -21,12 +21,12 @@ const DYE_LABELS = {
 
 // 主题对齐：以白族扎染正统纹样为基准（蝴蝶纹/团花纹/水波纹/山水纹/几何纹/卷草纹）
 const PATTERN_CATALOG = [
-  { id: 'hudie', name: '蝴蝶纹', tags: '多子多福', type: 'butterfly', petals: 2, cat: '白族传统' },
-  { id: 'tuan', name: '团花纹', tags: '团圆美满', type: 'radial', petals: 8, cat: '白族传统' },
-  { id: 'shui', name: '水波纹', tags: '风调雨顺', type: 'wave', petals: 6, cat: '自然' },
-  { id: 'cang', name: '山水纹', tags: '乐山乐水', type: 'mountain', petals: 1, cat: '自然' },
-  { id: 'ling', name: '菱形纹', tags: '秩序稳定', type: 'diamond', petals: 4, cat: '几何' },
-  { id: 'he', name: '卷草纹', tags: '生生不息', type: 'vine', petals: 10, cat: '白族传统' }
+  { id: 'hudie', name: '蝴蝶纹', tags: '多子多福', type: 'butterfly', petals: 2, cat: '白族传统', story: '轻盈展翅，寓意破茧新生，适合需要力量的时刻。' },
+  { id: 'tuan', name: '团花纹', tags: '团圆美满', type: 'radial', petals: 8, cat: '白族传统', story: '圆满聚合，如花开当庭，带来安定与归属感。' },
+  { id: 'shui', name: '水波纹', tags: '风调雨顺', type: 'wave', petals: 6, cat: '自然', story: '连续折叠与扎结会形成自然流线，象征流动、松弛与不过度控制。' },
+  { id: 'cang', name: '山水纹', tags: '乐山乐水', type: 'mountain', petals: 1, cat: '自然', story: '苍山洱海入布，寓意乐山乐水、道法自然。' },
+  { id: 'ling', name: '菱形纹', tags: '秩序稳定', type: 'diamond', petals: 4, cat: '几何', story: '菱形秩序，象征稳定与清晰，适合整理思绪。' },
+  { id: 'he', name: '卷草纹', tags: '生生不息', type: 'vine', petals: 10, cat: '白族传统', story: '卷草绵延，象征生生不息，于流转中见韧性。' }
 ];
 
 function hexToRgb(hex) {
