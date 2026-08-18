@@ -100,6 +100,7 @@
       <view class="result-meta">
         <text class="result-name">{{result.title}}</text>
         <text class="result-line">{{result.dyeName}} · 浓度{{result.concentration}}%</text>
+        <text class="result-line result-story">文化寓意：{{result.story}}</text>
         <text class="result-line">{{result.createdAt}}</text>
       </view>
       <textarea class="mindful-input" placeholder="此时此刻的感受是什么？（会存入正念日志）" value="{{mindfulNote}}" bindinput="onMindfulNoteInput" maxlength="60"/>
