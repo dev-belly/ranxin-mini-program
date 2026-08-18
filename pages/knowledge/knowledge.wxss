@@ -1,4 +1,33 @@
 .kn-page { padding-top: 40rpx; }
+.kn-hero {
+  position: relative;
+  margin-bottom: 28rpx;
+  min-height: 200rpx;
+  border-radius: 31rpx;
+  overflow: hidden;
+  background: linear-gradient(90deg, #082d6d 0%, #0a3277 45%, #184988 100%);
+  box-shadow: 0 12rpx 28rpx rgba(24,48,89,.10);
+}
+.kn-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(90deg, rgba(7,29,71,.96) 0%, rgba(7,29,71,.78) 45%, transparent 85%);
+}
+.kn-hero-copy { position: relative; z-index: 3; padding: 36rpx; color: #fff; }
+.kn-hero-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 44rpx;
+  padding: 0 16rpx;
+  border-radius: 22rpx;
+  border: 1.3rpx solid rgba(255,255,255,.45);
+  font-size: 22rpx;
+  color: rgba(255,255,255,.86);
+}
+.kn-hero-title { font-size: 44rpx; font-weight: 500; letter-spacing: 2rpx; margin-top: 18rpx; line-height: 1.4; }
+.kn-hero-desc { font-size: 24rpx; color: rgba(255,255,255,.74); margin-top: 10rpx; }
 .kn-head { margin-bottom: 32rpx; }
 .kn-spark { font-size: 42rpx; font-weight: 700; color: #173d79; font-family: "Songti SC","STSong",serif; }
 .kn-spark .rx-spark { margin-right: 10rpx; }
@@ -26,8 +55,8 @@
 .kn-tag {
   display: inline-block;
   font-size: 22rpx;
-  color: #3a55c8;
-  background: rgba(75,110,230,0.10);
+  color: #2a44c1;
+  background: rgba(52,122,240,0.10);
   border-radius: 999rpx;
   padding: 4rpx 16rpx;
   margin-bottom: 12rpx;

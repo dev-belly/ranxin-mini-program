@@ -1,12 +1,12 @@
 /* 全局主题：染心 · 蓝紫水彩（对齐 A 设计稿） */
 page {
-  background: #edf1f6;
+  background: linear-gradient(180deg, #fbfaf8 0%, #faf9f6 76%, #f8f7f4 100%);
   font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   color: #173d79;
   -webkit-font-smoothing: antialiased;
 }
 
-/* 模拟水彩晕染背景（对齐 A：#edf1f6 + 柔光径向洗） */
+/* 对齐 A 首页 .page：暖白纸感 + 网点纹理 + 水彩晕染 + 气泡光点 */
 .rx-bg {
   position: fixed;
   left: 0;
@@ -15,11 +15,14 @@ page {
   bottom: 0;
   z-index: -1;
   background:
-    radial-gradient(520rpx 330rpx at 16% 8%, rgba(255,255,255,.99), rgba(255,255,255,.92) 60%, transparent 100%),
-    radial-gradient(ellipse at 77% 17%, rgba(145,185,240,.40), transparent 34%),
-    radial-gradient(540rpx 420rpx at 74% 20%, rgba(160,194,242,.34), transparent 72%),
-    radial-gradient(210rpx 170rpx at 88% 12%, rgba(184,211,244,.34), transparent 72%),
-    radial-gradient(circle at 50% 45%, #fafbfe 0%, #eff3f8 68%, #e9edf4 100%);
+    radial-gradient(circle at 2px 2px, rgba(45,82,136,.16) 0 .6px, transparent .8px) 0 0 / 21px 21px,
+    radial-gradient(ellipse 380rpx 320rpx at 82% 10%, rgba(145,185,240,.34), transparent 62%),
+    radial-gradient(ellipse 300rpx 260rpx at 92% 24%, rgba(133,176,234,.28), transparent 58%),
+    radial-gradient(ellipse 240rpx 200rpx at 74% 6%, rgba(162,193,242,.22), transparent 60%),
+    radial-gradient(circle 130rpx at 28% 22%, rgba(170,147,239,.20), transparent 70%),
+    radial-gradient(circle 64rpx at 60% 38%, rgba(119,161,221,.16), transparent 70%),
+    radial-gradient(circle 40rpx at 40% 60%, rgba(168,197,237,.14), transparent 70%),
+    linear-gradient(180deg, #fbfaf8 0%, #faf9f6 76%, #f8f7f4 100%);
 }
 
 /* 通用容器 */
@@ -61,7 +64,7 @@ page {
   font-size: 30rpx;
   font-weight: 600;
   padding: 20rpx 48rpx;
-  box-shadow: 0 10rpx 24rpx rgba(93, 95, 220, 0.28);
+  box-shadow: 0 10rpx 24rpx rgba(101, 124, 253, 0.28);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -73,12 +76,12 @@ page {
 /* 次按钮：白底蓝边 */
 .rx-btn-secondary {
   background: rgba(255, 255, 255, 0.92);
-  color: #3a55c8;
+  color: #2a44c1;
   border-radius: 999rpx;
   font-size: 28rpx;
   font-weight: 600;
   padding: 18rpx 40rpx;
-  border: 1rpx solid rgba(75, 110, 230, 0.22);
+  border: 1rpx solid rgba(52, 122, 240, 0.22);
 }
 
 .rx-btn-secondary::after { border: none; }
@@ -90,7 +93,7 @@ page {
   padding: 16rpx 32rpx;
   border-radius: 999rpx;
   background: rgba(255, 255, 255, 0.82);
-  border: 1rpx solid rgba(75, 110, 230, 0.16);
+  border: 1rpx solid rgba(52, 122, 240, 0.16);
   color: #62749b;
   font-size: 28rpx;
   margin-right: 16rpx;
@@ -101,7 +104,7 @@ page {
   background: linear-gradient(90deg, #347af0 0%, #5d78fd 42%, #a160ef 100%);
   color: #fff;
   border-color: transparent;
-  box-shadow: 0 8rpx 18rpx rgba(93, 95, 220, 0.22);
+  box-shadow: 0 8rpx 18rpx rgba(101, 124, 253, 0.22);
 }
 
 /* 小标签 */
@@ -110,8 +113,8 @@ page {
   align-items: center;
   padding: 6rpx 16rpx;
   border-radius: 999rpx;
-  background: rgba(75, 110, 230, 0.10);
-  color: #3a55c8;
+  background: rgba(52, 122, 240, 0.10);
+  color: #2a44c1;
   font-size: 22rpx;
 }
 

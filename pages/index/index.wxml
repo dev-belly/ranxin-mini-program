@@ -1,114 +1,77 @@
-<!-- 归属：A｜产品前端 Owner（B 按设计稿 image1 重制） -->
+<!-- 归属：A｜产品前端 Owner（B 按 1首页.html 重制） -->
 <view class="rx-bg"></view>
 <view class="rx-page home">
 
-  <!-- 顶部标题 -->
+  <!-- 顶部 logo + 音乐 -->
   <view class="home-header">
     <view class="home-brand">
       <text class="home-title">染心</text>
-      <text class="home-tag">用染色表达情绪，遇见更懂你的自己</text>
+      <text class="home-tag">白族扎染 · 把情绪染成纹样</text>
     </view>
-    <view class="music-btn" bindtap="toggleMusic">
+    <view class="music-btn {{musicOn ? 'on' : ''}}" bindtap="toggleMusic">
       <text class="music-icon">♪</text>
     </view>
   </view>
 
-  <!-- 情绪选择 -->
-  <view class="emotion-section">
-    <view class="emotion-title">今天，你想把什么情绪染开？</view>
-    <view class="emotion-chips">
-      <view
-        wx:for="{{emotions}}"
-        wx:key="key"
-        class="rx-chip {{item.active ? 'active' : ''}} emotion-chip"
-        data-key="{{item.key}}"
-        bindtap="selectEmotion"
-      >
-        <text wx:if="{{item.active}}" class="chip-star">✦</text>
-        {{item.label}}
-      </view>
+  <!-- 情绪问题 + 胶囊 -->
+  <view class="question">今天，你想把什么情绪染开？<text class="spark">✦</text></view>
+  <view class="chips">
+    <view
+      wx:for="{{emotions}}"
+      wx:key="key"
+      class="chip {{item.active ? 'active' : ''}}"
+      data-key="{{item.key}}"
+      bindtap="selectEmotion"
+    >{{item.label}}</view>
+  </view>
+
+  <!-- hero 卡：灵魂扎染测试（对齐 A 深蓝渐变） -->
+  <view class="card hero" bindtap="goMbti">
+    <image class="card-img" src="/assets/patterns/tuan.png" mode="aspectFill" />
+    <view class="hero-copy">
+      <view class="eyebrow">灵魂扎染</view>
+      <view class="hero-h2">测测你的</view>
+      <view class="hero-h2">灵魂扎染纹样</view>
+      <view class="hero-p">30 道情境题，找到属于你的白族扎染纹样</view>
+      <view class="glow-btn">开始测试 ›</view>
     </view>
   </view>
 
-  <!-- MBTI 灵魂扎染卡 -->
-  <view class="feature-card mbti-card" bindtap="goMbti">
-    <view class="card-tag">MBTI 灵魂扎染</view>
-    <view class="card-copy">
-      <view class="card-headline">测测你的</view>
-      <view class="card-headline">灵魂扎染纹样</view>
-      <view class="card-desc">30个问题，找到属于你的白族扎染纹样</view>
-      <view class="rx-btn-primary card-btn">开始测试 ></view>
-    </view>
-    <image class="mbti-pattern" src="/assets/patterns/tuan.png" mode="aspectFill" />
-  </view>
-
-  <!-- 合成大染缸卡 -->
-  <view class="feature-card game-card" bindtap="goGame">
-    <view class="game-header">
-      <view>
-        <view class="game-title">合成大染缸</view>
-        <view class="game-sub">把烦恼一颗颗合掉</view>
-        <view class="game-tag-row">
-          <text class="rx-tag">沉浸解压</text>
-          <text class="rx-tag">超上头</text>
-        </view>
+  <!-- stress 卡：放松一下（对齐 A） -->
+  <view class="card stress" bindtap="goDiy">
+    <image class="card-img" src="/assets/patterns/cang.png" mode="aspectFill" />
+    <view class="stress-copy">
+      <view class="stress-h2">放松一下</view>
+      <view class="stress-desc">用一缸靛蓝，把今天的紧绷慢慢染开</view>
+      <view class="stag">已坚持 {{relaxDays}} 天</view>
+      <view class="score">
+        <text class="score-label">今日放松</text>
+        <text class="score-num">{{relaxCount}}</text>
+        <text class="score-unit">次</text>
       </view>
-      <view class="game-score">
-        <text class="game-score-label">今日最高</text>
-        <text class="game-score-num">{{todayBest}}</text>
-      </view>
-    </view>
-    <view class="game-orbs">
-      <view class="orb orb-1"><image src="/assets/patterns/shui.png" mode="aspectFill"/></view>
-      <view class="orb orb-2"><image src="/assets/patterns/ling.png" mode="aspectFill"/></view>
-      <view class="orb orb-3"><image src="/assets/patterns/hudie.png" mode="aspectFill"/></view>
-      <view class="orb orb-4"><image src="/assets/patterns/he.png" mode="aspectFill"/></view>
-      <view class="orb orb-5"><image src="/assets/patterns/cang.png" mode="aspectFill"/></view>
-    </view>
-    <view class="rx-btn-secondary game-btn" bindtap="goGame">开始解压 ></view>
-  </view>
-
-  <!-- 今日染力榜 -->
-  <view class="leaderboard-section">
-    <view class="lb-header">
-      <view class="lb-title">今日染力榜</view>
-      <view class="lb-tabs">
-        <view class="lb-tab {{leaderboard.active==='user'?'active':''}}" data-tab="user" bindtap="switchLeaderboardTab">用户</view>
-        <view class="lb-tab {{leaderboard.active==='city'?'active':''}}" data-tab="city" bindtap="switchLeaderboardTab">全国</view>
-      </view>
-    </view>
-    <view class="rx-card lb-card">
-      <view wx:for="{{leaderboard.list}}" wx:key="rank" class="lb-row">
-        <view class="lb-rank">{{item.rank}}</view>
-        <image class="lb-avatar" src="{{item.avatar}}" mode="aspectFill" />
-        <view class="lb-name">{{item.name}}</view>
-        <view class="lb-score">{{item.score}}</view>
-      </view>
-      <view class="lb-more" bindtap="goLeaderboard">查看完整榜单 ></view>
+      <view class="white-btn" catchtap="goDiy">开始放松 ›</view>
     </view>
   </view>
 
-  <!-- 一分钟非遗（对齐 A：三张知识卡 + 更多知识） -->
-  <view class="knowledge-section">
-    <view class="knowledge-head">
-      <view class="knowledge-h-title">
-        <text class="rx-spark">✦</text> 一分钟非遗
+  <!-- 一分钟非遗 -->
+  <view class="heritage-head">
+    <view class="heritage-title">一分钟非遗</view>
+    <view class="heritage-more" bindtap="goKnowledge">更多知识 ›</view>
+  </view>
+  <view class="knowledge">
+    <view
+      wx:for="{{knowledge}}"
+      wx:key="id"
+      class="kcard"
+      data-art="{{item.art}}"
+      bindtap="goArticle"
+    >
+      <view class="kheader">
+        <view class="khead-tag">{{item.tag}}</view>
+        <view class="khead-title">{{item.title}}</view>
+        <view class="klead">{{item.lead}}</view>
       </view>
-      <view class="knowledge-more" bindtap="goKnowledge">更多知识 ›</view>
-    </view>
-    <view class="knowledge-list">
-      <view
-        wx:for="{{knowledge}}"
-        wx:key="id"
-        class="rx-card knowledge-card"
-        data-art="{{item.art}}"
-        bindtap="goArticle"
-      >
-        <view class="knowledge-tag">{{item.tag}}</view>
-        <view class="knowledge-title">{{item.title}}</view>
-        <view class="knowledge-desc">{{item.desc}}</view>
-        <view class="knowledge-link">探索更多 →</view>
-      </view>
+      <view class="kart-zone"><image src="{{item.img}}" mode="aspectFill" /></view>
     </view>
   </view>
 
