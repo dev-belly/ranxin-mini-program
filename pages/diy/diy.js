@@ -282,7 +282,7 @@ Page({
     const { patternId, params, fabric, dyeName, concentration, oxidationTime, untieMethod, mood } = this.data;
     const pattern = engine.getPatternById(patternId);
     const work = {
-      id: 'diy_' + Date.now(),
+      workId: 'work_' + Date.now(),
       title: pattern.name + ' · ' + FABRICS.find(f => f.id === fabric).name,
       patternId,
       params: { ...params },
@@ -295,22 +295,26 @@ Page({
       source: 'diy',
       createdAt: new Date().toISOString()
     };
-    // 生成缩略图
-    wx.canvasToTempFilePath({
-      canvas: this.canvas,
-      success: (res) => {
-        work.thumb = res.tempFilePath;
-        let works = wx.getStorageSync('ranxin_works') || [];
-        works.unshift(work);
-        wx.setStorageSync('ranxin_works', works);
-        // 同时解锁纹样
-        this.unlockPattern(patternId);
-        api.saveWork(work).then(() => {
-          wx.showToast({ title: '作品已保存', icon: 'success' });
-          setTimeout(() => wx.navigateBack(), 1200);
-        });
-      }
-    });
+    // 统一经 api.saveWork 落库（带 workId，避免重复写入与过滤丢弃）
+    const persist = () => {
+      this.unlockPattern(patternId);
+      api.saveWork(work).then(() => {
+        wx.showToast({ title: '作品已保存', icon: 'success' });
+        setTimeout(() => wx.navigateBack(), 1200);
+      }).catch(() => {
+        wx.showToast({ title: '保存失败，请重试', icon: 'none' });
+      });
+    };
+    // 生成缩略图（当前画布可用时），失败也照常保存
+    if (this.canvas) {
+      wx.canvasToTempFilePath({
+        canvas: this.canvas,
+        success: (res) => { work.thumb = res.tempFilePath; persist(); },
+        fail: () => persist()
+      });
+    } else {
+      persist();
+    }
   },
 
   unlockPattern(id) {

@@ -11,7 +11,7 @@
 
   <view wx:else class="grid">
     <view class="work" wx:for="{{list}}" wx:key="workId">
-      <image class="work-img" src="/assets/patterns/{{item.patternId}}.png" mode="aspectFill" />
+      <image class="work-img" src="{{item.thumb ? item.thumb : '/assets/patterns/' + item.patternId + '.png'}}" mode="aspectFill" />
       <view class="work-name">{{item.title}}</view>
       <view class="work-meta">{{item.patternName}} · {{item.date}}</view>
     </view>

@@ -18,6 +18,8 @@ Page({
     catalog: engine.PATTERN_CATALOG,
     viewList: [],
     unlocked: [],
+    unlockedCount: 0,
+    total: engine.PATTERN_CATALOG.length,
     filter: 'all',
     detail: null,
     assetMap: {}
@@ -42,10 +44,16 @@ Page({
     api.getPatterns().then(list => {
       const remoteIds = list.map(p => p.id);
       const merged = Array.from(new Set([...local, ...remoteIds]));
-      this.setData({ unlocked: merged, viewList: toViewList(merged) }, () => this.renderThumbs());
+      const view = toViewList(merged);
+      this.setData({ unlocked: merged, viewList: view, unlockedCount: view.filter(v => v.unlocked).length }, () => this.renderThumbs());
     }).catch(() => {
-      this.setData({ unlocked: local, viewList: toViewList(local) }, () => this.renderThumbs());
+      const view = toViewList(local);
+      this.setData({ unlocked: local, viewList: view, unlockedCount: view.filter(v => v.unlocked).length }, () => this.renderThumbs());
     });
+  },
+
+  goGame() {
+    wx.navigateTo({ url: '/pages/game/game' });
   },
 
   renderThumbs() {

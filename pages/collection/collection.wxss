@@ -22,6 +22,51 @@
   gap: 20rpx;
   margin-bottom: 30rpx;
 }
+
+.unlock-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24rpx;
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 24rpx 28rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.04);
+}
+.unlock-progress {
+  flex: 1;
+  min-width: 0;
+}
+.unlock-text {
+  display: block;
+  font-size: 26rpx;
+  color: #2C3A4F;
+  margin-bottom: 12rpx;
+}
+.progress-bar {
+  height: 14rpx;
+  background: #E8EDF5;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4A5D7A, #6A7CA0);
+  border-radius: 8rpx;
+  transition: width 0.3s ease;
+}
+.banner-btn {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0 28rpx;
+  height: 64rpx;
+  line-height: 64rpx;
+  background: linear-gradient(90deg, #4A5D7A, #6A7CA0);
+  color: #fff;
+  border-radius: 32rpx;
+  font-size: 24rpx;
+}
 .filter-btn {
   padding: 12rpx 28rpx;
   border-radius: 30rpx;
