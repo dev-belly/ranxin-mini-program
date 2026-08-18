@@ -1,4 +1,4 @@
-// 归属：B｜核心交互 Owner（按 A 设计稿：正念DIY = 状态 → 选布料 → 选纹样 → 扎染等拆 → 分享海报）
+// 归属：B｜核心交互 Owner（按 A 设计稿：2.1选布料 / 2.2选择纹样 / 2.3diy扎染）
 const engine = require('../../utils/pattern-engine.js');
 const api = require('../../utils/api.js');
 
@@ -43,7 +43,7 @@ const QUOTES = {
   ],
   3: [
     '无论你看到什么——它都是唯一的那一块。',
-    '没有"错"的花纹——只有你的花纹。',
+    '没有“错”的花纹——只有你的花纹。',
     '拆开褶皱，让惊喜绽放。'
   ]
 };
@@ -54,6 +54,13 @@ const FABRICS = [
   { id: 'pillow', name: '抱枕', tag: '柔软', desc: '适合大面积纹样' }
 ];
 
+// 每个纹样对应的代表染液（用于生成缩略图与配色）
+const PATTERN_DYE = {
+  hudie: '紫草', tuan: '板蓝根', shui: '靛青', cang: '板蓝根', ling: '板蓝根', he: '靛青'
+};
+
+const CATS = ['全部', '白族传统', '自然', '几何'];
+
 Page({
   data: {
     stage: 'mood',        // mood → fabric → pattern → craft → result
@@ -63,8 +70,12 @@ Page({
     mood: 'quiet',
     fabrics: FABRICS,
     fabric: 'scarf',
-    patterns: engine.PATTERN_CATALOG.map(p => ({ id: p.id, name: p.name, thumb: '/assets/patterns/' + p.id + '.png' })),
+    cats: CATS,
+    catFilter: '全部',
+    patterns: [],          // 由引擎目录构建，含 dye / tint / thumb
+    visiblePatterns: [],
     patternId: 'tuan',
+    selPattern: null,
     foldTypes: FOLD_TYPES,
     foldType: 'symmetric',
     tightness: 3,
@@ -80,6 +91,9 @@ Page({
     soundOn: false,
     soundHint: '白噪音：洱海水声、扎花布料声、苍山风声',
     showResult: false,
+    showStory: false,
+    storyPattern: null,
+    liveChanging: false,
     mindfulNote: '',
     result: null,
     reviewMode: false,
@@ -88,7 +102,20 @@ Page({
   },
 
   onLoad() {
-    this.setData({ quote: this.randomQuote(0) });
+    const patterns = engine.PATTERN_CATALOG.map(p => {
+      const dye = PATTERN_DYE[p.id] || '板蓝根';
+      return {
+        id: p.id, name: p.name, desc: p.tags, cat: p.cat, story: p.story,
+        dye,
+        thumb: '/assets/patterns/' + p.id + '.png',
+        tint: engine.getDyeColor(dye).main
+      };
+    });
+    this.setData({ patterns, quote: this.randomQuote(0) }, () => {
+      this.updateVisible();
+      const init = patterns.find(p => p.id === this.data.patternId) || patterns[0];
+      this.setData({ selPattern: init });
+    });
     const prefill = wx.getStorageSync('ranxin_diy_prefill');
     if (prefill && engine.getPatternById(prefill)) {
       this.setData({ patternId: prefill });
@@ -97,6 +124,7 @@ Page({
   },
 
   onReady() {
+    this.genThumbs();
     if (this.data.stage === 'craft') {
       wx.nextTick(() => this.initCanvasById('diy-canvas'));
     }
@@ -105,12 +133,65 @@ Page({
   onUnload() {
     this.stopOxidation();
     if (this.reviewTimer) { clearInterval(this.reviewTimer); this.reviewTimer = null; }
+    if (this._live) clearTimeout(this._live);
     if (this.audioCtx) { this.audioCtx.destroy(); this.audioCtx = null; }
   },
 
   randomQuote(stepIdx) {
     const list = QUOTES[stepIdx] || QUOTES[0];
     return list[Math.floor(Math.random() * list.length)];
+  },
+
+  updateVisible() {
+    const { patterns, catFilter } = this.data;
+    const visible = catFilter === '全部' ? patterns : patterns.filter(p => p.cat === catFilter);
+    this.setData({ visiblePatterns: visible });
+  },
+
+  setCat(e) {
+    this.setData({ catFilter: e.currentTarget.dataset.cat }, () => this.updateVisible());
+  },
+
+  openStory(e) {
+    const id = e.currentTarget.dataset.id;
+    const p = this.data.patterns.find(x => x.id === id);
+    if (p) this.setData({ showStory: true, storyPattern: p });
+  },
+  closeStory() {
+    this.setData({ showStory: false, storyPattern: null });
+  },
+  noop() {},
+
+  // 运行时用引擎为每个纹样生成真实扎染缩略图（即使缺素材图也好看）
+  genThumbs() {
+    const q = wx.createSelectorQuery();
+    q.select('#thumb-canvas').fields({ node: true, size: true }).exec(res => {
+      if (!res || !res[0]) return;
+      const canvas = res[0].node;
+      canvas.width = 220; canvas.height = 220;
+      const ctx = canvas.getContext('2d');
+      const list = this.data.patterns;
+      const drawOne = (i) => {
+        if (i >= list.length) return;
+        const p = list[i];
+        ctx.clearRect(0, 0, 220, 220);
+        engine.renderTieDye(ctx, 220, 220, {
+          type: p.type || 'radial', petals: p.petals || 8, tightness: 0.62,
+          whitespace: 0.4, rotation: 0, dyeName: p.dye, concentration: 0.72, seed: 42
+        });
+        wx.canvasToTempFilePath({
+          canvas, x: 0, y: 0, width: 220, height: 220, destWidth: 220, destHeight: 220,
+          success: r => {
+            const patterns = this.data.patterns.slice();
+            const idx = patterns.findIndex(x => x.id === p.id);
+            if (idx >= 0) patterns[idx] = Object.assign({}, patterns[idx], { thumb: r.tempFilePath });
+            this.setData({ patterns }, () => { this.updateVisible(); drawOne(i + 1); });
+          },
+          fail: () => drawOne(i + 1)
+        });
+      };
+      drawOne(0);
+    });
   },
 
   // —— 前置流程：状态 / 布料 / 纹样 ——
@@ -126,7 +207,8 @@ Page({
   },
   choosePattern(e) {
     const id = e.currentTarget.dataset.id;
-    this.setData({ patternId: id, stage: 'craft', step: 0, quote: this.randomQuote(0) }, () => {
+    const sp = this.data.patterns.find(p => p.id === id);
+    this.setData({ patternId: id, selPattern: sp, showStory: false, stage: 'craft', step: 0, quote: this.randomQuote(0) }, () => {
       wx.nextTick(() => this.initCanvasById('diy-canvas'));
     });
   },
@@ -137,7 +219,7 @@ Page({
       if (!res || !res[0]) return;
       const canvas = res[0].node;
       const { width, height } = res[0];
-      const dpr = wx.getSystemInfoSync().pixelRatio;
+      const dpr = wx.getWindowInfo ? wx.getWindowInfo().pixelRatio : wx.getSystemInfoSync().pixelRatio;
       canvas.width = width * dpr;
       canvas.height = height * dpr;
       this.canvas = canvas;
@@ -180,6 +262,13 @@ Page({
     }
   },
 
+  // 滑块/选项变动时的“实时变化”高亮（对齐 A .live-changing 玻璃辉光）
+  flashLive() {
+    this.setData({ liveChanging: true });
+    if (this._live) clearTimeout(this._live);
+    this._live = setTimeout(() => this.setData({ liveChanging: false }), 260);
+  },
+
   afterStepChange() {
     const step = this.data.step;
     this.setData({ quote: this.randomQuote(step) });
@@ -194,18 +283,18 @@ Page({
 
   // Step 0: 扎
   chooseFold(e) {
-    this.setData({ foldType: e.currentTarget.dataset.id }, () => this.drawCurrent());
+    this.setData({ foldType: e.currentTarget.dataset.id }, () => { this.flashLive(); this.drawCurrent(); });
   },
   onTightnessChange(e) {
-    this.setData({ tightness: e.detail.value }, () => this.drawCurrent());
+    this.setData({ tightness: e.detail.value }, () => { this.flashLive(); this.drawCurrent(); });
   },
 
   // Step 1: 染
   chooseDye(e) {
-    this.setData({ dyeName: e.currentTarget.dataset.name }, () => this.drawCurrent());
+    this.setData({ dyeName: e.currentTarget.dataset.name }, () => { this.flashLive(); this.drawCurrent(); });
   },
   onConcentrationChange(e) {
-    this.setData({ concentration: e.detail.value }, () => this.drawCurrent());
+    this.setData({ concentration: e.detail.value }, () => { this.flashLive(); this.drawCurrent(); });
   },
 
   // Step 2: 等（氧化）
@@ -249,7 +338,7 @@ Page({
 
   // Step 3: 拆
   onUnfoldChange(e) {
-    this.setData({ unfoldProgress: e.detail.value }, () => this.drawCurrent());
+    this.setData({ unfoldProgress: e.detail.value }, () => { this.flashLive(); this.drawCurrent(); });
   },
 
   // 扎染等拆导航
@@ -343,13 +432,13 @@ Page({
       const canvas = this.canvas;
       canvas.width = W; canvas.height = H;
       const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#fbfaf8'; ctx.fillRect(0, 0, W, H);
-      ctx.fillStyle = '#173d79'; ctx.font = 'bold 26px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillStyle = '#fbfdff'; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = '#153e7f'; ctx.font = 'bold 26px sans-serif'; ctx.textAlign = 'center';
       ctx.fillText('染心 · 我的扎染', W / 2, 48);
       this.drawCurrent(ctx, W, H);
-      ctx.fillStyle = '#173d79'; ctx.font = '18px sans-serif';
+      ctx.fillStyle = '#153e7f'; ctx.font = '18px sans-serif';
       ctx.fillText(r.patternName + ' · ' + r.fabric, W / 2, H - 64);
-      ctx.fillStyle = '#4f5f7a'; ctx.font = '14px sans-serif';
+      ctx.fillStyle = '#59709e'; ctx.font = '14px sans-serif';
       const note = (r.mindfulNote || r.story).slice(0, 20);
       ctx.fillText(note, W / 2, H - 36);
       wx.canvasToTempFilePath({
@@ -380,7 +469,7 @@ Page({
       if (!res || !res[0]) return;
       const canvas = res[0].node;
       const { width, height } = res[0];
-      const dpr = wx.getSystemInfoSync().pixelRatio;
+      const dpr = wx.getWindowInfo ? wx.getWindowInfo().pixelRatio : wx.getSystemInfoSync().pixelRatio;
       canvas.width = width * dpr; canvas.height = height * dpr;
       this.rcanvas = canvas; this.rcanvasW = width; this.rcanvasH = height;
       this.rctx = canvas.getContext('2d'); this.rctx.scale(dpr, dpr);
