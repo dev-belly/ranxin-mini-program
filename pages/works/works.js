@@ -12,7 +12,10 @@ Page({
     filterOptions: [{ id: 'all', name: '全部' }]
   },
 
-  onShow() { this.load(); },
+  onShow() {
+    this.load();
+    if (this.getTabBar) this.getTabBar().setData({ selected: 2 });
+  },
 
   load() {
     this.setData({ loading: true });

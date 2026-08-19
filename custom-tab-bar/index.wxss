@@ -1,0 +1,50 @@
+/* 自定义玻璃 tabBar：半透明白色胶囊，底层动态极光直接透出，颜色跟着极光流转
+   替换原生的纯白 tabBar，避免盖住 .rx-bg 的流动极光 */
+
+.tabbar {
+  position: fixed;
+  left: 50%;
+  bottom: 36rpx;
+  transform: translateX(-50%);
+  width: 86%;
+  max-width: 700rpx;
+  display: flex;
+  background: rgba(255, 255, 255, .20);
+  border: 1rpx solid rgba(255, 255, 255, .50);
+  border-radius: 999rpx;
+  padding: 10rpx 18rpx;
+  box-sizing: border-box;
+  box-shadow: 0 20rpx 50rpx rgba(18, 28, 64, .28);
+  z-index: 999;
+}
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6rpx 0;
+}
+.dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: transparent;
+  margin-bottom: 8rpx;
+  border: 1rpx solid rgba(140, 150, 180, .35);
+  box-sizing: border-box;
+}
+.dot.on {
+  background: rgba(93, 120, 253, 1);
+  border-color: rgba(161, 96, 239, 1);
+  box-shadow: 0 0 12rpx rgba(93, 120, 253, .8);
+}
+.t {
+  font-size: 22rpx;
+  color: #8a93a6;
+  font-weight: 500;
+}
+.tab.on .t {
+  color: #2a44c1;
+  font-weight: 700;
+}

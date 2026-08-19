@@ -23,10 +23,7 @@
     "navigationStyle": "default"
   },
   "tabBar": {
-    "color": "#8a93a6",
-    "selectedColor": "#347af0",
-    "backgroundColor": "#ffffff",
-    "borderStyle": "white",
+    "custom": true,
     "list": [
       { "pagePath": "pages/index/index", "text": "情绪染坊" },
       { "pagePath": "pages/diy/diy", "text": "正念DIY" },

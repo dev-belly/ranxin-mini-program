@@ -119,6 +119,10 @@ Page({
     reviewProgress: 0
   },
 
+  onShow() {
+    if (this.getTabBar) this.getTabBar().setData({ selected: 1 });
+  },
+
   onLoad() {
     const patterns = engine.PATTERN_CATALOG.map(p => {
       const dye = PATTERN_DYE[p.id] || '板蓝根';
