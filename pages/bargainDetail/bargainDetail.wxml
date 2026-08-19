@@ -1,0 +1,51 @@
+<view class="rx-bg"></view>
+<view class="rx-page detail-page" wx:if="{{bargain}}">
+  <view class="nav-bar">
+    <view class="back" bindtap="goBack">‹</view>
+    <view class="share-top" bindtap="inviteHelp">分享活动</view>
+  </view>
+
+  <view class="headline">{{shareMessage}}</view>
+
+  <view class="ring-card rx-card">
+    <view class="progress-ring">
+      <view class="ring-bg"></view>
+      <view class="ring-fill" style="background: conic-gradient(#5d78fd {{progressPercent}}%, rgba(93,120,253,0.12) {{progressPercent}}%);"></view>
+      <view class="ring-inner">
+        <view class="ring-label">还差</view>
+        <view class="ring-amount">¥{{leftAmount}}</view>
+        <view class="ring-cut">已砍 ¥{{bargain.cutTotal}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="product-card rx-card">
+    <image class="product-img" src="{{bargain.previewImage}}" mode="aspectFill"></image>
+    <view class="product-info">
+      <view class="product-title">{{bargain.patternName}} · {{bargain.type}}</view>
+      <view class="product-sub">原价 ¥{{bargain.originalPrice}}</view>
+      <view class="product-current">当前 ¥{{bargain.currentPrice}}</view>
+    </view>
+  </view>
+
+  <view class="record-card rx-card" wx:if="{{bargain.helpers.length}}">
+    <view class="record-title">砍价记录</view>
+    <view class="record-list">
+      <view wx:for="{{bargain.helpers}}" wx:key="index" class="record-item">
+        <view class="record-avatar"></view>
+        <view class="record-meta">
+          <view class="record-name">{{item.name}}</view>
+          <view class="record-time">{{item.time}}</view>
+        </view>
+        <view class="record-amount">-{{item.amount > 0 ? item.amount : -item.amount}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-record" wx:else>还没有好友帮你砍，快邀请吧</view>
+</view>
+
+<view class="bottom-bar" wx:if="{{bargain}}">
+  <view class="rx-btn-primary invite-btn" bindtap="mockHelp">邀请好友帮我砍</view>
+  <view class="rx-btn-secondary buy-btn" bindtap="buyNow">¥{{bargain.currentPrice}} 直接购买</view>
+</view>
