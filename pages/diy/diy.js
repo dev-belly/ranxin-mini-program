@@ -120,7 +120,8 @@ Page({
   },
 
   onShow() {
-    if (this.getTabBar) this.getTabBar().setData({ selected: 1 });
+    const tabBar = this.getTabBar && this.getTabBar();
+    if (tabBar && tabBar.setData) tabBar.setData({ selected: 1 });
   },
 
   onLoad() {

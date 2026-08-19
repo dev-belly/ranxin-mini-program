@@ -37,7 +37,8 @@ Page({
   },
 
   onShow() {
-    if (this.getTabBar) this.getTabBar().setData({ selected: 0 });
+    const tabBar = this.getTabBar && this.getTabBar();
+    if (tabBar && tabBar.setData) tabBar.setData({ selected: 0 });
   },
 
   toggleMusic() {

@@ -3,11 +3,9 @@
 
 .tabbar {
   position: fixed;
-  left: 50%;
+  left: 7%;
+  right: 7%;
   bottom: 36rpx;
-  transform: translateX(-50%);
-  width: 86%;
-  max-width: 700rpx;
   display: flex;
   background: rgba(255, 255, 255, .20);
   border: 1rpx solid rgba(255, 255, 255, .50);
