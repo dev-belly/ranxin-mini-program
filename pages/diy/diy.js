@@ -396,7 +396,12 @@ Page({
         height: this.canvas.height,
         destWidth: this.canvas.width,
         destHeight: this.canvas.height,
-        success: (res) => { work.thumb = res.tempFilePath; captureAndPersist(); },
+        success: (res) => {
+          work.thumb = res.tempFilePath;
+          wx.setStorageSync('ranxin_last_pattern_name', pattern.name);
+          wx.setStorageSync('ranxin_last_pattern_image', res.tempFilePath);
+          captureAndPersist();
+        },
         fail: () => captureAndPersist()
       });
     } else {
@@ -419,6 +424,15 @@ Page({
   closeResult() {
     this.setData({ showResult: false });
     wx.switchTab({ url: '/pages/works/works' });
+  },
+
+  goToProduct() {
+    const r = this.data.result;
+    if (r && r.thumb) {
+      wx.setStorageSync('ranxin_last_pattern_name', r.patternName);
+      wx.setStorageSync('ranxin_last_pattern_image', r.thumb);
+    }
+    wx.navigateTo({ url: '/pages/product/product' });
   },
 
   // 分享海报（对齐 A：1.1分享海报）

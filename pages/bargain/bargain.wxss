@@ -1,0 +1,82 @@
+.bargain-page { padding-top: 20rpx; }
+
+.nav-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10rpx;
+}
+.back {
+  width: 60rpx; height: 60rpx; display: flex; align-items: center; justify-content: center;
+  font-size: 44rpx; color: #173d79;
+  background: var(--glass-sheen), var(--glass-bg-strong);
+  border: 1.5rpx solid var(--glass-border-bright); border-radius: 50%;
+  box-shadow: var(--glass-thickness);
+}
+.nav-center { text-align: center; flex: 1; }
+.nav-title {
+  font-size: 34rpx; font-weight: 700; color: #173d79; letter-spacing: 2rpx;
+  font-family: "Songti SC", "STSong", "SimSun", serif;
+}
+.nav-sub { font-size: 22rpx; color: #8b97b3; margin-top: 4rpx; }
+.nav-right { width: 60rpx; }
+
+.tabs {
+  display: flex; justify-content: center; gap: 24rpx;
+  margin: 24rpx 0 28rpx;
+}
+.tab {
+  position: relative;
+  font-size: 28rpx; color: #8b97b3; padding: 12rpx 28rpx;
+  border-radius: 999rpx;
+  background: var(--glass-sheen), var(--glass-bg);
+  border: 1.5rpx solid var(--glass-border);
+  box-shadow: var(--glass-thickness);
+}
+.tab.active {
+  background: var(--brand-grad); color: #fff; border-color: transparent;
+  box-shadow: 0 10rpx 24rpx rgba(101, 124, 253, 0.40), inset 0 1.5rpx 1rpx rgba(255,255,255,0.6);
+}
+
+.list { padding-bottom: 40rpx; }
+.empty { text-align: center; color: #8b97b3; padding: 80rpx 0; font-size: 26rpx; }
+
+.card {
+  display: flex; align-items: center; gap: 22rpx;
+  padding: 24rpx; margin-bottom: 24rpx;
+}
+.card-img {
+  width: 170rpx; height: 170rpx; border-radius: 20rpx;
+  background: #eef1f8; flex-shrink: 0;
+}
+.card-body { flex: 1; min-width: 0; }
+.card-title { font-size: 30rpx; font-weight: 700; color: #173d79; }
+.card-sub {
+  display: inline-block; margin-top: 8rpx; margin-bottom: 10rpx;
+  font-size: 20rpx; color: #2a44c1;
+  background: rgba(52, 122, 240, 0.12); padding: 4rpx 12rpx; border-radius: 999rpx;
+}
+.price-row { display: flex; align-items: baseline; gap: 14rpx; margin-bottom: 12rpx; }
+.original { font-size: 22rpx; color: #8b97b3; text-decoration: line-through; }
+.current { font-size: 30rpx; color: #2a44c1; font-weight: 700; }
+
+.progress-wrap { margin-bottom: 16rpx; }
+.progress-track {
+  height: 14rpx; border-radius: 999rpx;
+  background: rgba(20, 30, 70, 0.08); overflow: hidden;
+}
+.progress-bar {
+  height: 100%; border-radius: 999rpx;
+  background: linear-gradient(90deg, #ff7a7a, #ff9e9e);
+}
+
+.card-foot { display: flex; align-items: center; justify-content: space-between; }
+.avatars { display: flex; }
+.avatar {
+  width: 44rpx; height: 44rpx; border-radius: 50%;
+  background: linear-gradient(135deg, #d0d8f0, #a8b6e8);
+  border: 2rpx solid #fff;
+  margin-left: -10rpx;
+}
+.avatar:first-child { margin-left: 0; }
+.mini {
+  font-size: 22rpx; padding: 12rpx 24rpx; border-radius: 999rpx;
+}

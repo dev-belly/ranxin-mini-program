@@ -1,0 +1,67 @@
+<view class="rx-bg"></view>
+<view class="rx-page bargain-page">
+  <view class="nav-bar">
+    <view class="back" bindtap="goBack">‹</view>
+    <view class="nav-center">
+      <view class="nav-title">好友砍价大厅</view>
+      <view class="nav-sub">一起把喜欢的作品带回家</view>
+    </view>
+    <view class="nav-right"></view>
+  </view>
+
+  <view class="tabs">
+    <view wx:for="{{tabs}}" wx:key="key"
+          class="tab {{activeTab === item.key ? 'active' : ''}}"
+          data-key="{{item.key}}"
+          bindtap="switchTab">
+      {{item.label}}
+    </view>
+  </view>
+
+  <view class="list" hidden="{{activeTab !== 'ongoing'}}">
+    <view wx:if="{{ongoingList.length === 0}}" class="empty">暂无进行中的砍价</view>
+    <view wx:for="{{ongoingList}}" wx:key="id"
+          class="card rx-card"
+          data-id="{{item.id}}"
+          bindtap="goDetail">
+      <image class="card-img" src="{{item.previewImage}}" mode="aspectFill"></image>
+      <view class="card-body">
+        <view class="card-title">{{item.patternName}} · {{item.type}}</view>
+        <view class="card-sub">扎染{{item.type}}</view>
+        <view class="price-row">
+          <text class="original">原价 ¥{{item.originalPrice}}</text>
+          <text class="current">当前 ¥{{item.currentPrice}}</text>
+        </view>
+        <view class="progress-wrap">
+          <view class="progress-track">
+            <view class="progress-bar" style="width: {{item.cutTotal / (item.cutTotal + item.needCut) * 100}}%"></view>
+          </view>
+        </view>
+        <view class="card-foot">
+          <view class="avatars">
+            <view wx:for="{{item.helpers}}" wx:key="*this" wx:for-item="h" class="avatar"></view>
+          </view>
+          <view class="rx-btn-primary mini">继续邀请好友</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="list" hidden="{{activeTab !== 'completed'}}">
+    <view wx:if="{{completedList.length === 0}}" class="empty">暂无已完成的砍价</view>
+    <view wx:for="{{completedList}}" wx:key="id"
+          class="card rx-card"
+          data-id="{{item.id}}"
+          bindtap="goDetail">
+      <image class="card-img" src="{{item.previewImage}}" mode="aspectFill"></image>
+      <view class="card-body">
+        <view class="card-title">{{item.patternName}} · {{item.type}}</view>
+        <view class="card-sub">{{item.result || '砍价成功'}}</view>
+        <view class="price-row">
+          <text class="original">原价 ¥{{item.originalPrice}}</text>
+          <text class="current">成交价 ¥{{item.currentPrice}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

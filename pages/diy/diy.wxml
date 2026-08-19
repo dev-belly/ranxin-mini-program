@@ -184,6 +184,7 @@
       </view>
       <textarea class="mindful-input" placeholder="此时此刻的感受是什么？（会存入正念日志）" value="{{mindfulNote}}" bindinput="onMindfulNoteInput" maxlength="60"/>
       <button class="btn primary" bindtap="closeResult">查看我的作品</button>
+      <button class="btn primary" bindtap="goToProduct">把作品变成实物</button>
       <button class="btn ghost" bindtap="makePoster">生成分享海报</button>
       <button class="btn ghost" bindtap="startReview">回溯创作（15 秒）</button>
       <button class="btn ghost" bindtap="replay">再染一件</button>

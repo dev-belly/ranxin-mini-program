@@ -1,0 +1,99 @@
+.progress-page { padding-top: 20rpx; padding-bottom: 40rpx; }
+
+.nav-bar {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 24rpx;
+}
+.back {
+  width: 60rpx; height: 60rpx; display: flex; align-items: center; justify-content: center;
+  font-size: 44rpx; color: #173d79;
+  background: var(--glass-sheen), var(--glass-bg-strong);
+  border: 1.5rpx solid var(--glass-border-bright); border-radius: 50%;
+  box-shadow: var(--glass-thickness); flex-shrink: 0;
+}
+.nav-center { flex: 1; text-align: center; padding: 0 20rpx; }
+.nav-title {
+  font-size: 34rpx; font-weight: 700; color: #173d79; letter-spacing: 2rpx;
+  font-family: "Songti SC", "STSong", "SimSun", serif;
+}
+.nav-sub { font-size: 22rpx; color: #8b97b3; margin-top: 8rpx; }
+.nav-right { width: 60rpx; }
+
+.order-card {
+  display: flex; align-items: center; gap: 22rpx;
+  padding: 24rpx; margin-bottom: 28rpx;
+}
+.order-img {
+  width: 150rpx; height: 150rpx; border-radius: 20rpx;
+  background: #eef1f8; flex-shrink: 0;
+}
+.order-info { flex: 1; }
+.order-title { font-size: 30rpx; font-weight: 700; color: #173d79; }
+.order-tags { margin: 12rpx 0; display: flex; gap: 10rpx; }
+.order-eta { font-size: 24rpx; color: #2a44c1; }
+
+.timeline-card { padding: 32rpx 28rpx; margin-bottom: 28rpx; }
+.timeline {}
+.step {
+  display: flex; gap: 20rpx; padding-bottom: 30rpx;
+}
+.step:last-child { padding-bottom: 0; }
+.dot-wrap {
+  display: flex; flex-direction: column; align-items: center;
+  width: 32rpx; flex-shrink: 0;
+}
+.dot {
+  width: 24rpx; height: 24rpx; border-radius: 50%;
+  background: rgba(20, 30, 70, 0.12);
+  border: 4rpx solid transparent;
+}
+.step.done .dot {
+  background: var(--brand-grad);
+  border-color: rgba(93, 120, 253, 0.2);
+}
+.step.active .dot {
+  background: #fff;
+  border-color: #5d78fd;
+  box-shadow: 0 0 0 6rpx rgba(93, 120, 253, 0.12);
+}
+.line {
+  flex: 1; width: 4rpx; min-height: 60rpx;
+  background: rgba(20, 30, 70, 0.08);
+  margin: 8rpx 0;
+}
+.step.done + .step .line,
+.step.done .line { background: linear-gradient(180deg, #5d78fd, rgba(93,120,253,0.2)); }
+
+.step-body { flex: 1; }
+.step-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6rpx; }
+.step-label { font-size: 28rpx; font-weight: 700; color: #173d79; }
+.step.active .step-label { color: #2a44c1; }
+.step-date { font-size: 22rpx; color: #8b97b3; }
+.step-desc { font-size: 22rpx; color: #4f5f7a; line-height: 1.5; }
+
+.tip-card {
+  display: flex; align-items: center; gap: 18rpx;
+  padding: 24rpx;
+}
+.tip-icon {
+  width: 60rpx; height: 60rpx; border-radius: 50%;
+  background: var(--glass-sheen), rgba(52, 122, 240, 0.16);
+  border: 1.5rpx solid rgba(52, 122, 240, 0.25);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  position: relative;
+}
+.tip-icon::before {
+  content: ""; position: absolute; top: 16rpx;
+  width: 16rpx; height: 16rpx; border-radius: 50%;
+  border: 3rpx solid #2a44c1; background: transparent;
+}
+.tip-icon::after {
+  content: ""; position: absolute; bottom: 14rpx;
+  width: 22rpx; height: 4rpx; border-radius: 999rpx; background: #2a44c1;
+}
+.tip-text { flex: 1; }
+.tip-title { font-size: 26rpx; font-weight: 700; color: #173d79; }
+.tip-sub { font-size: 22rpx; color: #8b97b3; margin-top: 4rpx; }
+.tip-btn {
+  font-size: 24rpx; color: #2a44c1; font-weight: 600; white-space: nowrap;
+}
