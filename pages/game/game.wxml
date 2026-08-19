@@ -89,7 +89,7 @@
         <view class="quote-text">{{result.quote}}</view>
       </view>
 
-      <button class="rx-btn-primary result-btn" bindtap="replay">收下纹样 ✦</button>
+      <button class="rx-btn-primary result-btn" bindtap="viewCollection">收下纹样 ✦</button>
       <view class="result-actions">
         <view class="result-action" bindtap="replay">↻ 再玩一局</view>
         <view class="result-action" bindtap="viewRank">♕ 查看排行榜</view>

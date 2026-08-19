@@ -53,7 +53,7 @@ Page({
   },
 
   goDiy() {
-    wx.navigateTo({ url: '/pages/diy/diy' });
+    wx.switchTab({ url: '/pages/diy/diy' });
   },
 
   goRelax() {
