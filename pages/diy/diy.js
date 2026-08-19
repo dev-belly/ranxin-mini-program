@@ -93,6 +93,7 @@ Page({
     patterns: [],          // 由引擎目录构建，含 dye / tint / thumb
     visiblePatterns: [],
     patternId: 'tuan',
+    petals: 8,
     selPattern: null,
     foldTypes: FOLD_TYPES,
     foldType: 'symmetric',
@@ -157,7 +158,7 @@ Page({
     this.stopOxidation();
     if (this.reviewTimer) { clearInterval(this.reviewTimer); this.reviewTimer = null; }
     if (this._live) clearTimeout(this._live);
-    if (this.audioCtx) { this.audioCtx.destroy(); this.audioCtx = null; }
+    if (this.audioCtx) { try { this.audioCtx.close(); } catch (e) {} this.audioCtx = null; }
   },
 
   randomQuote(stepIdx) {
@@ -231,17 +232,25 @@ Page({
   choosePattern(e) {
     const id = e.currentTarget.dataset.id;
     const sp = this.data.patterns.find(p => p.id === id);
-    this.setData({ patternId: id, selPattern: sp, showStory: false, stage: 'craft', step: 0, stepperActive: 2, quote: this.randomQuote(0) }, () => {
+    this.setData({ patternId: id, selPattern: sp, petals: (sp && sp.petals) || 8, showStory: false, stage: 'craft', step: 0, stepperActive: 2, quote: this.randomQuote(0) }, () => {
       wx.nextTick(() => this.initCanvasById('diy-canvas'));
     });
   },
 
-  initCanvasById(id) {
+  initCanvasById(id, retry) {
+    retry = retry || 0;
     const query = wx.createSelectorQuery();
     query.select('#' + id).fields({ node: true, size: true }).exec((res) => {
-      if (!res || !res[0]) return;
+      // 节点未就绪（wx:if 刚切出、canvas 未挂载）时重试，最多 8 次，避免首次进入 craft 空白
+      if (!res || !res[0] || !res[0].node) {
+        if (retry < 8) {
+          setTimeout(() => this.initCanvasById(id, retry + 1), 80);
+        }
+        return;
+      }
       const canvas = res[0].node;
       const { width, height } = res[0];
+      if (!width || !height) return;
       const dpr = wx.getWindowInfo ? wx.getWindowInfo().pixelRatio : wx.getSystemInfoSync().pixelRatio;
       canvas.width = width * dpr;
       canvas.height = height * dpr;
@@ -257,7 +266,7 @@ Page({
   drawCurrent(ctx, w, h) {
     ctx = ctx || this.ctx;
     if (!ctx) return;
-    const { step, patternId, foldType, tightness, dyeName, concentration, oxidationSeconds, oxidationTotal, unfoldProgress, whitespace, rotation } = this.data;
+    const { step, patternId, foldType, tightness, dyeName, concentration, oxidationSeconds, oxidationTotal, unfoldProgress, whitespace, rotation, petals } = this.data;
     const pattern = engine.getPatternById(patternId);
     if (w == null) w = this.canvasW;
     if (h == null) h = this.canvasH;
@@ -275,7 +284,7 @@ Page({
     } else if (step === 3) {
       engine.renderUnfold(this.ctx, w, h, {
         type: pattern.type,
-        petals: pattern.petals,
+        petals: petals || pattern.petals,
         tightness: engineTightness,
         whitespace: engineWhitespace,
         rotation: engineRotation,
@@ -324,6 +333,9 @@ Page({
   onRotationChange(e) {
     this.setData({ rotation: e.detail.value }, () => { this.flashLive(); this.drawCurrent(); });
   },
+  onPetalsChange(e) {
+    this.setData({ petals: e.detail.value }, () => { this.flashLive(); this.drawCurrent(); });
+  },
 
   // Step 1: 染
   chooseDye(e) {
@@ -365,18 +377,47 @@ Page({
     const soundOn = !this.data.soundOn;
     this.setData({ soundOn });
     if (soundOn) {
-      if (!this.audioCtx) {
-        this.audioCtx = wx.createInnerAudioContext();
-        this.audioCtx.src = '/assets/audio/ambient.mp3';
-        this.audioCtx.loop = true;
-        this.audioCtx.onError(() => {
-          wx.showToast({ title: '白噪音资源待补充', icon: 'none' });
-          this.setData({ soundOn: false });
-        });
+      this.startWhiteNoise();
+    } else {
+      this.stopWhiteNoise();
+    }
+  },
+  startWhiteNoise() {
+    if (this.audioCtx) return;
+    try {
+      if (!wx.createWebAudioContext) {
+        wx.showToast({ title: '当前版本不支持白噪音', icon: 'none' });
+        this.setData({ soundOn: false });
+        return;
       }
-      this.audioCtx.play();
-    } else if (this.audioCtx) {
-      this.audioCtx.pause();
+      const ctx = wx.createWebAudioContext();
+      const rate = ctx.sampleRate || 22050;
+      const len = rate * 2;
+      const buf = ctx.createBuffer(1, len, rate);
+      const d = buf.getChannelData(0);
+      // 粉噪音：比纯白噪音更柔和的自然底噪
+      let last = 0;
+      for (let i = 0; i < len; i++) {
+        const white = Math.random() * 2 - 1;
+        last = (last + 0.02 * white) / 1.02;
+        d[i] = last * 3.5;
+      }
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.loop = true;
+      src.connect(ctx.destination);
+      src.start();
+      this.audioCtx = ctx;
+      wx.vibrateShort({ type: 'light' });
+    } catch (e) {
+      wx.showToast({ title: '白噪音开启失败', icon: 'none' });
+      this.setData({ soundOn: false });
+    }
+  },
+  stopWhiteNoise() {
+    if (this.audioCtx) {
+      try { this.audioCtx.close(); } catch (e) {}
+      this.audioCtx = null;
     }
   },
 
