@@ -35,48 +35,62 @@ page {
   z-index: -1;
   overflow: hidden;
   background:
+    linear-gradient(115deg, transparent 40%, rgba(120, 140, 255, .22) 49%, rgba(255, 255, 255, .05) 53%, transparent 62%) 0 0 / 280% 280%,
     radial-gradient(circle at 2rpx 2rpx, rgba(45, 82, 136, .10) 0 .7rpx, transparent .9rpx) 0 0 / 21rpx 21rpx,
     linear-gradient(180deg, #fbfaf8 0%, #faf9f6 76%, #f7f5f2 100%);
+  animation: rx-sweep 7s linear infinite;
 }
 
-/* 极光光团：两个超大渐变层大幅漂移 + 旋转 + 缩放 + 色相流转（GPU transform 动画，真机顺滑不掉帧）
-   把幅度/速度/饱和度全部拉满，肉眼一眼就能看出背景在流动。 */
+/* 极光光团：大幅漂移 + 旋转 + 缩放 + 色相流转（颜色像彩虹一样持续流动），叠加扫光带周期性扫过屏幕
+   三招叠加，肉眼一眼就能看出背景在动。 */
 .rx-bg::before,
 .rx-bg::after {
   content: "";
   position: absolute;
-  left: -40%; top: -40%;
-  width: 180%; height: 180%;
+  left: -45%; top: -45%;
+  width: 190%; height: 190%;
   pointer-events: none;
   will-change: transform, opacity, filter;
   backface-visibility: hidden;
 }
 .rx-bg::before {
   background:
-    radial-gradient(42% 42% at 24% 30%, rgba(80, 140, 255, .88), transparent 58%),
-    radial-gradient(40% 40% at 70% 18%, rgba(150, 90, 255, .80), transparent 58%),
-    radial-gradient(34% 34% at 86% 56%, rgba(0, 210, 255, .62), transparent 58%),
-    radial-gradient(38% 38% at 14% 76%, rgba(110, 170, 255, .72), transparent 60%);
-  animation: rx-aurora-a 12s ease-in-out infinite alternate;
+    radial-gradient(42% 42% at 24% 30%, rgba(80, 140, 255, .90), transparent 58%),
+    radial-gradient(40% 40% at 70% 18%, rgba(150, 90, 255, .82), transparent 58%),
+    radial-gradient(34% 34% at 86% 56%, rgba(0, 210, 255, .65), transparent 58%),
+    radial-gradient(38% 38% at 14% 76%, rgba(110, 170, 255, .74), transparent 60%);
+  animation: rx-aurora-a 9s ease-in-out infinite alternate, rx-hue-a 12s linear infinite;
 }
 .rx-bg::after {
   background:
-    radial-gradient(44% 40% at 74% 70%, rgba(255, 110, 200, .58), transparent 58%),
-    radial-gradient(36% 34% at 10% 26%, rgba(255, 185, 70, .52), transparent 58%),
-    radial-gradient(42% 38% at 88% 88%, rgba(130, 90, 255, .60), transparent 60%),
-    radial-gradient(38% 34% at 46% 6%, rgba(0, 205, 255, .50), transparent 60%);
-  animation: rx-aurora-b 16s ease-in-out infinite alternate;
+    radial-gradient(44% 40% at 74% 70%, rgba(255, 110, 200, .60), transparent 58%),
+    radial-gradient(36% 34% at 10% 26%, rgba(255, 185, 70, .55), transparent 58%),
+    radial-gradient(42% 38% at 88% 88%, rgba(130, 90, 255, .62), transparent 60%),
+    radial-gradient(38% 34% at 46% 6%, rgba(0, 205, 255, .52), transparent 60%);
+  animation: rx-aurora-b 13s ease-in-out infinite alternate, rx-hue-b 16s linear infinite;
 }
 
+@keyframes rx-sweep {
+  0%   { background-position: -140% -140%, 0 0, 0 0; }
+  100% { background-position: 140% 140%, 0 0, 0 0; }
+}
 @keyframes rx-aurora-a {
-  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1);      opacity: .95; }
-  50%  { transform: translate3d(-16%, 12%, 0) rotate(16deg) scale(1.32); opacity: 1; }
-  100% { transform: translate3d(12%, -10%, 0) rotate(-12deg) scale(1.14); opacity: .92; }
+  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1);       opacity: .95; }
+  50%  { transform: translate3d(-24%, 16%, 0) rotate(22deg) scale(1.42); opacity: 1; }
+  100% { transform: translate3d(18%, -14%, 0) rotate(-16deg) scale(1.20); opacity: .92; }
 }
 @keyframes rx-aurora-b {
-  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1);      opacity: .94; }
-  50%  { transform: translate3d(14%, -14%, 0) rotate(-18deg) scale(1.38); opacity: 1; }
-  100% { transform: translate3d(-14%, 10%, 0) rotate(12deg) scale(1.12); opacity: .90; }
+  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1);       opacity: .94; }
+  50%  { transform: translate3d(20%, -18%, 0) rotate(-26deg) scale(1.50); opacity: 1; }
+  100% { transform: translate3d(-20%, 14%, 0) rotate(18deg) scale(1.18); opacity: .90; }
+}
+@keyframes rx-hue-a {
+  0%   { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+@keyframes rx-hue-b {
+  0%   { filter: hue-rotate(360deg); }
+  100% { filter: hue-rotate(0deg); }
 }
 
 /* 通用容器 */

@@ -16,35 +16,37 @@
   z-index: -1;
   overflow: hidden;
   background:
+    linear-gradient(115deg, transparent 40%, rgba(140, 170, 255, .20) 49%, rgba(255, 255, 255, .05) 53%, transparent 62%) 0 0 / 280% 280%,
     radial-gradient(circle at 12rpx 8rpx, rgba(49, 90, 166, .10) 0 .7rpx, transparent .9rpx) 0 0 / 21rpx 17rpx,
     linear-gradient(180deg, #fbfdff 0%, #f4f7fd 60%, #eef2fb 100%);
+  animation: rx-sweep 7s linear infinite;
 }
-/* 冷调极光光团：两个光团大幅漂移（保持冷紫身份，同样花里胡哨地流动） */
+/* 冷调极光光团：大幅漂移 + 色相流转（保持冷紫身份，同样花里胡哨地流动） */
 .diy-bg::before,
 .diy-bg::after {
   content: "";
   position: absolute;
-  left: -40%; top: -40%;
-  width: 180%; height: 180%;
+  left: -45%; top: -45%;
+  width: 190%; height: 190%;
   pointer-events: none;
-  will-change: transform, opacity;
+  will-change: transform, opacity, filter;
   backface-visibility: hidden;
 }
 .diy-bg::before {
   background:
-    radial-gradient(42% 42% at 24% 30%, rgba(120, 100, 255, .78), transparent 58%),
-    radial-gradient(40% 40% at 70% 18%, rgba(90, 150, 255, .72), transparent 58%),
-    radial-gradient(34% 34% at 86% 58%, rgba(170, 105, 245, .62), transparent 58%),
-    radial-gradient(38% 38% at 14% 74%, rgba(140, 180, 255, .66), transparent 60%);
-  animation: rx-aurora-a 12s ease-in-out infinite alternate;
+    radial-gradient(42% 42% at 24% 30%, rgba(120, 100, 255, .80), transparent 58%),
+    radial-gradient(40% 40% at 70% 18%, rgba(90, 150, 255, .74), transparent 58%),
+    radial-gradient(34% 34% at 86% 58%, rgba(170, 105, 245, .64), transparent 58%),
+    radial-gradient(38% 38% at 14% 74%, rgba(140, 180, 255, .68), transparent 60%);
+  animation: rx-aurora-a 9s ease-in-out infinite alternate, rx-hue-a 12s linear infinite;
 }
 .diy-bg::after {
   background:
-    radial-gradient(44% 40% at 74% 70%, rgba(0, 190, 255, .46), transparent 58%),
-    radial-gradient(36% 34% at 10% 26%, rgba(200, 160, 255, .42), transparent 58%),
-    radial-gradient(42% 38% at 88% 88%, rgba(120, 90, 255, .48), transparent 60%),
-    radial-gradient(38% 34% at 46% 6%, rgba(140, 200, 255, .42), transparent 60%);
-  animation: rx-aurora-b 16s ease-in-out infinite alternate;
+    radial-gradient(44% 40% at 74% 70%, rgba(0, 190, 255, .48), transparent 58%),
+    radial-gradient(36% 34% at 10% 26%, rgba(200, 160, 255, .44), transparent 58%),
+    radial-gradient(42% 38% at 88% 88%, rgba(120, 90, 255, .50), transparent 60%),
+    radial-gradient(38% 34% at 46% 6%, rgba(140, 200, 255, .44), transparent 60%);
+  animation: rx-aurora-b 13s ease-in-out infinite alternate, rx-hue-b 16s linear infinite;
 }
 
 /* 通用玻璃卡 */
