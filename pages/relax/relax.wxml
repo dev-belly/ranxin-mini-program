@@ -1,0 +1,36 @@
+<!-- 归属：B｜核心交互 Owner -->
+<view class="rx-bg relax-bg"></view>
+<view class="rx-page relax">
+
+  <view class="relax-head">
+    <view class="relax-h1">放松一下</view>
+    <view class="relax-lead">呼吸、染色、等待——把心事慢慢浸开</view>
+  </view>
+
+  <view class="breath-stage">
+    <view class="ripple ripple-1"></view>
+    <view class="ripple ripple-2"></view>
+    <view class="breath-core {{phase}}">
+      <view class="breath-inner">
+        <text class="breath-icon">✦</text>
+        <text class="breath-cycle">{{cycle + 1}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="hint">{{hint}}</view>
+
+  <view class="dots">
+    <view wx:for="{{dots}}" wx:key="*this" class="dot {{index <= cycle ? 'active' : ''}}"></view>
+  </view>
+
+  <view class="action">
+    <view wx:if="{{!finished}}" class="relax-note">一呼一吸，像把布缓缓浸入靛蓝</view>
+    <view wx:else class="done-card">
+      <view class="done-title">今日放松完成</view>
+      <view class="done-desc">你的心事，已经慢慢在靛蓝里化开了</view>
+      <view class="done-btn" bindtap="onDone">收下这份平静 ›</view>
+    </view>
+  </view>
+
+</view>

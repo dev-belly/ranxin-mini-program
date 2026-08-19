@@ -1,0 +1,190 @@
+/* 归属：B｜核心交互 Owner */
+
+/* 紫调光晕底层，与 DIY 第二批设计语言一致 */
+.relax-bg {
+  background:
+    radial-gradient(circle at 2px 2px, rgba(45, 82, 136, .12) 0 .6px, transparent .8px) 0 0 / 21px 21px,
+    radial-gradient(ellipse 520rpx 420rpx at 18% 20%, rgba(109, 96, 255, .22), transparent 62%),
+    radial-gradient(ellipse 420rpx 360rpx at 88% 14%, rgba(78, 146, 255, .24), transparent 58%),
+    radial-gradient(ellipse 360rpx 300rpx at 72% 78%, rgba(160, 100, 239, .18), transparent 55%),
+    linear-gradient(180deg, #fbfdff 0%, #f4f7ff 42%, #eef2fb 100%);
+}
+
+.relax {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 60rpx;
+}
+
+.relax-head {
+  text-align: center;
+  margin-bottom: 60rpx;
+}
+.relax-h1 {
+  font-family: "Songti SC", "STSong", "SimSun", serif;
+  font-size: 56rpx;
+  font-weight: 700;
+  letter-spacing: 6rpx;
+  color: #153e7f;
+}
+.relax-h1::after {
+  content: "✦";
+  font-family: Arial;
+  font-size: 28rpx;
+  color: #7d6bff;
+  margin-left: 10rpx;
+}
+.relax-lead {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  color: #59709e;
+  letter-spacing: 2rpx;
+}
+
+/* 呼吸舞台 */
+.breath-stage {
+  position: relative;
+  width: 420rpx;
+  height: 420rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ripple {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(125, 107, 255, .12);
+  border: 1.5rpx solid rgba(125, 107, 255, .22);
+  transform: scale(0.86);
+  opacity: 0;
+}
+.ripple-1 { animation: ripple 4.5s ease-in-out infinite; }
+.ripple-2 { animation: ripple 4.5s ease-in-out 2.25s infinite; }
+
+@keyframes ripple {
+  0%   { transform: scale(0.86); opacity: 0; }
+  50%  { opacity: .7; }
+  100% { transform: scale(1.22); opacity: 0; }
+}
+
+.breath-core {
+  position: relative;
+  z-index: 2;
+  width: 320rpx;
+  height: 320rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, .5);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1.5rpx solid rgba(255, 255, 255, .8);
+  box-shadow: 0 20rpx 60rpx rgba(93, 110, 200, .22), inset 0 2rpx 0 rgba(255, 255, 255, .9);
+  transition: transform .8s ease-in-out, box-shadow .8s ease;
+}
+.breath-core.inhale  { transform: scale(1.18); box-shadow: 0 24rpx 72rpx rgba(125, 107, 255, .32), inset 0 2rpx 0 rgba(255,255,255,.9); }
+.breath-core.hold    { transform: scale(1.18); }
+.breath-core.exhale  { transform: scale(1); }
+.breath-core.done    { transform: scale(1); background: linear-gradient(135deg, rgba(125,107,255,.25), rgba(78,146,255,.2)), rgba(255,255,255,.55); }
+
+.breath-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.breath-icon {
+  font-family: Arial;
+  font-size: 40rpx;
+  color: #7d6bff;
+  margin-bottom: 8rpx;
+}
+.breath-cycle {
+  font-size: 64rpx;
+  font-weight: 300;
+  color: #153e7f;
+  letter-spacing: 4rpx;
+}
+
+.hint {
+  margin-top: 56rpx;
+  font-size: 32rpx;
+  font-weight: 500;
+  letter-spacing: 3rpx;
+  color: #153e7f;
+}
+
+.dots {
+  margin-top: 30rpx;
+  display: flex;
+  gap: 16rpx;
+}
+.dot {
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 50%;
+  background: rgba(125, 107, 255, .22);
+  transition: background .3s;
+}
+.dot.active {
+  background: linear-gradient(135deg, #7d6bff, #4e92ff);
+  box-shadow: 0 0 12rpx rgba(125, 107, 255, .45);
+}
+
+.action {
+  margin-top: 70rpx;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 40rpx;
+  box-sizing: border-box;
+}
+.relax-note {
+  font-size: 24rpx;
+  color: #7b8fae;
+  letter-spacing: 2rpx;
+}
+
+.done-card {
+  width: 100%;
+  max-width: 600rpx;
+  padding: 36rpx;
+  border-radius: 32rpx;
+  text-align: center;
+  background: rgba(255, 255, 255, .6);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+  border: 1.5rpx solid rgba(255, 255, 255, .82);
+  box-shadow: 0 16rpx 44rpx rgba(60, 80, 150, .14), inset 0 1.5rpx 0 rgba(255,255,255,.9);
+}
+.done-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #153e7f;
+  letter-spacing: 3rpx;
+}
+.done-desc {
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  color: #59709e;
+  letter-spacing: 1.5rpx;
+}
+.done-btn {
+  margin-top: 28rpx;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 80rpx;
+  padding: 0 44rpx;
+  border-radius: 40rpx;
+  color: #fff;
+  font-size: 30rpx;
+  letter-spacing: 3rpx;
+  background: linear-gradient(105deg, #4b7bff, #5b67ff, #9e68ff, #c67cff);
+  box-shadow: 0 12rpx 32rpx rgba(125, 107, 255, .35), inset 0 1rpx 0 rgba(255,255,255,.4);
+}

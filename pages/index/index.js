@@ -10,7 +10,7 @@ Page({
       { key: 'happy', label: '开心', active: false },
       { key: 'messy', label: '有点乱', active: false }
     ],
-    relaxDays: 3,
+    relaxDays: 0,
     relaxCount: 0,
     // 一分钟非遗三卡（对齐 A：浅底深蓝标题 + 底部图区）
     knowledge: [
@@ -47,6 +47,10 @@ Page({
 
   goDiy() {
     wx.navigateTo({ url: '/pages/diy/diy' });
+  },
+
+  goRelax() {
+    wx.navigateTo({ url: '/pages/relax/relax' });
   },
 
   goKnowledge() {
