@@ -9,7 +9,7 @@
   display: flex;
   align-items: center;
   padding: 12rpx;
-  background: rgba(255, 255, 255, .35);
+  background: rgba(255, 255, 255, .48);
   border: 1rpx solid rgba(255, 255, 255, .60);
   border-radius: 48rpx;
   box-sizing: border-box;
