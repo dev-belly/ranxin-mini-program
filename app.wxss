@@ -39,43 +39,44 @@ page {
     linear-gradient(180deg, #fbfaf8 0%, #faf9f6 76%, #f7f5f2 100%);
 }
 
-/* 极光光团：两个超大渐变层缓慢漂移（GPU transform 动画，真机顺滑不掉帧） */
+/* 极光光团：两个超大渐变层大幅漂移 + 旋转 + 缩放 + 色相流转（GPU transform 动画，真机顺滑不掉帧）
+   把幅度/速度/饱和度全部拉满，肉眼一眼就能看出背景在流动。 */
 .rx-bg::before,
 .rx-bg::after {
   content: "";
   position: absolute;
-  left: -32%; top: -32%;
-  width: 164%; height: 164%;
+  left: -40%; top: -40%;
+  width: 180%; height: 180%;
   pointer-events: none;
-  will-change: transform, opacity;
+  will-change: transform, opacity, filter;
   backface-visibility: hidden;
 }
 .rx-bg::before {
   background:
-    radial-gradient(46% 42% at 30% 28%, rgba(126, 170, 255, .60), transparent 60%),
-    radial-gradient(42% 38% at 68% 22%, rgba(140, 130, 245, .52), transparent 60%),
-    radial-gradient(36% 34% at 82% 54%, rgba(176, 150, 255, .44), transparent 60%),
-    radial-gradient(40% 36% at 18% 70%, rgba(118, 162, 255, .40), transparent 60%);
-  animation: rx-aurora-a 18s ease-in-out infinite alternate;
+    radial-gradient(42% 42% at 24% 30%, rgba(80, 140, 255, .88), transparent 58%),
+    radial-gradient(40% 40% at 70% 18%, rgba(150, 90, 255, .80), transparent 58%),
+    radial-gradient(34% 34% at 86% 56%, rgba(0, 210, 255, .62), transparent 58%),
+    radial-gradient(38% 38% at 14% 76%, rgba(110, 170, 255, .72), transparent 60%);
+  animation: rx-aurora-a 12s ease-in-out infinite alternate;
 }
 .rx-bg::after {
   background:
-    radial-gradient(44% 40% at 74% 66%, rgba(150, 196, 247, .46), transparent 60%),
-    radial-gradient(36% 34% at 14% 30%, rgba(134, 220, 255, .38), transparent 60%),
-    radial-gradient(42% 36% at 90% 82%, rgba(255, 176, 224, .24), transparent 60%),
-    radial-gradient(38% 32% at 50% 6%, rgba(176, 150, 255, .34), transparent 60%);
-  animation: rx-aurora-b 26s ease-in-out infinite alternate;
+    radial-gradient(44% 40% at 74% 70%, rgba(255, 110, 200, .58), transparent 58%),
+    radial-gradient(36% 34% at 10% 26%, rgba(255, 185, 70, .52), transparent 58%),
+    radial-gradient(42% 38% at 88% 88%, rgba(130, 90, 255, .60), transparent 60%),
+    radial-gradient(38% 34% at 46% 6%, rgba(0, 205, 255, .50), transparent 60%);
+  animation: rx-aurora-b 16s ease-in-out infinite alternate;
 }
 
 @keyframes rx-aurora-a {
-  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1);     opacity: .90; }
-  50%  { transform: translate3d(-6%, 4%, 0) rotate(7deg) scale(1.13); opacity: 1; }
-  100% { transform: translate3d(5%, -3%, 0) rotate(-4deg) scale(1.04); opacity: .92; }
+  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1);      opacity: .95; }
+  50%  { transform: translate3d(-16%, 12%, 0) rotate(16deg) scale(1.32); opacity: 1; }
+  100% { transform: translate3d(12%, -10%, 0) rotate(-12deg) scale(1.14); opacity: .92; }
 }
 @keyframes rx-aurora-b {
-  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1);     opacity: .92; }
-  50%  { transform: translate3d(5%, -5%, 0) rotate(-9deg) scale(1.16); opacity: 1; }
-  100% { transform: translate3d(-6%, 3%, 0) rotate(6deg) scale(1.05);  opacity: .90; }
+  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1);      opacity: .94; }
+  50%  { transform: translate3d(14%, -14%, 0) rotate(-18deg) scale(1.38); opacity: 1; }
+  100% { transform: translate3d(-14%, 10%, 0) rotate(12deg) scale(1.12); opacity: .90; }
 }
 
 /* 通用容器 */
