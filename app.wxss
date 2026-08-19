@@ -28,21 +28,19 @@ page {
   --brand-grad: linear-gradient(90deg, #347af0 0%, #5d78fd 42%, #a160ef 100%);
 }
 
-/* 折射底层：暖白纸感 + 动态极光晕染（多层光晕缓慢漂移 / 旋转 / 呼吸，让薄玻璃透出流动色彩，玻璃才"立"得起来） */
+/* 折射底层：暖白纸感 + 自然极光晕染 */
 .rx-bg {
   position: fixed;
   left: 0; right: 0; top: 0; bottom: 0;
   z-index: -1;
   overflow: hidden;
   background:
-    linear-gradient(115deg, transparent 40%, rgba(120, 140, 255, .22) 49%, rgba(255, 255, 255, .05) 53%, transparent 62%) 0 0 / 280% 280%,
     radial-gradient(circle at 2rpx 2rpx, rgba(45, 82, 136, .10) 0 .7rpx, transparent .9rpx) 0 0 / 21rpx 21rpx,
     linear-gradient(180deg, #fbfaf8 0%, #faf9f6 76%, #f7f5f2 100%);
-  animation: rx-sweep 18s ease-in-out infinite alternate;
 }
 
-/* 极光光团：中幅漂移 + 旋转 + 缩放 + 色相流转（颜色像彩虹一样持续流动），叠加扫光带来回扫过屏幕
-   节奏放缓（20~40s），扫光改 alternate 来回避免瞬移跳变，幅度适中不显"跳"。 */
+/* 自然极光：两个柔和大光团，各以互质周期（23s / 37s）+ 不规则多关键点路径缓慢漂移/呼吸
+   不做匀速转色轮（hue-rotate）、不做机械扫光——靠光团移动与明暗呼吸产生有机的色彩流动 */
 .rx-bg::before,
 .rx-bg::after {
   content: "";
@@ -50,47 +48,41 @@ page {
   left: -45%; top: -45%;
   width: 190%; height: 190%;
   pointer-events: none;
-  will-change: transform, opacity, filter;
+  will-change: transform, opacity;
   backface-visibility: hidden;
 }
 .rx-bg::before {
   background:
-    radial-gradient(42% 42% at 24% 30%, rgba(80, 140, 255, .90), transparent 58%),
-    radial-gradient(40% 40% at 70% 18%, rgba(150, 90, 255, .82), transparent 58%),
-    radial-gradient(34% 34% at 86% 56%, rgba(0, 210, 255, .65), transparent 58%),
-    radial-gradient(38% 38% at 14% 76%, rgba(110, 170, 255, .74), transparent 60%);
-  animation: rx-aurora-a 20s ease-in-out infinite alternate, rx-hue-a 30s linear infinite;
+    radial-gradient(46% 44% at 26% 30%, rgba(110, 160, 255, .72), transparent 62%),
+    radial-gradient(42% 40% at 68% 20%, rgba(160, 120, 255, .62), transparent 62%),
+    radial-gradient(36% 36% at 84% 58%, rgba(70, 200, 245, .52), transparent 62%),
+    radial-gradient(40% 38% at 16% 74%, rgba(120, 175, 255, .58), transparent 62%);
+  animation: rx-aurora-a 23s ease-in-out infinite;
 }
 .rx-bg::after {
   background:
-    radial-gradient(44% 40% at 74% 70%, rgba(255, 110, 200, .60), transparent 58%),
-    radial-gradient(36% 34% at 10% 26%, rgba(255, 185, 70, .55), transparent 58%),
-    radial-gradient(42% 38% at 88% 88%, rgba(130, 90, 255, .62), transparent 60%),
-    radial-gradient(38% 34% at 46% 6%, rgba(0, 205, 255, .52), transparent 60%);
-  animation: rx-aurora-b 26s ease-in-out infinite alternate, rx-hue-b 40s linear infinite;
+    radial-gradient(44% 42% at 74% 72%, rgba(255, 140, 205, .50), transparent 62%),
+    radial-gradient(38% 36% at 12% 28%, rgba(255, 195, 120, .44), transparent 62%),
+    radial-gradient(42% 40% at 88% 86%, rgba(150, 110, 255, .50), transparent 62%),
+    radial-gradient(38% 36% at 48% 8%, rgba(90, 205, 255, .44), transparent 62%);
+  animation: rx-aurora-b 37s ease-in-out infinite;
 }
 
-@keyframes rx-sweep {
-  0%   { background-position: -140% -140%, 0 0, 0 0; }
-  100% { background-position: 140% 140%, 0 0, 0 0; }
-}
 @keyframes rx-aurora-a {
-  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1);       opacity: .95; }
-  50%  { transform: translate3d(-14%, 10%, 0) rotate(14deg) scale(1.22); opacity: 1; }
-  100% { transform: translate3d(10%, -8%, 0) rotate(-10deg) scale(1.10); opacity: .92; }
+  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1);        opacity: .82; }
+  18%  { transform: translate3d(-7%, 5%, 0) rotate(5deg) scale(1.08);  opacity: .94; }
+  37%  { transform: translate3d(-3%, 11%, 0) rotate(10deg) scale(1.16); opacity: 1; }
+  55%  { transform: translate3d(6%, 6%, 0) rotate(3deg) scale(1.06);    opacity: .88; }
+  74%  { transform: translate3d(9%, -4%, 0) rotate(-6deg) scale(1.13);  opacity: .96; }
+  100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1);        opacity: .82; }
 }
 @keyframes rx-aurora-b {
-  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1);       opacity: .94; }
-  50%  { transform: translate3d(12%, -12%, 0) rotate(-16deg) scale(1.28); opacity: 1; }
-  100% { transform: translate3d(-12%, 8%, 0) rotate(12deg) scale(1.10); opacity: .90; }
-}
-@keyframes rx-hue-a {
-  0%   { filter: hue-rotate(0deg); }
-  100% { filter: hue-rotate(360deg); }
-}
-@keyframes rx-hue-b {
-  0%   { filter: hue-rotate(360deg); }
-  100% { filter: hue-rotate(0deg); }
+  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1.05);     opacity: .78; }
+  22%  { transform: translate3d(9%, -7%, 0) rotate(-8deg) scale(1.13); opacity: .92; }
+  45%  { transform: translate3d(4%, 6%, 0) rotate(4deg) scale(1.20);   opacity: 1; }
+  68%  { transform: translate3d(-6%, 9%, 0) rotate(11deg) scale(1.08); opacity: .86; }
+  84%  { transform: translate3d(-2%, -3%, 0) rotate(-2deg) scale(1.14); opacity: .93; }
+  100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1.05);     opacity: .78; }
 }
 
 /* 通用容器 */
