@@ -3,9 +3,10 @@
 
 .diy-page {
   position: relative;
-  min-height: 100vh;
+  height: 100vh;
+  overflow-y: auto;
   box-sizing: border-box;
-  padding-bottom: 40rpx;
+  padding-bottom: 220rpx;
 }
 /* 关闭全局暖白底，改用 A 的冷调光晕底 */
 .diy-page .rx-bg { display: none; }
@@ -60,7 +61,7 @@
 .stage-screen {
   position: relative;
   z-index: 1;
-  padding: 120rpx 40rpx 60rpx;
+  padding: 200rpx 40rpx 60rpx;
   box-sizing: border-box;
 }
 .d-title {
