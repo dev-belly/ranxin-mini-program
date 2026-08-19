@@ -14,7 +14,8 @@ Page({
 
   onShow() {
     this.load();
-    if (this.getTabBar) this.getTabBar().setData({ selected: 2 });
+    const tabBar = this.getTabBar && this.getTabBar();
+    if (tabBar && tabBar.setData) tabBar.setData({ selected: 2 });
   },
 
   load() {
