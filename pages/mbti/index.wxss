@@ -28,14 +28,25 @@
 .q-counter { text-align: right; font-size: 22rpx; color: #8b97b3; margin-bottom: 20rpx; }
 
 .q-card {
+  position: relative;
   padding: 36rpx 32rpx;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.10)), rgba(255, 255, 255, 0.5);
-  -webkit-backdrop-filter: blur(20px) saturate(170%);
-  backdrop-filter: blur(20px) saturate(170%);
-  border: 1.5rpx solid rgba(255, 255, 255, 0.72);
+  background:
+    var(--glass-sheen),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.30), rgba(255, 255, 255, 0.08)), var(--glass-bg-strong);
+  -webkit-backdrop-filter: blur(22px) saturate(200%);
+  backdrop-filter: blur(22px) saturate(200%);
+  border: 1.5rpx solid var(--glass-border-bright);
   border-radius: 32rpx;
-  box-shadow: 0 14rpx 44rpx rgba(31, 45, 90, 0.16), inset 0 1.5rpx 0 rgba(255, 255, 255, 0.92);
+  box-shadow: 0 14rpx 44rpx rgba(31, 45, 90, 0.18), inset 0 1.5rpx 1rpx rgba(255, 255, 255, 0.95), inset 0 -1.5rpx 1rpx rgba(24, 32, 64, 0.10);
   overflow: hidden;
+}
+.q-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1.4rpx rgba(255, 255, 255, 0.42);
 }
 .q-title {
   font-size: 34rpx;
@@ -48,17 +59,18 @@
 .q-opt {
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.5);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  border: 1.5rpx solid rgba(255, 255, 255, 0.72);
+  position: relative;
+  background: var(--glass-sheen), var(--glass-bg-strong);
+  -webkit-backdrop-filter: blur(14px) saturate(190%);
+  backdrop-filter: blur(14px) saturate(190%);
+  border: 1.5rpx solid var(--glass-border-bright);
   border-radius: 18rpx;
   padding: 26rpx 28rpx;
   font-size: 28rpx;
   color: #34527d;
   text-align: left;
   line-height: 1.4;
-  box-shadow: inset 0 1rpx 0 rgba(255, 255, 255, 0.9);
+  box-shadow: inset 0 1.5rpx 1rpx rgba(255, 255, 255, 0.95), inset 0 -1.5rpx 1rpx rgba(24, 32, 64, 0.10);
 }
 .q-opt::after { border: none; }
 .q-opt:active { background: rgba(247, 248, 255, 0.72); border-color: #778cf0; }
@@ -80,15 +92,26 @@
 
 /* 结果 */
 .result-card {
+  position: relative;
   padding: 48rpx 36rpx;
   text-align: center;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.10)), rgba(255, 255, 255, 0.5);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  backdrop-filter: blur(24px) saturate(180%);
-  border: 1.5rpx solid rgba(255, 255, 255, 0.72);
+  background:
+    var(--glass-sheen),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.10)), var(--glass-bg-strong);
+  -webkit-backdrop-filter: blur(26px) saturate(210%) brightness(108%);
+  backdrop-filter: blur(26px) saturate(210%) brightness(108%);
+  border: 1.5rpx solid var(--glass-border-bright);
   border-radius: 32rpx;
-  box-shadow: 0 14rpx 44rpx rgba(31, 45, 90, 0.16), inset 0 1.5rpx 0 rgba(255, 255, 255, 0.92);
+  box-shadow: 0 16rpx 50rpx rgba(31, 45, 90, 0.20), inset 0 1.5rpx 1rpx rgba(255, 255, 255, 0.95), inset 0 -1.5rpx 1rpx rgba(24, 32, 64, 0.10);
   overflow: hidden;
+}
+.result-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1.4rpx rgba(255, 255, 255, 0.42);
 }
 .result-eyebrow { font-size: 24rpx; color: #4f5f7a; }
 .result-type {

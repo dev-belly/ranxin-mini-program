@@ -34,14 +34,14 @@
   width: 74rpx;
   height: 74rpx;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.55);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  border: 1.5rpx solid rgba(255, 255, 255, 0.72);
+  background: var(--glass-sheen), var(--glass-bg-strong);
+  -webkit-backdrop-filter: blur(16px) saturate(190%);
+  backdrop-filter: blur(16px) saturate(190%);
+  border: 1.5rpx solid var(--glass-border-bright);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 0 4rpx rgba(126, 118, 242, .16), 0 0 28rpx rgba(112, 104, 237, .25), 0 8rpx 18rpx rgba(40, 67, 124, .10), inset 0 1rpx 0 rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 0 4rpx rgba(126, 118, 242, .14), 0 0 30rpx rgba(112, 104, 237, .30), 0 8rpx 20rpx rgba(40, 67, 124, .12), inset 0 1.5rpx 1rpx rgba(255, 255, 255, 0.95), inset 0 -1.5rpx 1rpx rgba(24, 32, 64, 0.10);
 }
 .music-btn.on {
   box-shadow: 0 0 0 4rpx rgba(126, 118, 242, .22), 0 0 34rpx rgba(112, 104, 237, .42), 0 8rpx 18rpx rgba(40, 67, 124, .10);
@@ -77,23 +77,24 @@
   margin-bottom: 18rpx;
   padding: 0 28rpx;
   border-radius: 35rpx;
-  border: 1.5rpx solid rgba(255, 255, 255, 0.72);
-  background: rgba(255, 255, 255, 0.5);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  position: relative;
+  border: 1.5rpx solid var(--glass-border);
+  background: var(--glass-sheen), var(--glass-bg);
+  -webkit-backdrop-filter: blur(16px) saturate(190%);
+  backdrop-filter: blur(16px) saturate(190%);
   color: #4f5f7a;
   font-size: 27rpx;
   letter-spacing: 2rpx;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-shadow: inset 0 1rpx 0 rgba(255, 255, 255, 0.9);
+  box-shadow: var(--glass-shadow), var(--glass-thickness);
 }
 .chip.active {
   color: #fff;
   border-color: transparent;
   background: linear-gradient(90deg, #347af0 0%, #5d78fd 42%, #a160ef 100%);
-  box-shadow: 0 0 0 5rpx rgba(101, 124, 253, .10), 0 0 24rpx rgba(95, 90, 255, .44), inset 0 1rpx 0 rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 0 5rpx rgba(101, 124, 253, .10), 0 0 24rpx rgba(95, 90, 255, .44), inset 0 1.5rpx 1rpx rgba(255, 255, 255, 0.6), inset 0 -1.5rpx 1rpx rgba(20, 30, 70, 0.20);
 }
 
 /* 通用大卡片（对齐 A .card） */
@@ -117,13 +118,24 @@
 
 /* hero 卡：灵魂扎染测试（对齐 A 深蓝渐变 #082d6d→#184988） */
 .hero {
+  position: relative;
   min-height: 300rpx;
-  background: linear-gradient(90deg, rgba(8, 45, 109, .66), rgba(10, 50, 119, .58), rgba(24, 73, 136, .66));
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  backdrop-filter: blur(20px) saturate(160%);
-  border: 1.5rpx solid rgba(255, 255, 255, 0.4);
+  background:
+    var(--glass-sheen),
+    linear-gradient(90deg, rgba(8, 45, 109, .56), rgba(10, 50, 119, .48), rgba(24, 73, 136, .56));
+  -webkit-backdrop-filter: blur(26px) saturate(180%) brightness(110%);
+  backdrop-filter: blur(26px) saturate(180%) brightness(110%);
+  border: 1.5rpx solid rgba(255, 255, 255, 0.42);
   border-radius: 31rpx;
-  box-shadow: 0 16rpx 50rpx rgba(8, 30, 80, 0.28), inset 0 1rpx 0 rgba(255, 255, 255, 0.35);
+  box-shadow: 0 18rpx 56rpx rgba(8, 30, 80, 0.32), inset 0 1.5rpx 1rpx rgba(255, 255, 255, 0.45), inset 0 -1.5rpx 1rpx rgba(0, 10, 40, 0.30);
+}
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1.4rpx rgba(255, 255, 255, 0.42);
 }
 .hero::before {
   content: "";
@@ -162,31 +174,52 @@
   margin: 0;
 }
 .glow-btn {
+  position: relative;
   margin-top: 32rpx;
   display: inline-flex;
   align-items: center;
   height: 74rpx;
   padding: 0 34rpx;
-  border: 1.5rpx solid rgba(255, 255, 255, 0.5);
+  border: 1.5rpx solid rgba(255, 255, 255, 0.55);
   border-radius: 38rpx;
   color: #fff;
   font-size: 29rpx;
   letter-spacing: 3rpx;
-  background: linear-gradient(90deg, rgba(104, 167, 255, .9), rgba(121, 130, 255, .9), rgba(181, 108, 232, .9));
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 10rpx 26rpx rgba(124, 145, 255, .34), inset 0 1rpx 0 rgba(255, 255, 255, 0.5);
+  background: linear-gradient(90deg, rgba(104, 167, 255, .94), rgba(121, 130, 255, .94), rgba(181, 108, 232, .94));
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  backdrop-filter: blur(12px) saturate(160%);
+  box-shadow: 0 12rpx 30rpx rgba(124, 145, 255, .40), inset 0 1.5rpx 1rpx rgba(255, 255, 255, 0.6), inset 0 -1.5rpx 1rpx rgba(20, 30, 70, 0.18);
+  overflow: hidden;
+}
+.glow-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 42%);
+  pointer-events: none;
 }
 
 /* stress 卡：放松一下（对齐 A 蓝渐变） */
 .stress {
+  position: relative;
   min-height: 240rpx;
-  background: linear-gradient(135deg, rgba(52, 122, 240, .16), rgba(161, 96, 239, .14)), rgba(255, 255, 255, 0.5);
-  -webkit-backdrop-filter: blur(18px) saturate(170%);
-  backdrop-filter: blur(18px) saturate(170%);
-  border: 1.5rpx solid rgba(255, 255, 255, 0.72);
+  background:
+    var(--glass-sheen),
+    linear-gradient(135deg, rgba(52, 122, 240, .14), rgba(161, 96, 239, .12)), var(--glass-bg-strong);
+  -webkit-backdrop-filter: blur(22px) saturate(200%);
+  backdrop-filter: blur(22px) saturate(200%);
+  border: 1.5rpx solid var(--glass-border-bright);
   border-radius: 31rpx;
-  box-shadow: 0 14rpx 44rpx rgba(31, 45, 90, 0.16), inset 0 1.5rpx 0 rgba(255, 255, 255, 0.92);
+  box-shadow: 0 16rpx 50rpx rgba(31, 45, 90, 0.18), inset 0 1.5rpx 1rpx rgba(255, 255, 255, 0.95), inset 0 -1.5rpx 1rpx rgba(24, 32, 64, 0.10);
+}
+.stress::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1.4rpx rgba(255, 255, 255, 0.42);
 }
 .stress::before {
   content: "";
@@ -247,20 +280,21 @@
   margin: 0 12rpx;
 }
 .white-btn {
+  position: relative;
   margin-top: 14rpx;
   display: inline-flex;
   align-items: center;
   height: 65rpx;
   padding: 0 35rpx;
   border-radius: 33rpx;
-  background: rgba(255, 255, 255, 0.7);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  border: 1.5rpx solid rgba(255, 255, 255, 0.72);
+  background: var(--glass-sheen), var(--glass-bg-strong);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  backdrop-filter: blur(14px) saturate(180%);
+  border: 1.5rpx solid var(--glass-border-bright);
   color: #2d5a9c;
   font-size: 28rpx;
   letter-spacing: 3rpx;
-  box-shadow: 0 8rpx 22rpx rgba(26, 52, 96, .12), inset 0 1rpx 0 rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8rpx 22rpx rgba(26, 52, 96, .12), inset 0 1.5rpx 1rpx rgba(255, 255, 255, 0.95), inset 0 -1.5rpx 1rpx rgba(24, 32, 64, 0.10);
 }
 
 /* 一分钟非遗（对齐 A .heritage-head/.knowledge/.kcard） */
@@ -300,11 +334,21 @@
   overflow: hidden;
   border-radius: 28rpx;
   min-height: 300rpx;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.10)), rgba(255, 255, 255, 0.5);
-  -webkit-backdrop-filter: blur(20px) saturate(170%);
-  backdrop-filter: blur(20px) saturate(170%);
-  border: 1.5rpx solid rgba(255, 255, 255, 0.72);
-  box-shadow: 0 14rpx 44rpx rgba(31, 45, 90, 0.16), inset 0 1.5rpx 0 rgba(255, 255, 255, 0.92);
+  background:
+    var(--glass-sheen),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.30), rgba(255, 255, 255, 0.08)), var(--glass-bg-strong);
+  -webkit-backdrop-filter: blur(22px) saturate(200%);
+  backdrop-filter: blur(22px) saturate(200%);
+  border: 1.5rpx solid var(--glass-border-bright);
+  box-shadow: 0 14rpx 44rpx rgba(31, 45, 90, 0.18), inset 0 1.5rpx 1rpx rgba(255, 255, 255, 0.95), inset 0 -1.5rpx 1rpx rgba(24, 32, 64, 0.10);
+}
+.kcard::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1.4rpx rgba(255, 255, 255, 0.42);
 }
 .kcard:last-child {
   margin-right: 0;

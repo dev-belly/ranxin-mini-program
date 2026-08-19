@@ -9,13 +9,13 @@
   font-size: 30rpx;
   font-weight: 600;
   color: #2a44c1;
-  background: linear-gradient(135deg, rgba(52,122,240,0.14), rgba(161,96,239,0.14)), rgba(255,255,255,0.5);
+  background: linear-gradient(135deg, rgba(52,122,240,0.14), rgba(161,96,239,0.14)), var(--glass-bg-strong);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
-  border: 1.5rpx solid rgba(255,255,255,0.72);
+  border: 1.5rpx solid var(--glass-border-bright);
   border-radius: 999rpx;
   padding: 12rpx 28rpx;
-  box-shadow: inset 0 1rpx 0 rgba(255,255,255,0.9);
+  box-shadow: inset 0 1.5rpx 1rpx rgba(255,255,255,0.95), inset 0 -1.5rpx 1rpx rgba(24,32,64,0.10);
 }
 
 .art-intro {
@@ -24,24 +24,24 @@
   color: #3d4f6f;
   line-height: 1.7;
   margin-bottom: 24rpx;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.10)), rgba(255, 255, 255, 0.5);
+  background: var(--glass-sheen), var(--glass-bg-strong);
   -webkit-backdrop-filter: blur(20px) saturate(170%);
   backdrop-filter: blur(20px) saturate(170%);
-  border: 1.5rpx solid rgba(255, 255, 255, 0.72);
+  border: 1.5rpx solid var(--glass-border-bright);
   border-radius: 31rpx;
-  box-shadow: 0 14rpx 44rpx rgba(31, 45, 90, 0.16), inset 0 1.5rpx 0 rgba(255, 255, 255, 0.92);
+  box-shadow: 0 14rpx 44rpx rgba(31, 45, 90, 0.16), inset 0 1.5rpx 1rpx rgba(255,255,255,0.95), inset 0 -1.5rpx 1rpx rgba(24,32,64,0.10);
 }
 
 .art-section {
   display: flex;
   padding: 32rpx;
   margin-bottom: 24rpx;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.10)), rgba(255, 255, 255, 0.5);
+  background: var(--glass-sheen), var(--glass-bg-strong);
   -webkit-backdrop-filter: blur(20px) saturate(170%);
   backdrop-filter: blur(20px) saturate(170%);
-  border: 1.5rpx solid rgba(255, 255, 255, 0.72);
+  border: 1.5rpx solid var(--glass-border-bright);
   border-radius: 31rpx;
-  box-shadow: 0 14rpx 44rpx rgba(31, 45, 90, 0.16), inset 0 1.5rpx 0 rgba(255, 255, 255, 0.92);
+  box-shadow: 0 14rpx 44rpx rgba(31, 45, 90, 0.16), inset 0 1.5rpx 1rpx rgba(255,255,255,0.95), inset 0 -1.5rpx 1rpx rgba(24,32,64,0.10);
 }
 .art-num {
   flex: 0 0 auto;
@@ -82,14 +82,14 @@
   margin-top: 18rpx;
   font-size: 24rpx;
   color: #4f5f7a;
-  background: linear-gradient(135deg, rgba(52,122,240,0.12), rgba(161,96,239,0.10)), rgba(255,255,255,0.5);
+  background: linear-gradient(135deg, rgba(52,122,240,0.12), rgba(161,96,239,0.10)), var(--glass-bg-strong);
   -webkit-backdrop-filter: blur(14px) saturate(170%);
   backdrop-filter: blur(14px) saturate(170%);
-  border: 1.5rpx solid rgba(255,255,255,0.72);
+  border: 1.5rpx solid var(--glass-border-bright);
   border-left: 6rpx solid #a160ef;
   border-radius: 14rpx;
   padding: 14rpx 18rpx;
-  box-shadow: inset 0 1rpx 0 rgba(255,255,255,0.9);
+  box-shadow: inset 0 1.5rpx 1rpx rgba(255,255,255,0.95), inset 0 -1.5rpx 1rpx rgba(24,32,64,0.10);
 }
 .art-foot {
   text-align: center;
