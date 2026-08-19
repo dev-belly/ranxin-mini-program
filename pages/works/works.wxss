@@ -18,14 +18,14 @@
   display: inline-block;
   padding: 14rpx 30rpx;
   margin-right: 16rpx;
-  background: rgba(255,255,255,0.5);
+  background: var(--glass-sheen), var(--glass-bg-strong);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
-  border: 1.5rpx solid rgba(255,255,255,0.72);
+  border: 1.5rpx solid var(--glass-border-bright);
   border-radius: 999rpx;
   font-size: 26rpx;
   color: #2a44c1;
-  box-shadow: inset 0 1rpx 0 rgba(255,255,255,0.9);
+  box-shadow: inset 0 1.5rpx 1rpx rgba(255,255,255,0.95), inset 0 -1.5rpx 1rpx rgba(24,32,64,0.10);
 }
 .filter-chip.active {
   background: linear-gradient(90deg, #347af0, #5d78fd 42%, #a160ef);
@@ -45,12 +45,12 @@
   display: flex;
   padding: 20rpx;
   gap: 20rpx;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.10)), rgba(255, 255, 255, 0.5);
+  background: var(--glass-sheen), var(--glass-bg-strong);
   -webkit-backdrop-filter: blur(18px) saturate(170%);
   backdrop-filter: blur(18px) saturate(170%);
-  border: 1.5rpx solid rgba(255, 255, 255, 0.72);
+  border: 1.5rpx solid var(--glass-border-bright);
   border-radius: 28rpx;
-  box-shadow: 0 14rpx 44rpx rgba(31, 45, 90, 0.16), inset 0 1.5rpx 0 rgba(255, 255, 255, 0.92);
+  box-shadow: 0 14rpx 44rpx rgba(31, 45, 90, 0.16), inset 0 1.5rpx 1rpx rgba(255,255,255,0.95), inset 0 -1.5rpx 1rpx rgba(24,32,64,0.10);
   overflow: hidden;
 }
 .work-img {
@@ -84,12 +84,12 @@
 .mall-block {
   margin-top: 36rpx;
   padding: 32rpx;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.10)), rgba(255, 255, 255, 0.5);
+  background: var(--glass-sheen), var(--glass-bg-strong);
   -webkit-backdrop-filter: blur(18px) saturate(170%);
   backdrop-filter: blur(18px) saturate(170%);
-  border: 1.5rpx solid rgba(255, 255, 255, 0.72);
+  border: 1.5rpx solid var(--glass-border-bright);
   border-radius: 31rpx;
-  box-shadow: 0 14rpx 44rpx rgba(31, 45, 90, 0.16), inset 0 1.5rpx 0 rgba(255, 255, 255, 0.92);
+  box-shadow: 0 14rpx 44rpx rgba(31, 45, 90, 0.16), inset 0 1.5rpx 1rpx rgba(255,255,255,0.95), inset 0 -1.5rpx 1rpx rgba(24,32,64,0.10);
 }
 .mall-title { font-size: 30rpx; font-weight: 700; color: #173d79; }
 .mall-desc { font-size: 24rpx; color: #4f5f7a; line-height: 1.6; margin: 12rpx 0 24rpx; }
