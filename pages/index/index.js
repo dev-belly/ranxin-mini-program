@@ -12,6 +12,13 @@ Page({
     ],
     relaxDays: 0,
     relaxCount: 0,
+    // 今日染力榜（对齐 A 稿 image1）
+    lbTab: 'user',
+    lbList: [
+      { rank: 1, name: '@inkblue27', score: '128,432', avatar: '/assets/patterns/tuan.png' },
+      { rank: 2, name: '@cloud_dye', score: '97,310', avatar: '/assets/patterns/shui.png' },
+      { rank: 3, name: '@xiao_ran77', score: '86,540', avatar: '/assets/patterns/cang.png' }
+    ],
     // 一分钟非遗三卡（对齐 A：浅底深蓝标题 + 底部图区）
     knowledge: [
       { id: 'why-blue', art: 'why-blue', tag: '为什么不是蓝色？', title: '刚出缸的布，为何不蓝？', lead: '明明染的是板蓝根，为什么捞出来却是黄绿色？', img: '/assets/patterns/cang.png' },
@@ -55,6 +62,26 @@ Page({
 
   goKnowledge() {
     wx.navigateTo({ url: '/pages/knowledge/knowledge' });
+  },
+
+  switchLbTab(e) {
+    const tab = e.currentTarget.dataset.tab;
+    const list = tab === 'user'
+      ? [
+        { rank: 1, name: '@inkblue27', score: '128,432', avatar: '/assets/patterns/tuan.png' },
+        { rank: 2, name: '@cloud_dye', score: '97,310', avatar: '/assets/patterns/shui.png' },
+        { rank: 3, name: '@xiao_ran77', score: '86,540', avatar: '/assets/patterns/cang.png' }
+      ]
+      : [
+        { rank: 1, name: '@blue_mori', score: '632,110', avatar: '/assets/patterns/he.png' },
+        { rank: 2, name: '@nightindigo', score: '543,221', avatar: '/assets/patterns/ling.png' },
+        { rank: 3, name: '@dyewave', score: '487,652', avatar: '/assets/patterns/die.png' }
+      ];
+    this.setData({ lbTab: tab, lbList: list });
+  },
+
+  goRank() {
+    wx.navigateTo({ url: '/pages/rank/rank' });
   },
 
   goArticle(e) {

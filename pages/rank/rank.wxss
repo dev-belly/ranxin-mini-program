@@ -1,0 +1,76 @@
+.rank-page { padding-top: 80rpx; }
+.rank-head {
+  display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 36rpx;
+}
+.back {
+  position: absolute; left: 0; width: 60rpx; height: 60rpx; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 40rpx; color: #173d79;
+  background: var(--glass-sheen), var(--glass-bg-strong); border: 1rpx solid var(--glass-border-bright);
+  box-shadow: var(--glass-shadow), var(--glass-thickness);
+}
+.rank-title { font-size: 40rpx; font-weight: 700; letter-spacing: 4rpx; color: #173d79; font-family: "Songti SC", serif; }
+.rank-spark { position: absolute; right: 0; font-family: Arial; color: #6e86e8; font-size: 24rpx; }
+
+.top-tabs { display: flex; justify-content: center; gap: 60rpx; margin-bottom: 28rpx; }
+.top-tab { font-size: 32rpx; color: #8a9bb8; position: relative; padding-bottom: 8rpx; }
+.top-tab.active { color: #173d79; font-weight: 700; }
+.top-tab.active::after {
+  content: ""; position: absolute; left: 50%; bottom: 0; transform: translateX(-50%);
+  width: 40rpx; height: 4rpx; border-radius: 2rpx; background: linear-gradient(90deg,#347af0,#a160ef);
+}
+
+.sub-tabs { display: flex; justify-content: center; gap: 16rpx; margin-bottom: 30rpx; }
+.sub-tab {
+  padding: 10rpx 28rpx; border-radius: 999rpx; font-size: 26rpx; color: #5d7099;
+  background: var(--glass-sheen), var(--glass-bg); border: 1rpx solid var(--glass-border);
+  box-shadow: var(--glass-thickness);
+}
+.sub-tab.active { background: var(--brand-grad); color: #fff; border-color: transparent; }
+
+.top-card {
+  position: relative; overflow: hidden;
+  background: linear-gradient(90deg, rgba(8, 45, 109, .92), rgba(24, 73, 136, .88));
+  border-radius: 34rpx; padding: 38rpx;
+  display: flex; align-items: center; gap: 26rpx;
+  box-shadow: 0 20rpx 60rpx rgba(8, 30, 80, 0.35);
+}
+.top-card::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  box-shadow: inset 0 0 0 1.4rpx rgba(255,255,255,.35);
+  background: radial-gradient(120% 120% at 50% 0%, rgba(255,255,255,.16), transparent 42%),
+              radial-gradient(120% 120% at 50% 100%, rgba(255,255,255,.08), transparent 42%);
+}
+.laurel {
+  width: 80rpx; height: 80rpx; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(circle, #ffd24c 0%, #ffb347 100%);
+  color: #fff; font-weight: 800; font-size: 34rpx; box-shadow: 0 6rpx 18rpx rgba(255, 178, 70, .4);
+}
+.top-avatar { width: 110rpx; height: 110rpx; border-radius: 50%; border: 4rpx solid rgba(255,255,255,.35); z-index: 1; }
+.top-info { color: #fff; z-index: 1; }
+.top-name { font-size: 32rpx; font-weight: 600; }
+.top-label { font-size: 22rpx; color: rgba(255,255,255,.72); margin-top: 4rpx; }
+.top-score { font-size: 54rpx; font-weight: 700; margin-top: 10rpx; letter-spacing: 2rpx; }
+
+.rank-list { margin-top: 24rpx; }
+.rank-row {
+  display: flex; align-items: center; gap: 22rpx; padding: 22rpx 26rpx; margin-bottom: 18rpx;
+  background: var(--glass-sheen), var(--glass-bg-strong); border: 1rpx solid var(--glass-border);
+  border-radius: 26rpx; box-shadow: var(--glass-shadow), var(--glass-thickness);
+}
+.rank-num { width: 52rpx; text-align: center; font-size: 30rpx; font-weight: 700; color: #6b7c9f; }
+.row-avatar { width: 74rpx; height: 74rpx; border-radius: 50%; border: 2rpx solid rgba(255,255,255,.35); }
+.row-name { flex: 1; font-size: 28rpx; color: #173d79; }
+.row-score { font-size: 30rpx; font-weight: 700; color: #2a44c1; }
+
+.my-rank {
+  margin-top: 32rpx; padding: 24rpx 28rpx;
+  background: linear-gradient(135deg, rgba(161,96,239,.12), rgba(52,122,240,.10)), var(--glass-bg-strong);
+  border-radius: 26rpx; border: 1rpx solid var(--glass-border); box-shadow: var(--glass-shadow), var(--glass-thickness);
+}
+.my-tag { display: block; font-size: 22rpx; color: #6b7c9f; margin-bottom: 12rpx; }
+.my-row { display: flex; align-items: center; gap: 22rpx; }
+.my-avatar { width: 84rpx; height: 84rpx; border-radius: 50%; border: 2rpx solid rgba(255,255,255,.35); }
+.my-name { flex: 1; font-size: 30rpx; color: #173d79; }
+.my-current { font-size: 26rpx; color: #5d7099; }
+.my-num { font-size: 44rpx; font-weight: 700; color: #2a44c1; margin-left: 6rpx; }

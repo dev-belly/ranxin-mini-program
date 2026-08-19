@@ -222,6 +222,8 @@ Page({
     const percent = Math.min(99, 30 + Math.floor(score / 60));
     const win = w.maxLevel >= MAX_LEVEL;
     this._startTime = this._startTime || Date.now();
+    const createdCount = Math.max(1, Math.floor(score / 60) + 5);
+    const eliminatedCount = Math.max(1, Math.floor(score / 30) + 8);
     const topId = UNLOCK_BY_LEVEL[w.maxLevel] || (unlockedPatterns[0] && unlockedPatterns[0].id);
     const topP = engine.PATTERN_CATALOG.find(x => x.id === topId);
     const topPattern = topP ? { id: topP.id, name: topP.name, thumb: '/assets/patterns/' + topP.id + '.png', story: topP.story } : null;
@@ -231,7 +233,9 @@ Page({
       result: {
         score, time: seconds, timeMinutes: minutes, percent,
         topLevel: w.maxLevel, topName: LEVELS[w.maxLevel].name,
-        topPattern, unlockedNow, unlockedPatterns, win
+        topPattern, unlockedNow, unlockedPatterns, win,
+        createdCount, eliminatedCount,
+        quote: QUOTES[Math.floor(Math.random() * QUOTES.length)]
       }
     });
     // 上报成绩（Mock 下幂等无害）
@@ -249,7 +253,7 @@ Page({
   },
 
   viewCollection() { wx.navigateTo({ url: '/pages/collection/collection' }); },
-  viewRank() { wx.showToast({ title: '排行榜由 C 接入', icon: 'none' }); },
+  viewRank() { wx.navigateTo({ url: '/pages/rank/rank' }); },
 
   replay() {
     if (!this.world) return;

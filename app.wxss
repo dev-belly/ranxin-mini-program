@@ -1,202 +1,190 @@
-/* 全局主题：染心 · 液态玻璃（Liquid Glass，参考 iOS 26） */
+/* 全局主题：染心 · 液态玻璃 v3（参考 iOS 26 + GitHub 开源 liquid-glass 技术）
+   真做法核心（来自开源复刻）：
+   ① 边缘折射 —— 玻璃是凸面，背后内容在边缘被透镜弯折；
+   ② 对称镜面高光 —— 光从两侧进入/射出，玻璃上下边形成一圈亮环；
+   ③ 薄磨砂体 + 鲜艳底层 —— 玻璃要薄，底下必须是鲜艳内容，玻璃才透得起来。
+   真机 backdrop-filter / SVG 滤镜支持差，故用最强 CSS 还原：脆边 + 上下 rim 光 + 凸面顶部高光 + 鲜艳晕染底层。 */
 page {
   background: #fbfaf8;
   font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   color: #173d79;
   -webkit-font-smoothing: antialiased;
-  /* —— 液态玻璃设计令牌 ——
-     关键词：薄（thin）、透（translucent）、亮边（specular）、艳底（vivid）。
-     真机 backdrop-filter 支持差，故 background 保持薄透，让鲜艳底层透上来；
-     桌面/DevTools 浏览器支持 backdrop-filter，可出真实折射。 */
-  --glass-bg: rgba(255, 255, 255, 0.16);
-  --glass-bg-strong: rgba(255, 255, 255, 0.24);
-  --glass-bg-tint: rgba(255, 255, 255, 0.20);
-  --glass-border: rgba(255, 255, 255, 0.50);
-  --glass-border-bright: rgba(255, 255, 255, 0.68);
-  /* 深度：外阴影给景深，内阴影给玻璃厚度（顶亮底暗） */
-  --glass-shadow: 0 12rpx 40rpx rgba(20, 30, 70, 0.22);
-  --glass-thickness: inset 0 1.5rpx 1rpx rgba(255, 255, 255, 0.95), inset 0 -1.5rpx 1rpx rgba(24, 32, 64, 0.10);
-  /* 斜向高光（specular highlight），让光从左上掠过玻璃 */
-  --glass-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.10) 36%, rgba(255, 255, 255, 0) 58%);
-  /* 边缘折射亮环（玻璃边缘聚光，关键区别于塑料） */
-  --glass-edge: inset 0 0 0 1.4rpx rgba(255, 255, 255, 0.42);
+  --glass-bg: rgba(255, 255, 255, 0.14);
+  --glass-bg-strong: rgba(255, 255, 255, 0.20);
+  --glass-bg-tint: rgba(255, 255, 255, 0.18);
+  --glass-border: rgba(255, 255, 255, 0.45);
+  --glass-border-bright: rgba(255, 255, 255, 0.62);
+  /* 景深 + 玻璃厚度（顶亮底暗，模拟凸面玻璃体） */
+  --glass-shadow: 0 18rpx 50rpx rgba(18, 28, 64, 0.24);
+  --glass-thickness: inset 0 2rpx 2rpx rgba(255, 255, 255, 0.9), inset 0 -2rpx 3rpx rgba(18, 28, 64, 0.12);
+  /* 斜向 specular：光从左上掠过玻璃顶部（凸面高光带） */
+  --glass-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.08) 34%, rgba(255, 255, 255, 0) 56%);
+  /* 边缘折射亮环（仿苹果凸面）：脆边 + 软内圈 + 顶部光 + 底部厚度暗 */
+  --glass-edge:
+    inset 0 0 0 1.2rpx rgba(255, 255, 255, 0.55),
+    inset 0 0 0 2.6rpx rgba(255, 255, 255, 0.10),
+    inset 0 3rpx 10rpx rgba(255, 255, 255, 0.30),
+    inset 0 -4rpx 12rpx rgba(16, 26, 60, 0.10);
   --brand-grad: linear-gradient(90deg, #347af0 0%, #5d78fd 42%, #a160ef 100%);
 }
 
-/* 折射底层：对齐 A 第一版暖白纸感（网点 + 水彩蓝晕），玻璃卡浮其上呈苹果浅色玻璃 */
+/* 折射底层：对齐 A 第一版暖白纸感 + 更鲜艳的蓝紫晕染（让薄玻璃透出色彩，玻璃才"立"得起来） */
 .rx-bg {
   position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
+  left: 0; right: 0; top: 0; bottom: 0;
   z-index: -1;
   background:
-    radial-gradient(circle at 2rpx 2rpx, rgba(45, 82, 136, .10) 0 .7rpx, transparent .9rpx) 0 0 / 21rpx 21rpx,
-    radial-gradient(400rpx 340rpx at 82% 8%, rgba(145, 185, 240, .34), transparent 62%),
-    radial-gradient(360rpx 300rpx at 92% 30%, rgba(133, 176, 234, .28), transparent 60%),
-    radial-gradient(300rpx 260rpx at 68% 6%, rgba(127, 169, 229, .22), transparent 60%),
-    radial-gradient(260rpx 240rpx at 16% 70%, rgba(150, 196, 247, .18), transparent 62%),
-    linear-gradient(180deg, #fbfaf8 0%, #faf9f6 76%, #f8f7f4 100%);
+    radial-gradient(circle at 2rpx 2rpx, rgba(45, 82, 136, .12) 0 .7rpx, transparent .9rpx) 0 0 / 21rpx 21rpx,
+    radial-gradient(440rpx 360rpx at 84% 6%, rgba(126, 170, 255, .42), transparent 62%),
+    radial-gradient(380rpx 320rpx at 94% 28%, rgba(140, 130, 245, .34), transparent 60%),
+    radial-gradient(340rpx 280rpx at 70% 4%, rgba(118, 162, 255, .30), transparent 60%),
+    radial-gradient(320rpx 280rpx at 12% 64%, rgba(150, 196, 247, .26), transparent 62%),
+    radial-gradient(300rpx 260rpx at 90% 78%, rgba(176, 150, 255, .24), transparent 62%),
+    linear-gradient(180deg, #fbfaf8 0%, #faf9f6 76%, #f7f5f2 100%);
 }
 
 /* 通用容器 */
-.rx-page {
-  padding: 0 32rpx 140rpx;
-  box-sizing: border-box;
-}
+.rx-page { padding: 0 32rpx 140rpx; box-sizing: border-box; }
 
-/* 通用玻璃卡 —— 薄透 + 折射高光 + 边缘亮环 + 景深 */
+/* 通用玻璃卡 —— 薄透 + 凸面顶部高光 + 边缘折射亮环 + 景深 */
 .rx-card {
   position: relative;
   background: var(--glass-sheen), var(--glass-bg);
-  -webkit-backdrop-filter: blur(34px) saturate(210%) brightness(108%);
-  backdrop-filter: blur(34px) saturate(210%) brightness(108%);
+  -webkit-backdrop-filter: blur(30px) saturate(200%) brightness(108%);
+  backdrop-filter: blur(30px) saturate(200%) brightness(108%);
   border-radius: 32rpx;
-  border: 1.5rpx solid var(--glass-border);
+  border: 1rpx solid var(--glass-border);
   box-shadow: var(--glass-shadow), var(--glass-thickness);
   overflow: hidden;
 }
-/* 玻璃边缘折射亮环（伪元素，不挡内容） */
+/* 凸面顶部高光（宽光带，模拟玻璃鼓起） */
+.rx-card::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(130% 90% at 50% -12%, rgba(255, 255, 255, 0.32), transparent 46%);
+}
+/* 边缘折射亮环：上下对称 rim 光（仿苹果凸面）+ 脆边 */
 .rx-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background:
+    radial-gradient(120% 120% at 50% 0%, rgba(255, 255, 255, 0.24), transparent 42%),
+    radial-gradient(120% 120% at 50% 100%, rgba(255, 255, 255, 0.13), transparent 42%);
   box-shadow: var(--glass-edge);
 }
 
 /* 标题字体（宋体） */
 .rx-title {
-  font-size: 48rpx;
-  font-weight: 700;
-  color: #173d79;
-  letter-spacing: 4rpx;
+  font-size: 48rpx; font-weight: 700; color: #173d79; letter-spacing: 4rpx;
   font-family: "Songti SC", "STSong", "SimSun", serif;
 }
+.rx-section-title { font-size: 36rpx; font-weight: 700; color: #173d79; margin-bottom: 20rpx; }
 
-.rx-section-title {
-  font-size: 36rpx;
-  font-weight: 700;
-  color: #173d79;
-  margin-bottom: 20rpx;
-}
-
-/* 主按钮：玻璃品牌渐变（薄高光 + 亮边） */
+/* 主按钮：玻璃品牌渐变（薄高光 + 脆边 + 顶亮底暗） */
 .rx-btn-primary {
   position: relative;
   background: linear-gradient(90deg, rgba(52, 122, 240, .94), rgba(93, 120, 253, .94), rgba(161, 96, 239, .94));
-  -webkit-backdrop-filter: blur(12px) saturate(160%);
-  backdrop-filter: blur(12px) saturate(160%);
-  color: #fff;
-  border-radius: 999rpx;
-  font-size: 30rpx;
-  font-weight: 600;
-  padding: 20rpx 48rpx;
-  border: 1.5rpx solid rgba(255, 255, 255, 0.55);
-  box-shadow: 0 12rpx 30rpx rgba(52, 122, 240, 0.40), inset 0 1.5rpx 1rpx rgba(255, 255, 255, 0.65), inset 0 -1.5rpx 1rpx rgba(20, 30, 70, 0.18);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+  -webkit-backdrop-filter: blur(12px) saturate(160%); backdrop-filter: blur(12px) saturate(160%);
+  color: #fff; border-radius: 999rpx; font-size: 30rpx; font-weight: 600;
+  padding: 20rpx 48rpx; border: 1rpx solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 14rpx 34rpx rgba(52, 122, 240, 0.42), inset 0 2rpx 1rpx rgba(255, 255, 255, 0.7), inset 0 -2rpx 1rpx rgba(20, 30, 70, 0.18);
+  display: inline-flex; align-items: center; justify-content: center; overflow: hidden;
 }
 .rx-btn-primary::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 42%);
-  pointer-events: none;
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 42%);
 }
 .rx-btn-primary::after { border: none; }
 
-/* 次按钮：薄白玻璃 + 亮边 + 顶亮底暗 */
+/* 次按钮：薄白玻璃 + 脆边 + 顶亮底暗 + 上下 rim 光 */
 .rx-btn-secondary {
   position: relative;
   background: var(--glass-sheen), var(--glass-bg-strong);
-  -webkit-backdrop-filter: blur(14px) saturate(180%);
-  backdrop-filter: blur(14px) saturate(180%);
-  color: #2a44c1;
-  border-radius: 999rpx;
-  font-size: 28rpx;
-  font-weight: 600;
-  padding: 18rpx 40rpx;
-  border: 1.5rpx solid var(--glass-border-bright);
-  box-shadow: var(--glass-shadow), var(--glass-thickness);
-  overflow: hidden;
+  -webkit-backdrop-filter: blur(14px) saturate(180%); backdrop-filter: blur(14px) saturate(180%);
+  color: #2a44c1; border-radius: 999rpx; font-size: 28rpx; font-weight: 600;
+  padding: 18rpx 40rpx; border: 1rpx solid var(--glass-border-bright);
+  box-shadow: var(--glass-shadow), var(--glass-thickness); overflow: hidden;
 }
-.rx-btn-secondary::after { border: none; }
+.rx-btn-secondary::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background:
+    radial-gradient(120% 120% at 50% 0%, rgba(255, 255, 255, 0.22), transparent 42%),
+    radial-gradient(120% 120% at 50% 100%, rgba(255, 255, 255, 0.12), transparent 42%);
+  box-shadow: var(--glass-edge);
+}
 
 /* 玻璃芯片 */
 .rx-chip {
-  display: inline-flex;
-  align-items: center;
-  position: relative;
-  padding: 16rpx 32rpx;
-  border-radius: 999rpx;
+  display: inline-flex; align-items: center; position: relative;
+  padding: 16rpx 32rpx; border-radius: 999rpx;
   background: var(--glass-sheen), var(--glass-bg);
-  -webkit-backdrop-filter: blur(14px) saturate(190%);
-  backdrop-filter: blur(14px) saturate(190%);
-  border: 1.5rpx solid var(--glass-border);
-  color: #4f5f7a;
-  font-size: 28rpx;
-  box-shadow: var(--glass-thickness);
-  margin-right: 16rpx;
-  margin-bottom: 16rpx;
+  -webkit-backdrop-filter: blur(14px) saturate(190%); backdrop-filter: blur(14px) saturate(190%);
+  border: 1rpx solid var(--glass-border); color: #4f5f7a; font-size: 28rpx;
+  box-shadow: var(--glass-thickness); margin-right: 16rpx; margin-bottom: 16rpx; overflow: hidden;
+}
+.rx-chip::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background:
+    radial-gradient(120% 120% at 50% 0%, rgba(255, 255, 255, 0.22), transparent 42%),
+    radial-gradient(120% 120% at 50% 100%, rgba(255, 255, 255, 0.12), transparent 42%);
+  box-shadow: var(--glass-edge);
 }
 .rx-chip.active {
-  background: var(--brand-grad);
-  color: #fff;
-  border-color: transparent;
-  box-shadow: 0 10rpx 24rpx rgba(101, 124, 253, 0.40), inset 0 1.5rpx 1rpx rgba(255, 255, 255, 0.6), inset 0 -1.5rpx 1rpx rgba(20, 30, 70, 0.20);
+  background: var(--brand-grad); color: #fff; border-color: transparent;
+  box-shadow: 0 10rpx 24rpx rgba(101, 124, 253, 0.42), inset 0 2rpx 1rpx rgba(255, 255, 255, 0.6), inset 0 -2rpx 1rpx rgba(20, 30, 70, 0.20);
 }
 
 /* 小标签 */
 .rx-tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 6rpx 16rpx;
-  border-radius: 999rpx;
-  background: rgba(52, 122, 240, 0.16);
-  color: #2a44c1;
-  font-size: 22rpx;
+  display: inline-flex; align-items: center; padding: 6rpx 16rpx; border-radius: 999rpx;
+  background: rgba(52, 122, 240, 0.16); color: #2a44c1; font-size: 22rpx;
 }
 
-/* —— 液态玻璃扩展类 —— */
-/* 深蓝品牌玻璃（hero / 深色卡）：薄透深蓝 + 亮边 + 折射环 */
+/* 深蓝品牌玻璃（hero / 深色卡）：薄透深蓝 + 脆边 + 折射环 + 上下 rim 光 */
 .glass-hero {
   position: relative;
-  background: linear-gradient(90deg, rgba(8, 45, 109, .58), rgba(10, 50, 119, .50), rgba(24, 73, 136, .58));
-  -webkit-backdrop-filter: blur(26px) saturate(180%) brightness(110%);
-  backdrop-filter: blur(26px) saturate(180%) brightness(110%);
-  border-radius: 31rpx;
-  border: 1.5rpx solid rgba(255, 255, 255, 0.42);
-  box-shadow: 0 18rpx 56rpx rgba(8, 30, 80, 0.32), inset 0 1.5rpx 1rpx rgba(255, 255, 255, 0.45), inset 0 -1.5rpx 1rpx rgba(0, 10, 40, 0.30);
+  background: linear-gradient(90deg, rgba(8, 45, 109, .56), rgba(10, 50, 119, .48), rgba(24, 73, 136, .56));
+  -webkit-backdrop-filter: blur(24px) saturate(180%) brightness(110%); backdrop-filter: blur(24px) saturate(180%) brightness(110%);
+  border-radius: 31rpx; border: 1rpx solid rgba(255, 255, 255, 0.42);
+  box-shadow: 0 20rpx 60rpx rgba(8, 30, 80, 0.34), inset 0 2rpx 1rpx rgba(255, 255, 255, 0.5), inset 0 -2rpx 1rpx rgba(0, 10, 40, 0.30);
   overflow: hidden;
+}
+.glass-hero::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background:
+    radial-gradient(120% 120% at 50% 0%, rgba(255, 255, 255, 0.20), transparent 42%),
+    radial-gradient(120% 120% at 50% 100%, rgba(255, 255, 255, 0.10), transparent 42%);
+  box-shadow: var(--glass-edge);
 }
 
 /* 浅色品牌玻璃（淡蓝/淡紫信息块） */
 .glass-tint {
   position: relative;
   background: var(--glass-sheen), var(--glass-bg-tint);
-  -webkit-backdrop-filter: blur(22px) saturate(200%);
-  backdrop-filter: blur(22px) saturate(200%);
-  border: 1.5rpx solid var(--glass-border);
-  border-radius: 28rpx;
-  box-shadow: var(--glass-shadow), var(--glass-thickness);
+  -webkit-backdrop-filter: blur(20px) saturate(200%); backdrop-filter: blur(20px) saturate(200%);
+  border: 1rpx solid var(--glass-border); border-radius: 28rpx;
+  box-shadow: var(--glass-shadow), var(--glass-thickness); overflow: hidden;
+}
+.glass-tint::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background:
+    radial-gradient(120% 120% at 50% 0%, rgba(255, 255, 255, 0.22), transparent 42%),
+    radial-gradient(120% 120% at 50% 100%, rgba(255, 255, 255, 0.12), transparent 42%);
+  box-shadow: var(--glass-edge);
 }
 
-/* 白玻璃按钮（用于浅底上的次按钮 / 关闭） */
+/* 白玻璃按钮（浅底上的次按钮 / 关闭） */
 .glass-btn-light {
   position: relative;
   background: var(--glass-sheen), var(--glass-bg-strong);
-  -webkit-backdrop-filter: blur(14px) saturate(180%);
-  backdrop-filter: blur(14px) saturate(180%);
-  border: 1.5rpx solid var(--glass-border-bright);
-  border-radius: 999rpx;
-  color: #2a44c1;
-  box-shadow: var(--glass-shadow), var(--glass-thickness);
+  -webkit-backdrop-filter: blur(14px) saturate(180%); backdrop-filter: blur(14px) saturate(180%);
+  border: 1rpx solid var(--glass-border-bright); border-radius: 999rpx; color: #2a44c1;
+  box-shadow: var(--glass-shadow), var(--glass-thickness); overflow: hidden;
+}
+.glass-btn-light::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background:
+    radial-gradient(120% 120% at 50% 0%, rgba(255, 255, 255, 0.22), transparent 42%),
+    radial-gradient(120% 120% at 50% 100%, rgba(255, 255, 255, 0.12), transparent 42%);
+  box-shadow: var(--glass-edge);
 }
 
 /* A 风格装饰星 */

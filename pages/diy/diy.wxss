@@ -457,3 +457,112 @@
 
 /* 隐藏缩略图画布 */
 .thumb-canvas { position: fixed; left: -9999rpx; top: -9999rpx; width: 220px; height: 220px; }
+
+/* ============ 新增：六步 stepper 与 mood 摘要（image8） ============ */
+.global-stepper {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 80rpx 40rpx 24rpx; background: linear-gradient(180deg, #fbfdff 0%, rgba(251,253,255,0) 100%);
+}
+.gstep { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8rpx; position: relative; }
+.gstep::after { content: ""; position: absolute; top: 18rpx; left: 50%; right: -50%; height: 2rpx; background: #d7deee; z-index: 0; }
+.gstep:last-child::after { display: none; }
+.gdot { width: 38rpx; height: 38rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20rpx; color: #8a9bc2; background: #eef2fb; border: 2rpx solid #d0d9ec; z-index: 1; }
+.gstep.done .gdot { background: linear-gradient(135deg,#4e7cff,#7756ff); color: #fff; border-color: transparent; }
+.gstep.active .gdot { width: 46rpx; height: 46rpx; background: linear-gradient(135deg,#6a68ff,#a06bff); color: #fff; border-color: #fff; box-shadow: 0 0 0 6rpx rgba(106,104,255,.16); }
+.glabel { font-size: 20rpx; color: #7a8ab0; }
+.gstep.active .glabel { color: #4f3fff; font-weight: 600; }
+
+.summary-card {
+  margin-top: 40rpx; padding: 34rpx;
+  background: var(--glass-sheen), var(--glass-bg-strong); border-radius: 32rpx;
+  border: 1rpx solid rgba(226, 231, 242, .9); box-shadow: 0 9rpx 27rpx rgba(58, 79, 125, .12);
+}
+.summary-head { text-align: center; font-size: 28rpx; color: #153e7f; font-weight: 600; margin-bottom: 22rpx; }
+.mini-stepper { display: flex; justify-content: space-between; margin-bottom: 28rpx; }
+.mstep { display: flex; flex-direction: column; align-items: center; gap: 6rpx; }
+.mdot { width: 30rpx; height: 30rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18rpx; color: #8a9bc2; background: #eef2fb; border: 2rpx solid #d0d9ec; }
+.mstep.active .mdot { background: linear-gradient(135deg,#6a68ff,#a06bff); color: #fff; border-color: #fff; }
+.mlabel { font-size: 18rpx; color: #7a8ab0; }
+.mstep.active .mlabel { color: #4f3fff; }
+.summary-preview { display: flex; align-items: center; gap: 24rpx; padding: 20rpx; border-radius: 24rpx; background: rgba(255,255,255,.55); }
+.summary-thumb { width: 140rpx; height: 140rpx; border-radius: 50%; border: 3rpx solid rgba(255,255,255,.6); }
+.summary-info { flex: 1; }
+.summary-name { font-family: "Songti SC", serif; font-size: 34rpx; font-weight: 700; color: #153e7f; }
+.summary-desc { font-size: 22rpx; color: #6b7c9e; margin-top: 6rpx; }
+.summary-meta { margin-top: 12rpx; display: flex; gap: 12rpx; flex-wrap: wrap; }
+.summary-meta text { font-size: 20rpx; color: #5d75a0; background: rgba(255,255,255,.7); padding: 4rpx 12rpx; border-radius: 12rpx; }
+.summary-quote { margin-top: 20rpx; text-align: center; font-size: 24rpx; color: #5d75a0; line-height: 1.6; }
+
+.knowledge-mini {
+  margin-top: 28rpx; padding: 28rpx;
+  background: var(--glass-sheen), var(--glass-bg-strong); border-radius: 28rpx;
+  border: 1rpx solid rgba(226, 231, 242, .9); box-shadow: 0 7rpx 22rpx rgba(58, 79, 125, .10);
+}
+.kmini-title { font-size: 24rpx; color: #6b7c9e; }
+.kmini-h { font-family: "Songti SC", serif; font-size: 30rpx; font-weight: 700; color: #153e7f; margin: 10rpx 0; }
+.kmini-body { font-size: 24rpx; color: #5d75a0; line-height: 1.6; }
+
+/* ============ fabric 卡片加图（image9） ============ */
+.fabric-card { padding: 22rpx; display: flex; align-items: center; gap: 24rpx; }
+.fabric-img { width: 160rpx; height: 160rpx; border-radius: 22rpx; background: #eef1fb; border: 1rpx solid rgba(255,255,255,.6); }
+.fabric-main { flex: 1; }
+.fabric-check { width: 48rpx; height: 48rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg,#5c6df4,#8e6bed); color: #fff; font-size: 26rpx; }
+
+/* ============ craft 新布局（image11-14） ============ */
+.craft-title { font-family: "Songti SC", serif; font-size: 48rpx; font-weight: 700; color: #153e7f; text-align: center; margin-top: 100rpx; }
+.craft-subtitle { font-size: 24rpx; color: #59709e; text-align: center; margin-top: 8rpx; margin-bottom: 20rpx; }
+.fold-list { display: flex; flex-direction: column; gap: 16rpx; }
+.fold-card { padding: 20rpx 24rpx; border-radius: 20rpx; background: var(--glass-sheen), var(--glass-bg); border: 2rpx solid transparent; }
+.fold-card.sel { border-color: #7d6bff; background: #eef2ff; }
+.fold-name { font-size: 28rpx; font-weight: 600; color: #20417d; }
+.fold-desc { font-size: 22rpx; color: #6b7c9e; margin-top: 4rpx; }
+
+.ctrl-block { margin-top: 8rpx; }
+
+/* 入染：染液圆圈 + 方式卡片 */
+.dye-circles { display: flex; justify-content: space-around; margin: 20rpx 0; }
+.dye-circle-wrap { display: flex; flex-direction: column; align-items: center; gap: 10rpx; }
+.dye-circle-big { width: 78rpx; height: 78rpx; border-radius: 50%; border: 4rpx solid rgba(255,255,255,.6); box-shadow: 0 6rpx 16rpx rgba(0,0,0,.08); }
+.dye-circle-wrap.sel .dye-circle-big { box-shadow: 0 0 0 6rpx rgba(125,107,255,.25); }
+.dye-circle-label { font-size: 22rpx; color: #20417d; }
+
+.preview-row { margin-top: 8rpx; }
+.preview-box { position: relative; border-radius: 24rpx; overflow: hidden; background: #eef1fb; }
+.preview-img { width: 100%; height: 260rpx; display: block; }
+.preview-tag { position: absolute; bottom: 16rpx; left: 16rpx; padding: 8rpx 18rpx; border-radius: 999rpx; font-size: 22rpx; color: #fff; background: rgba(21,62,127,.55); }
+
+.method-list { display: flex; flex-direction: column; gap: 16rpx; }
+.method-card { display: flex; align-items: center; justify-content: space-between; padding: 22rpx 24rpx; border-radius: 22rpx; background: var(--glass-sheen), var(--glass-bg); border: 2rpx solid transparent; }
+.method-card.sel { border-color: #7d6bff; background: #eef2ff; }
+.method-name { font-size: 28rpx; font-weight: 600; color: #20417d; }
+.method-recommend { font-size: 18rpx; color: #fff; background: #7d6bff; padding: 2rpx 10rpx; border-radius: 10rpx; margin-left: 8rpx; }
+.method-desc { font-size: 22rpx; color: #6b7c9e; margin-top: 4rpx; }
+.method-check { width: 40rpx; height: 40rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg,#5c6df4,#8e6bed); color: #fff; font-size: 22rpx; }
+
+/* 氧化 */
+.oxidation-set { padding: 22rpx; border-radius: 22rpx; background: var(--glass-sheen), var(--glass-bg); }
+.oxi-label { font-size: 24rpx; color: #5d75a0; }
+.oxi-minutes { display: flex; align-items: center; justify-content: center; gap: 30rpx; margin: 18rpx 0; }
+.oxi-btn { width: 56rpx; height: 56rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32rpx; color: #6b7c9e; background: rgba(255,255,255,.7); border: 1rpx solid #d7deee; }
+.oxi-num { font-size: 64rpx; font-weight: 700; color: #153e7f; }
+.oxi-unit { font-size: 26rpx; color: #59709e; margin-left: 8rpx; }
+.compare-row { display: flex; align-items: center; gap: 16rpx; }
+.compare-box { flex: 1; border-radius: 22rpx; overflow: hidden; background: #eef1fb; position: relative; }
+.compare-img { width: 100%; height: 200rpx; display: block; }
+.compare-tag { position: absolute; top: 12rpx; left: 12rpx; padding: 6rpx 14rpx; border-radius: 999rpx; font-size: 20rpx; color: #fff; background: rgba(21,62,127,.5); }
+.compare-tag.expect { background: linear-gradient(135deg,#4e7cff,#7756ff); }
+.compare-caption { text-align: center; font-size: 20rpx; color: #5d75a0; padding: 10rpx 0; }
+.compare-arrow { font-size: 40rpx; color: #7d6bff; }
+
+/* 拆结 */
+.unfold-methods { display: flex; gap: 20rpx; }
+.unfold-card { flex: 1; padding: 24rpx 16rpx; border-radius: 22rpx; text-align: center; background: var(--glass-sheen), var(--glass-bg); border: 2rpx solid transparent; }
+.unfold-card.sel { border-color: #7d6bff; background: #eef2ff; }
+.unfold-icon { font-size: 48rpx; }
+.unfold-name { font-size: 28rpx; font-weight: 600; color: #20417d; margin-top: 8rpx; }
+.unfold-desc { font-size: 22rpx; color: #6b7c9e; margin-top: 4rpx; }
+.tip-list { margin-top: 22rpx; padding: 22rpx; border-radius: 22rpx; background: linear-gradient(135deg, rgba(255,245,200,.3), rgba(255,255,255,.6)); border: 1rpx solid rgba(255,235,180,.6); }
+.tip-title { font-size: 26rpx; font-weight: 700; color: #8c6a1d; margin-bottom: 12rpx; }
+.tip-item { display: flex; align-items: center; gap: 12rpx; font-size: 24rpx; color: #6b5a2f; margin-top: 8rpx; }
+.tip-dot { width: 34rpx; height: 34rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(255,211,107,.35); font-size: 20rpx; }
