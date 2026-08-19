@@ -39,8 +39,8 @@ page {
     linear-gradient(180deg, #fbfaf8 0%, #faf9f6 76%, #f7f5f2 100%);
 }
 
-/* 自然极光：两个柔和大光团，各以互质周期（23s / 37s）+ 不规则多关键点路径缓慢漂移/呼吸
-   不做匀速转色轮（hue-rotate）、不做机械扫光——靠光团移动与明暗呼吸产生有机的色彩流动 */
+/* 自然极光：两个鲜艳大光团，互质慢周期（25s / 40s）+ 不规则路径，但位移/旋转/明暗呼吸幅度拉大
+   慢而不闷——几秒内也能看出光团在移动、在明暗呼吸，颜色鲜艳（花里胡哨）但不机械 */
 .rx-bg::before,
 .rx-bg::after {
   content: "";
@@ -53,36 +53,36 @@ page {
 }
 .rx-bg::before {
   background:
-    radial-gradient(46% 44% at 26% 30%, rgba(110, 160, 255, .72), transparent 62%),
-    radial-gradient(42% 40% at 68% 20%, rgba(160, 120, 255, .62), transparent 62%),
-    radial-gradient(36% 36% at 84% 58%, rgba(70, 200, 245, .52), transparent 62%),
-    radial-gradient(40% 38% at 16% 74%, rgba(120, 175, 255, .58), transparent 62%);
-  animation: rx-aurora-a 23s ease-in-out infinite;
+    radial-gradient(46% 44% at 26% 30%, rgba(70, 130, 255, .85), transparent 60%),
+    radial-gradient(42% 40% at 68% 20%, rgba(160, 80, 255, .78), transparent 60%),
+    radial-gradient(36% 36% at 84% 58%, rgba(0, 210, 255, .70), transparent 60%),
+    radial-gradient(40% 38% at 16% 74%, rgba(90, 170, 255, .74), transparent 60%);
+  animation: rx-aurora-a 25s ease-in-out infinite;
 }
 .rx-bg::after {
   background:
-    radial-gradient(44% 42% at 74% 72%, rgba(255, 140, 205, .50), transparent 62%),
-    radial-gradient(38% 36% at 12% 28%, rgba(255, 195, 120, .44), transparent 62%),
-    radial-gradient(42% 40% at 88% 86%, rgba(150, 110, 255, .50), transparent 62%),
-    radial-gradient(38% 36% at 48% 8%, rgba(90, 205, 255, .44), transparent 62%);
-  animation: rx-aurora-b 37s ease-in-out infinite;
+    radial-gradient(44% 42% at 74% 72%, rgba(255, 90, 200, .65), transparent 60%),
+    radial-gradient(38% 36% at 12% 28%, rgba(255, 190, 60, .58), transparent 60%),
+    radial-gradient(42% 40% at 88% 86%, rgba(140, 90, 255, .68), transparent 60%),
+    radial-gradient(38% 36% at 48% 8%, rgba(0, 200, 255, .55), transparent 60%);
+  animation: rx-aurora-b 40s ease-in-out infinite;
 }
 
 @keyframes rx-aurora-a {
-  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1);        opacity: .82; }
-  18%  { transform: translate3d(-7%, 5%, 0) rotate(5deg) scale(1.08);  opacity: .94; }
-  37%  { transform: translate3d(-3%, 11%, 0) rotate(10deg) scale(1.16); opacity: 1; }
-  55%  { transform: translate3d(6%, 6%, 0) rotate(3deg) scale(1.06);    opacity: .88; }
-  74%  { transform: translate3d(9%, -4%, 0) rotate(-6deg) scale(1.13);  opacity: .96; }
-  100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1);        opacity: .82; }
+  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1);       opacity: .62; }
+  20%  { transform: translate3d(-14%, 9%, 0) rotate(8deg) scale(1.16); opacity: 1; }
+  40%  { transform: translate3d(-6%, 18%, 0) rotate(15deg) scale(1.28); opacity: .75; }
+  60%  { transform: translate3d(10%, 9%, 0) rotate(4deg) scale(1.10);   opacity: .98; }
+  80%  { transform: translate3d(15%, -7%, 0) rotate(-10deg) scale(1.22); opacity: .70; }
+  100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1);       opacity: .62; }
 }
 @keyframes rx-aurora-b {
-  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1.05);     opacity: .78; }
-  22%  { transform: translate3d(9%, -7%, 0) rotate(-8deg) scale(1.13); opacity: .92; }
-  45%  { transform: translate3d(4%, 6%, 0) rotate(4deg) scale(1.20);   opacity: 1; }
-  68%  { transform: translate3d(-6%, 9%, 0) rotate(11deg) scale(1.08); opacity: .86; }
-  84%  { transform: translate3d(-2%, -3%, 0) rotate(-2deg) scale(1.14); opacity: .93; }
-  100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1.05);     opacity: .78; }
+  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1.06);     opacity: .58; }
+  22%  { transform: translate3d(16%, -12%, 0) rotate(-12deg) scale(1.20); opacity: .95; }
+  45%  { transform: translate3d(7%, 11%, 0) rotate(6deg) scale(1.32);   opacity: .70; }
+  68%  { transform: translate3d(-12%, 15%, 0) rotate(16deg) scale(1.14); opacity: 1; }
+  84%  { transform: translate3d(-4%, -5%, 0) rotate(-3deg) scale(1.24);  opacity: .78; }
+  100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1.06);     opacity: .58; }
 }
 
 /* 通用容器 */
