@@ -33,7 +33,8 @@ Page({
           mindfulNote: w.mindfulNote || '',
           date,
           fabric: w.fabric || '',
-          dyeName: w.dyeName || ''
+          dyeName: w.dyeName || '',
+          thumb: w.thumb || ''
         };
       });
       const filterOptions = [{ id: 'all', name: '全部' }].concat(
@@ -96,11 +97,17 @@ Page({
   },
 
   // C2M 实物定制（C 后端职责，前端入口）
-  customize() {
-    wx.showToast({ title: 'C2M 实物定制由 C 接入', icon: 'none' });
+  customize(e) {
+    const i = e.currentTarget.dataset.i;
+    const w = (i != null && this.data.displayList[i]) ? this.data.displayList[i] : null;
+    if (w) {
+      wx.setStorageSync('ranxin_last_pattern_name', w.patternName || w.title || '雨落苍山');
+      if (w.thumb) wx.setStorageSync('ranxin_last_pattern_image', w.thumb);
+    }
+    wx.navigateTo({ url: '/pages/product/product' });
   },
   openMall() {
-    wx.showToast({ title: '商城由 C 接入', icon: 'none' });
+    wx.navigateTo({ url: '/pages/product/product' });
   },
 
   goDiy() { wx.switchTab({ url: '/pages/diy/diy' }); }

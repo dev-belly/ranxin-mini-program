@@ -51,6 +51,17 @@
     </view>
   </view>
 
+  <!-- DIY 卡：正念 DIY（首页蓝紫调入口，跳转正念 DIY tab） -->
+  <view class="card diy-entry" bindtap="goDiy">
+    <image class="card-img" src="/assets/patterns/he.png" mode="aspectFill" />
+    <view class="diy-copy">
+      <view class="eyebrow">正念 DIY</view>
+      <view class="diy-h2">亲手扎一块布</view>
+      <view class="diy-p">选布料、扎结、入染、氧化、拆结——六步，把情绪慢慢染开</view>
+      <view class="glow-btn">开始创作 ›</view>
+    </view>
+  </view>
+
   <!-- 今日染力榜（对齐 A 稿 image1） -->
   <view class="leaderboard">
     <view class="lb-header">

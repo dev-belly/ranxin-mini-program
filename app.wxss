@@ -28,19 +28,54 @@ page {
   --brand-grad: linear-gradient(90deg, #347af0 0%, #5d78fd 42%, #a160ef 100%);
 }
 
-/* 折射底层：对齐 A 第一版暖白纸感 + 更鲜艳的蓝紫晕染（让薄玻璃透出色彩，玻璃才"立"得起来） */
+/* 折射底层：暖白纸感 + 动态极光晕染（多层光晕缓慢漂移 / 旋转 / 呼吸，让薄玻璃透出流动色彩，玻璃才"立"得起来） */
 .rx-bg {
   position: fixed;
   left: 0; right: 0; top: 0; bottom: 0;
   z-index: -1;
+  overflow: hidden;
   background:
-    radial-gradient(circle at 2rpx 2rpx, rgba(45, 82, 136, .12) 0 .7rpx, transparent .9rpx) 0 0 / 21rpx 21rpx,
-    radial-gradient(440rpx 360rpx at 84% 6%, rgba(126, 170, 255, .42), transparent 62%),
-    radial-gradient(380rpx 320rpx at 94% 28%, rgba(140, 130, 245, .34), transparent 60%),
-    radial-gradient(340rpx 280rpx at 70% 4%, rgba(118, 162, 255, .30), transparent 60%),
-    radial-gradient(320rpx 280rpx at 12% 64%, rgba(150, 196, 247, .26), transparent 62%),
-    radial-gradient(300rpx 260rpx at 90% 78%, rgba(176, 150, 255, .24), transparent 62%),
+    radial-gradient(circle at 2rpx 2rpx, rgba(45, 82, 136, .10) 0 .7rpx, transparent .9rpx) 0 0 / 21rpx 21rpx,
     linear-gradient(180deg, #fbfaf8 0%, #faf9f6 76%, #f7f5f2 100%);
+}
+
+/* 极光光团：两个超大渐变层缓慢漂移（GPU transform 动画，真机顺滑不掉帧） */
+.rx-bg::before,
+.rx-bg::after {
+  content: "";
+  position: absolute;
+  left: -32%; top: -32%;
+  width: 164%; height: 164%;
+  pointer-events: none;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+.rx-bg::before {
+  background:
+    radial-gradient(46% 42% at 30% 28%, rgba(126, 170, 255, .60), transparent 60%),
+    radial-gradient(42% 38% at 68% 22%, rgba(140, 130, 245, .52), transparent 60%),
+    radial-gradient(36% 34% at 82% 54%, rgba(176, 150, 255, .44), transparent 60%),
+    radial-gradient(40% 36% at 18% 70%, rgba(118, 162, 255, .40), transparent 60%);
+  animation: rx-aurora-a 18s ease-in-out infinite alternate;
+}
+.rx-bg::after {
+  background:
+    radial-gradient(44% 40% at 74% 66%, rgba(150, 196, 247, .46), transparent 60%),
+    radial-gradient(36% 34% at 14% 30%, rgba(134, 220, 255, .38), transparent 60%),
+    radial-gradient(42% 36% at 90% 82%, rgba(255, 176, 224, .24), transparent 60%),
+    radial-gradient(38% 32% at 50% 6%, rgba(176, 150, 255, .34), transparent 60%);
+  animation: rx-aurora-b 26s ease-in-out infinite alternate;
+}
+
+@keyframes rx-aurora-a {
+  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1);     opacity: .90; }
+  50%  { transform: translate3d(-6%, 4%, 0) rotate(7deg) scale(1.13); opacity: 1; }
+  100% { transform: translate3d(5%, -3%, 0) rotate(-4deg) scale(1.04); opacity: .92; }
+}
+@keyframes rx-aurora-b {
+  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1);     opacity: .92; }
+  50%  { transform: translate3d(5%, -5%, 0) rotate(-9deg) scale(1.16); opacity: 1; }
+  100% { transform: translate3d(-6%, 3%, 0) rotate(6deg) scale(1.05);  opacity: .90; }
 }
 
 /* 通用容器 */

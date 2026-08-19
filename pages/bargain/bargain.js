@@ -106,6 +106,9 @@ Page({
 
   goDetail(e) {
     const id = e.currentTarget.dataset.id;
+    const all = [...this.data.ongoingList, ...this.data.completedList];
+    const item = all.find(x => x.id === id);
+    if (item) wx.setStorageSync('ranxin_current_bargain', item);
     wx.navigateTo({ url: '/pages/bargainDetail/bargainDetail?id=' + id });
   },
 
