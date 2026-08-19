@@ -9,11 +9,11 @@ page {
   font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   color: #173d79;
   -webkit-font-smoothing: antialiased;
-  --glass-bg: rgba(255, 255, 255, 0.14);
-  --glass-bg-strong: rgba(255, 255, 255, 0.20);
-  --glass-bg-tint: rgba(255, 255, 255, 0.18);
-  --glass-border: rgba(255, 255, 255, 0.45);
-  --glass-border-bright: rgba(255, 255, 255, 0.62);
+  --glass-bg: rgba(255, 255, 255, 0.28);
+  --glass-bg-strong: rgba(255, 255, 255, 0.36);
+  --glass-bg-tint: rgba(255, 255, 255, 0.32);
+  --glass-border: rgba(255, 255, 255, 0.55);
+  --glass-border-bright: rgba(255, 255, 255, 0.70);
   /* 景深 + 玻璃厚度（顶亮底暗，模拟凸面玻璃体） */
   --glass-shadow: 0 18rpx 50rpx rgba(18, 28, 64, 0.24);
   --glass-thickness: inset 0 2rpx 2rpx rgba(255, 255, 255, 0.9), inset 0 -2rpx 3rpx rgba(18, 28, 64, 0.12);
