@@ -20,6 +20,22 @@
     radial-gradient(220px 200px at 92% 84%, rgba(195, 182, 255, .16), transparent 70%),
     linear-gradient(180deg, #fbfdff 0%, #f4f7fd 60%, #eef2fb 100%);
 }
+/* 冷调极光光团（与全局 rx-bg 同款漂移动画，但用冷紫配色保持 DIY 身份） */
+.diy-bg::before {
+  content: "";
+  position: absolute;
+  left: -32%; top: -32%;
+  width: 164%; height: 164%;
+  pointer-events: none;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  background:
+    radial-gradient(46% 42% at 30% 26%, rgba(109, 96, 255, .30), transparent 60%),
+    radial-gradient(42% 38% at 70% 20%, rgba(78, 146, 255, .28), transparent 60%),
+    radial-gradient(36% 34% at 84% 58%, rgba(160, 100, 239, .24), transparent 60%),
+    radial-gradient(40% 36% at 16% 72%, rgba(154, 187, 255, .26), transparent 60%);
+  animation: rx-aurora-a 22s ease-in-out infinite alternate;
+}
 .diy-bg::after {
   content: "";
   position: fixed;
