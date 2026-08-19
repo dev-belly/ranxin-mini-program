@@ -37,19 +37,17 @@
     </view>
   </view>
 
-  <!-- stress 卡：放松一下（对齐 A） -->
-  <view class="card stress" bindtap="goDiy">
+  <!-- stress 卡：放松一下（对齐 A 稿） -->
+  <view class="card stress" bindtap="goRelax">
     <image class="card-img" src="/assets/patterns/cang.png" mode="aspectFill" />
     <view class="stress-copy">
       <view class="stress-h2">放松一下</view>
-      <view class="stress-desc">用一缸靛蓝，把今天的紧绷慢慢染开</view>
-      <view class="stag">已坚持 {{relaxDays}} 天</view>
-      <view class="score">
-        <text class="score-label">今日放松</text>
-        <text class="score-num">{{relaxCount}}</text>
-        <text class="score-unit">次</text>
+      <view class="stress-desc">呼吸、染色、等待——把心事慢慢浸开</view>
+      <view class="relax-meta">
+        <text class="stag">已坚持 {{relaxDays}} 天</text>
+        <text class="stag" wx:if="{{relaxCount > 0}}">今日 {{relaxCount}} 次</text>
       </view>
-      <view class="white-btn" catchtap="goDiy">开始放松 ›</view>
+      <view class="white-btn" catchtap="goRelax">立即放松 ›</view>
     </view>
   </view>
 
