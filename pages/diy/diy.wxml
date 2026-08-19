@@ -149,7 +149,7 @@
           <text class="ctrl-title">对称瓣数</text>
           <view class="slider-row">
             <text class="slider-label">瓣数</text>
-            <slider min="2" max="12" step="2" value="{{selPattern.petals}}" show-value activeColor="#7d6bff" backgroundColor="#d7ddee"/>
+            <slider min="2" max="12" step="2" value="{{petals}}" bindchanging="onPetalsChange" bindchange="onPetalsChange" show-value activeColor="#7d6bff" backgroundColor="#d7ddee"/>
           </view>
         </view>
         <view wx:if="{{diyTab==='松紧'}}" class="ctrl-block">
