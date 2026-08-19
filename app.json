@@ -12,7 +12,8 @@
     "pages/product/product",
     "pages/bargain/bargain",
     "pages/bargainDetail/bargainDetail",
-    "pages/orderProgress/orderProgress"
+    "pages/orderProgress/orderProgress",
+    "pages/rank/rank"
   ],
   "window": {
     "navigationBarTitleText": "染心",

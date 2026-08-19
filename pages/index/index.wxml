@@ -51,6 +51,26 @@
     </view>
   </view>
 
+  <!-- 今日染力榜（对齐 A 稿 image1） -->
+  <view class="leaderboard">
+    <view class="lb-header">
+      <view class="lb-title">今日染力榜</view>
+      <view class="lb-tabs">
+        <view class="lb-tab {{lbTab==='user'?'active':''}}" data-tab="user" bindtap="switchLbTab">用户</view>
+        <view class="lb-tab {{lbTab==='nation'?'active':''}}" data-tab="nation" bindtap="switchLbTab">全国</view>
+      </view>
+    </view>
+    <view class="lb-list">
+      <view wx:for="{{lbList}}" wx:key="rank" class="lb-row">
+        <view class="lb-rank {{item.rank===1?'gold':item.rank===2?'silver':item.rank===3?'copper':''}}">{{item.rank}}</view>
+        <image class="lb-avatar" src="{{item.avatar}}" mode="aspectFill"/>
+        <view class="lb-name">{{item.name}}</view>
+        <view class="lb-score">{{item.score}}</view>
+      </view>
+    </view>
+    <view class="lb-more" bindtap="goRank">查看完整榜单 ›</view>
+  </view>
+
   <!-- 一分钟非遗 -->
   <view class="heritage-head">
     <view class="heritage-title">一分钟非遗</view>

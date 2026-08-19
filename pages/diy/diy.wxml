@@ -1,47 +1,89 @@
 <view class="diy-page diy-bg">
   <view class="rx-bg"></view>
 
-  <!-- 阶段一：正念入口（对齐 A：2DIY入口） -->
+  <!-- 全局六步 stepper（fabric / pattern / craft 阶段显示） -->
+  <view class="global-stepper" wx:if="{{stage !== 'mood' && stage !== 'result'}}">
+    <view wx:for="{{steps}}" wx:key="*this" class="gstep {{index === stepperActive ? 'active' : ''}} {{index < stepperActive ? 'done' : ''}}">
+      <view class="gdot">{{index < stepperActive ? '✓' : index + 1}}</view>
+      <text class="glabel">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 阶段一：正念入口（对齐 A：2DIY入口 / image8） -->
   <view wx:if="{{stage==='mood'}}" class="stage-screen">
-    <view class="d-title">
+    <view class="d-title center">
       <text class="d-spark">✦</text>
       <text class="d-title-text">正念 DIY</text>
+      <text class="d-spark">✦</text>
     </view>
-    <text class="d-sub">此刻，你更接近哪一种感觉？选择你此刻的状态，生成你的专属扎染</text>
+    <text class="d-sub center">此刻，你更接近哪一种感觉？选择你此刻的状态，生成你的专属扎染</text>
     <view class="mood-grid">
       <view wx:for="{{moods}}" wx:key="id" class="mood-card {{mood===item.id?'sel':''}}" data-id="{{item.id}}" bindtap="chooseMood">
         <text class="mood-label">{{item.label}}</text>
       </view>
     </view>
+
+    <!-- 今天的六步 + 已选纹样预览 -->
+    <view class="summary-card">
+      <view class="summary-head"><text class="d-spark">✦</text> 今天的六步 <text class="d-spark">✦</text></view>
+      <view class="mini-stepper">
+        <view wx:for="{{steps}}" wx:key="*this" class="mstep {{index===0?'active':''}}">
+          <view class="mdot">{{index+1}}</view>
+          <text class="mlabel">{{item}}</text>
+        </view>
+      </view>
+      <view class="summary-preview" wx:if="{{selPattern}}">
+        <image class="summary-thumb" src="{{selPattern.thumb}}" mode="aspectFill"/>
+        <view class="summary-info">
+          <view class="summary-name">{{selPattern.name}}</view>
+          <view class="summary-desc">{{selPattern.tags}} · {{selPattern.dye}}</view>
+          <view class="summary-meta">
+            <text>植物 {{selPattern.dye}}</text>
+            <text>声景 洱海水声</text>
+            <text>预计用时 6 分钟</text>
+          </view>
+        </view>
+      </view>
+      <view class="summary-quote">“让指尖慢下来，让心也跟着温柔绽放。”</view>
+    </view>
+
+    <view class="knowledge-mini">
+      <view class="kmini-title">这一缸里的知识</view>
+      <view class="kmini-h">植物染色，不只是“上色”</view>
+      <view class="kmini-body">板蓝根、茜草与栀子会呈现不同的天然色系。每一步，都有自己的工艺故事。</view>
+    </view>
+
     <text class="d-foot">跟随呼吸，慢慢来 —— 你新收获的纹样会在完成后出现</text>
   </view>
 
-  <!-- 阶段二：选布料（对齐 A：2.1选布料） -->
+  <!-- 阶段二：选布料（对齐 A：2.1选布料 / image9） -->
   <view wx:if="{{stage==='fabric'}}" class="stage-screen">
-    <view class="d-title">
+    <view class="d-title center">
       <text class="d-spark">✦</text>
       <text class="d-title-text">先选一块布</text>
     </view>
-    <text class="d-sub">不同材质，会留下不同的染色痕迹</text>
+    <text class="d-sub center">不同材质，会留下不同的染色痕迹</text>
     <view class="fabric-list">
       <view wx:for="{{fabrics}}" wx:key="id" class="fabric-card {{fabric===item.id?'sel':''}}" data-id="{{item.id}}" bindtap="chooseFabric">
-        <text class="fabric-name">{{item.name}}</text>
-        <view class="fabric-tags">
-          <text class="fabric-tag">{{item.tag}}</text>
-          <text class="fabric-desc">{{item.desc}}</text>
+        <image class="fabric-img" src="/assets/patterns/{{item.id==='bag'?'tuan':item.id==='scarf'?'shui':'cang'}}.png" mode="aspectFill"/>
+        <view class="fabric-main">
+          <view class="fabric-name">{{item.name}}</view>
+          <view class="fabric-tag">{{item.tag}}</view>
+          <view class="fabric-desc">{{item.desc}}</view>
         </view>
+        <view class="fabric-check" wx:if="{{fabric===item.id}}">✓</view>
       </view>
     </view>
-    <text class="d-foot">接下来进入纹样选择，你选的布料会保留到后续步骤</text>
+    <button class="btn primary" bindtap="chooseFabric" data-id="{{fabric}}">下一步 · 选择纹样</button>
   </view>
 
-  <!-- 阶段三：选纹样（对齐 A：2.2选择纹样） -->
+  <!-- 阶段三：选纹样（对齐 A：2.2选择纹样 / image10） -->
   <view wx:if="{{stage==='pattern'}}" class="stage-screen pattern-stage">
     <view class="d-title center">
       <text class="d-spark">✦</text>
       <text class="d-title-text">选择纹样</text>
     </view>
-    <text class="d-sub center">挑一块让你安心的纹样，开始你的扎染</text>
+    <text class="d-sub center">选择你今天想染下的形状</text>
     <view class="tabs">
       <view wx:for="{{cats}}" wx:key="*this" class="tab {{catFilter===item?'active':''}}" data-cat="{{item}}" bindtap="setCat">{{item}}</view>
     </view>
@@ -60,25 +102,25 @@
       </view>
     </view>
     <view class="story-card" bindtap="openStory" data-id="{{selPattern.id}}">
-      <text class="story-title"><text class="s">✦</text>{{selPattern.name}}的故事</text>
+      <text class="story-title"><text class="s">✦</text>纹样故事 · {{selPattern.name}}</text>
       <text class="story-body">{{selPattern.story}}</text>
-      <text class="story-link">查看完整故事 ›</text>
+      <text class="story-link">查看技法与寓意 ›</text>
     </view>
   </view>
 
-  <!-- 阶段四：扎染等拆（对齐 A：2.3diy扎染） -->
+  <!-- 阶段四~七：扎结 / 入染 / 氧化 / 拆结（对齐 image11-14） -->
   <view wx:if="{{stage==='craft'}}" class="craft-wrap">
-    <view class="d-title">
-      <text class="d-spark">✦</text>
-      <text class="d-title-text">DIY 扎染</text>
+    <view class="craft-title">
+      <text wx:if="{{step===0}}">纹样 DIY</text>
+      <text wx:if="{{step===1}}">入染</text>
+      <text wx:if="{{step===2}}">氧化</text>
+      <text wx:if="{{step===3}}">拆结</text>
     </view>
-
-    <view class="stepper">
-      <view class="step-line"></view>
-      <view wx:for="{{steps}}" wx:key="index" class="step {{index===step?'active':''}} {{index<step?'done':''}}">
-        <view class="dot">{{item}}</view>
-        <text class="step-label">{{item}}</text>
-      </view>
+    <view class="craft-subtitle">
+      <text wx:if="{{step===0}}">拖动、旋转与扎结，做出你的专属纹样</text>
+      <text wx:if="{{step===1}}">选择染液颜色与入染方式</text>
+      <text wx:if="{{step===2}}">靛蓝正随空气慢慢变深</text>
+      <text wx:if="{{step===3}}">轻轻拆开束缚，让纹样慢慢显现</text>
     </view>
 
     <view class="art-card {{liveChanging?'live':''}}">
@@ -89,27 +131,63 @@
 
     <!-- 控制卡：按步骤切换 -->
     <view class="control-card">
+      <!-- 扎结：结构/对称/松紧/留白/旋转 -->
       <block wx:if="{{step===0}}">
-        <text class="ctrl-title">折叠方式</text>
         <view class="tabs inner">
-          <view wx:for="{{foldTypes}}" wx:key="id" class="tab {{foldType===item.id?'active':''}}" data-id="{{item.id}}" bindtap="chooseFold">{{item.name}}</view>
+          <view wx:for="{{diyTabs}}" wx:key="*this" class="tab {{diyTab===item?'active':''}}" data-tab="{{item}}" bindtap="switchDiyTab">{{item}}</view>
         </view>
-        <view class="slider-row">
-          <text class="slider-label">捆扎松紧度</text>
-          <slider min="1" max="5" step="1" value="{{tightness}}" bindchanging="onTightnessChange" bindchange="onTightnessChange" block-size="22" activeColor="#7d6bff" backgroundColor="#d7ddee"/>
-          <text class="slider-val">{{tightness}}/5</text>
+        <view wx:if="{{diyTab==='结构'}}" class="ctrl-block">
+          <text class="ctrl-title">折叠方式</text>
+          <view class="fold-list">
+            <view wx:for="{{foldTypes}}" wx:key="id" class="fold-card {{foldType===item.id?'sel':''}}" data-id="{{item.id}}" bindtap="chooseFold">
+              <view class="fold-name">{{item.name}}</view>
+              <view class="fold-desc">{{item.desc}}</view>
+            </view>
+          </view>
+        </view>
+        <view wx:if="{{diyTab==='对称'}}" class="ctrl-block">
+          <text class="ctrl-title">对称瓣数</text>
+          <view class="slider-row">
+            <text class="slider-label">瓣数</text>
+            <slider min="2" max="12" step="2" value="{{selPattern.petals}}" show-value activeColor="#7d6bff" backgroundColor="#d7ddee"/>
+          </view>
+        </view>
+        <view wx:if="{{diyTab==='松紧'}}" class="ctrl-block">
+          <text class="ctrl-title">扎结力度</text>
+          <view class="slider-row">
+            <text class="slider-label">松</text>
+            <slider min="1" max="5" step="1" value="{{tightness}}" bindchanging="onTightnessChange" bindchange="onTightnessChange" block-size="22" activeColor="#7d6bff" backgroundColor="#d7ddee"/>
+            <text class="slider-val">{{tightness}}/5</text>
+            <text class="slider-label">紧</text>
+          </view>
+        </view>
+        <view wx:if="{{diyTab==='留白'}}" class="ctrl-block">
+          <text class="ctrl-title">留白面积</text>
+          <view class="slider-row">
+            <text class="slider-label">少</text>
+            <slider min="10" max="80" value="{{whitespace}}" bindchanging="onWhitespaceChange" bindchange="onWhitespaceChange" block-size="22" activeColor="#7d6bff" backgroundColor="#d7ddee"/>
+            <text class="slider-val">{{whitespace}}%</text>
+            <text class="slider-label">多</text>
+          </view>
+        </view>
+        <view wx:if="{{diyTab==='旋转'}}" class="ctrl-block">
+          <text class="ctrl-title">旋转角度</text>
+          <view class="slider-row">
+            <text class="slider-label">-180°</text>
+            <slider min="-180" max="180" value="{{rotation}}" bindchanging="onRotationChange" bindchange="onRotationChange" block-size="22" activeColor="#7d6bff" backgroundColor="#d7ddee"/>
+            <text class="slider-val">{{rotation}}°</text>
+            <text class="slider-label">180°</text>
+          </view>
         </view>
       </block>
 
+      <!-- 入染：染液 + 浓度 + 方式 -->
       <block wx:if="{{step===1}}">
-        <text class="ctrl-title">植物染液</text>
-        <view class="dye-list">
-          <view wx:for="{{dyes}}" wx:key="name" class="dye-card {{dyeName===item.name?'sel':''}}" data-name="{{item.name}}" bindtap="chooseDye">
-            <view class="dye-circle" style="background:{{item.color}}"></view>
-            <view class="dye-info">
-              <text class="dye-label">{{item.label}}</text>
-              <text class="dye-desc">{{item.desc}}</text>
-            </view>
+        <text class="ctrl-title">选择染液颜色</text>
+        <view class="dye-circles">
+          <view wx:for="{{dyes}}" wx:key="name" class="dye-circle-wrap {{dyeName===item.name?'sel':''}}" data-name="{{item.name}}" bindtap="chooseDye">
+            <view class="dye-circle-big" style="background:{{item.color}}"></view>
+            <text class="dye-circle-label">{{item.label}}</text>
           </view>
         </view>
         <view class="slider-row">
@@ -117,31 +195,82 @@
           <slider min="10" max="100" value="{{concentration}}" bindchanging="onConcentrationChange" bindchange="onConcentrationChange" block-size="22" activeColor="#7d6bff" backgroundColor="#d7ddee"/>
           <text class="slider-val">{{concentration}}%</text>
         </view>
+        <view class="preview-row">
+          <text class="ctrl-title">最终效果预览</text>
+          <view class="preview-box">
+            <image class="preview-img" src="{{selPattern.thumb}}" mode="aspectFill"/>
+            <view class="preview-tag">{{dyeName}}染色 · {{concentration}}%浓度效果</view>
+          </view>
+        </view>
+        <text class="ctrl-title" style="margin-top:22rpx">入染方式</text>
+        <view class="method-list">
+          <view wx:for="{{dyeMethods}}" wx:key="id" class="method-card {{dyeMethod===item.name?'sel':''}}" data-id="{{item.name}}" bindtap="chooseDyeMethod">
+            <view class="method-main">
+              <view class="method-name">{{item.name}} <text class="method-recommend" wx:if="{{item.recommend}}">推荐</text></view>
+              <view class="method-desc">{{item.desc}}</view>
+            </view>
+            <view class="method-check" wx:if="{{dyeMethod===item.name}}">✓</view>
+          </view>
+        </view>
       </block>
 
+      <!-- 氧化：时长 + 前后对比 -->
       <block wx:if="{{step===2}}">
-        <view class="timer-box">
-          <text class="timer-count">{{oxidationTotal - oxidationSeconds}}</text>
-          <text class="timer-unit">秒</text>
+        <text class="ctrl-title">氧化设置</text>
+        <view class="oxidation-set">
+          <view class="oxi-label">预计氧化时长</view>
+          <view class="oxi-minutes">
+            <view class="oxi-btn" bindtap="onOxidationMinutesChange" data-value="{{oxidationMinutes-1}}">-</view>
+            <view class="oxi-num">{{oxidationMinutes}}<text class="oxi-unit">分钟</text></view>
+            <view class="oxi-btn" bindtap="onOxidationMinutesChange" data-value="{{oxidationMinutes+1}}">+</view>
+          </view>
+          <slider min="1" max="5" step="1" value="{{oxidationMinutes}}" bindchange="onOxidationMinutesChange" block-size="22" activeColor="#7d6bff" backgroundColor="#d7ddee" show-value/>
         </view>
-        <text class="timer-hint">氧化过程不可加速，靛蓝正随空气慢慢变深</text>
-        <view class="breath-ring {{oxidizing?'breathing':''}}">
-          <view class="breath-inner">
-            <text class="breath-text">{{oxidizing?(oxidationSeconds%8<4?'吸气':'呼气'):'完成'}}</text>
+        <text class="ctrl-title" style="margin-top:22rpx">预计效果预览</text>
+        <view class="compare-row">
+          <view class="compare-box">
+            <image class="compare-img" src="{{selPattern.thumb}}" mode="aspectFill" style="filter: saturate(0.6) brightness(1.15)"/>
+            <view class="compare-tag">当前效果</view>
+            <view class="compare-caption">颜色较浅</view>
+          </view>
+          <view class="compare-arrow">›</view>
+          <view class="compare-box">
+            <image class="compare-img" src="{{selPattern.thumb}}" mode="aspectFill"/>
+            <view class="compare-tag expect">预计效果</view>
+            <view class="compare-caption">颜色更深、花纹更清晰</view>
           </view>
         </view>
         <view class="sound-row" bindtap="toggleSound">
           <view class="sound-icon">{{soundOn?'🔊':'🔇'}}</view>
-          <text class="sound-text">{{soundOn?'白噪音开启（资源待补充）':'开启白噪音 / 触觉反馈'}}</text>
+          <text class="sound-text">{{soundOn?'白噪音开启':'开启白噪音 / 触觉反馈'}}</text>
         </view>
       </block>
 
+      <!-- 拆结：方式 + 最终预览 + 小贴士 -->
       <block wx:if="{{step===3}}">
-        <text class="ctrl-title">慢慢拆开棉线</text>
-        <view class="slider-row">
+        <text class="ctrl-title">拆结方式</text>
+        <view class="unfold-methods">
+          <view class="unfold-card {{unfoldMethod==='hand'?'sel':''}}" data-id="hand" bindtap="chooseUnfoldMethod">
+            <view class="unfold-icon">✋</view>
+            <view class="unfold-name">手工拆结</view>
+            <view class="unfold-desc">轻柔拆解，保留细节</view>
+          </view>
+          <view class="unfold-card {{unfoldMethod==='scissor'?'sel':''}}" data-id="scissor" bindtap="chooseUnfoldMethod">
+            <view class="unfold-icon">✂</view>
+            <view class="unfold-name">剪刀辅助</view>
+            <view class="unfold-desc">更快速，适合较紧结扣</view>
+          </view>
+        </view>
+        <view class="slider-row" style="margin-top:22rpx">
           <text class="slider-label">展开程度</text>
           <slider min="0" max="100" value="{{unfoldProgress}}" bindchanging="onUnfoldChange" bindchange="onUnfoldChange" block-size="22" activeColor="#7d6bff" backgroundColor="#d7ddee"/>
           <text class="slider-val">{{unfoldProgress}}%</text>
+        </view>
+        <view class="tip-list">
+          <view class="tip-title">拆结小贴士</view>
+          <view class="tip-item"><text class="tip-dot">~</text>沿打结方向轻轻松开</view>
+          <view class="tip-item"><text class="tip-dot">✂</text>局部过紧可用剪刀辅助</view>
+          <view class="tip-item"><text class="tip-dot">💧</text>拆结后及时清洗定色</view>
         </view>
       </block>
     </view>

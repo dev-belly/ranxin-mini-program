@@ -2,7 +2,7 @@
 const engine = require('../../utils/pattern-engine.js');
 const api = require('../../utils/api.js');
 
-const STEPS = ['扎', '染', '等', '拆'];
+const STEPS = ['选布料', '选纹样', '扎结', '入染', '氧化', '拆结'];
 
 const FOLD_TYPES = [
   { id: 'symmetric', name: '对称折叠', desc: '规整图案，秩序之美' },
@@ -66,6 +66,24 @@ Page({
     stage: 'mood',        // mood → fabric → pattern → craft → result
     steps: STEPS,
     step: 0,
+    stepperActive: 0,
+    // 扎结阶段子标签：结构/对称/松紧/留白/旋转
+    diyTab: '结构',
+    diyTabs: ['结构', '对称', '松紧', '留白', '旋转'],
+    // 更丰富的扎染参数
+    whitespace: 35,
+    rotation: 0,
+    // 入染方式
+    dyeMethod: '整体浸染',
+    dyeMethods: [
+      { id: 'full', name: '整体浸染', desc: '将布料完全浸入染液中，适合基础图案', recommend: false },
+      { id: 'local', name: '局部入染', desc: '仅浸入局部区域，适合创造层次效果', recommend: true },
+      { id: 'drop', name: '点滴滴落', desc: '适合创造自然随性的纹样效果', recommend: false }
+    ],
+    // 氧化时长（分钟）
+    oxidationMinutes: 3,
+    // 拆结方式
+    unfoldMethod: 'hand',
     moods: MOODS,
     mood: 'quiet',
     fabrics: FABRICS,
@@ -196,19 +214,19 @@ Page({
 
   // —— 前置流程：状态 / 布料 / 纹样 ——
   chooseMood(e) {
-    this.setData({ mood: e.currentTarget.dataset.id }, () => {
+    this.setData({ mood: e.currentTarget.dataset.id, stepperActive: 0 }, () => {
       this.setData({ stage: 'fabric' });
     });
   },
   chooseFabric(e) {
-    this.setData({ fabric: e.currentTarget.dataset.id }, () => {
+    this.setData({ fabric: e.currentTarget.dataset.id, stepperActive: 1 }, () => {
       this.setData({ stage: 'pattern' });
     });
   },
   choosePattern(e) {
     const id = e.currentTarget.dataset.id;
     const sp = this.data.patterns.find(p => p.id === id);
-    this.setData({ patternId: id, selPattern: sp, showStory: false, stage: 'craft', step: 0, quote: this.randomQuote(0) }, () => {
+    this.setData({ patternId: id, selPattern: sp, showStory: false, stage: 'craft', step: 0, stepperActive: 2, quote: this.randomQuote(0) }, () => {
       wx.nextTick(() => this.initCanvasById('diy-canvas'));
     });
   },
@@ -234,12 +252,14 @@ Page({
   drawCurrent(ctx, w, h) {
     ctx = ctx || this.ctx;
     if (!ctx) return;
-    const { step, patternId, foldType, tightness, dyeName, concentration, oxidationSeconds, oxidationTotal, unfoldProgress } = this.data;
+    const { step, patternId, foldType, tightness, dyeName, concentration, oxidationSeconds, oxidationTotal, unfoldProgress, whitespace, rotation } = this.data;
     const pattern = engine.getPatternById(patternId);
     if (w == null) w = this.canvasW;
     if (h == null) h = this.canvasH;
     const engineTightness = 0.25 + (tightness / 5) * 0.65;
     const engineConc = concentration / 100;
+    const engineWhitespace = Math.max(0.1, Math.min(0.9, whitespace / 100));
+    const engineRotation = rotation;
 
     if (step === 0) {
       engine.renderFoldedFabric(this.ctx, w, h, { foldType, tightness });
@@ -252,8 +272,8 @@ Page({
         type: pattern.type,
         petals: pattern.petals,
         tightness: engineTightness,
-        whitespace: 0.35,
-        rotation: 0,
+        whitespace: engineWhitespace,
+        rotation: engineRotation,
         dyeName,
         concentration: engineConc,
         progress: unfoldProgress / 100,
@@ -273,8 +293,12 @@ Page({
     const step = this.data.step;
     this.setData({ quote: this.randomQuote(step) });
     wx.nextTick(() => this.initCanvasById('diy-canvas'));
-    if (step === 2 && !this.data.oxidationDone && this.data.oxidationSeconds === 0) {
-      this.startOxidation();
+    if (step === 2) {
+      const oxidationTotal = Math.max(30, this.data.oxidationMinutes * 60);
+      this.setData({ oxidationTotal });
+      if (!this.data.oxidationDone && this.data.oxidationSeconds === 0) {
+        this.startOxidation();
+      }
     }
     if (step !== 2) {
       this.stopOxidation();
@@ -282,22 +306,37 @@ Page({
   },
 
   // Step 0: 扎
+  switchDiyTab(e) { this.setData({ diyTab: e.currentTarget.dataset.tab }); },
   chooseFold(e) {
     this.setData({ foldType: e.currentTarget.dataset.id }, () => { this.flashLive(); this.drawCurrent(); });
   },
   onTightnessChange(e) {
     this.setData({ tightness: e.detail.value }, () => { this.flashLive(); this.drawCurrent(); });
   },
+  onWhitespaceChange(e) {
+    this.setData({ whitespace: e.detail.value }, () => { this.flashLive(); this.drawCurrent(); });
+  },
+  onRotationChange(e) {
+    this.setData({ rotation: e.detail.value }, () => { this.flashLive(); this.drawCurrent(); });
+  },
 
   // Step 1: 染
   chooseDye(e) {
     this.setData({ dyeName: e.currentTarget.dataset.name }, () => { this.flashLive(); this.drawCurrent(); });
+  },
+  chooseDyeMethod(e) {
+    this.setData({ dyeMethod: e.currentTarget.dataset.id });
   },
   onConcentrationChange(e) {
     this.setData({ concentration: e.detail.value }, () => { this.flashLive(); this.drawCurrent(); });
   },
 
   // Step 2: 等（氧化）
+  onOxidationMinutesChange(e) {
+    const val = e.detail && typeof e.detail.value === 'number' ? e.detail.value : Number(e.currentTarget.dataset.value);
+    const minutes = Math.max(1, Math.min(5, val));
+    this.setData({ oxidationMinutes: minutes, oxidationTotal: minutes * 60 });
+  },
   startOxidation() {
     if (this.oxiTimer) return;
     this.setData({ oxidizing: true });
@@ -337,19 +376,24 @@ Page({
   },
 
   // Step 3: 拆
+  chooseUnfoldMethod(e) {
+    this.setData({ unfoldMethod: e.currentTarget.dataset.id });
+  },
   onUnfoldChange(e) {
     this.setData({ unfoldProgress: e.detail.value }, () => { this.flashLive(); this.drawCurrent(); });
   },
 
   // 扎染等拆导航
   next() {
-    if (this.data.step < STEPS.length - 1) {
-      this.setData({ step: this.data.step + 1 }, () => this.afterStepChange());
+    if (this.data.step < 3) {
+      const step = this.data.step + 1;
+      this.setData({ step, stepperActive: step + 2 }, () => this.afterStepChange());
     }
   },
   prev() {
     if (this.data.step > 0) {
-      this.setData({ step: this.data.step - 1 }, () => this.afterStepChange());
+      const step = this.data.step - 1;
+      this.setData({ step, stepperActive: step + 2 }, () => this.afterStepChange());
     }
   },
 
@@ -521,8 +565,12 @@ Page({
 
   replay() {
     this.setData({
-      stage: 'mood', step: 0, oxidationSeconds: 0, oxidationDone: false,
-      unfoldProgress: 0, showResult: false, mindfulNote: '', quote: this.randomQuote(0)
+      stage: 'mood', step: 0, stepperActive: 0,
+      oxidationSeconds: 0, oxidationDone: false, oxidationMinutes: 3,
+      unfoldProgress: 0, showResult: false, mindfulNote: '',
+      diyTab: '结构', whitespace: 35, rotation: 0,
+      dyeMethod: '整体浸染', unfoldMethod: 'hand',
+      quote: this.randomQuote(0)
     }, () => {
       this.stopOxidation();
     });
