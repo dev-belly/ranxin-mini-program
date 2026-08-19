@@ -1,4 +1,5 @@
-<view class="diy-page diy-bg">
+<view class="diy-page">
+  <view class="diy-bg"></view>
   <view class="rx-bg"></view>
 
   <!-- 全局六步 stepper（fabric / pattern / craft 阶段显示） -->
