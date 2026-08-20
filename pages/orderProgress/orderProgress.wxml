@@ -1,0 +1,50 @@
+<view class="rx-bg"></view>
+<view class="rx-page progress-page">
+  <view class="nav-bar">
+    <view class="back" bindtap="goBack">‹</view>
+    <view class="nav-center">
+      <view class="nav-title">你的作品正在大理被制作</view>
+      <view class="nav-sub">每一步都在精心制作中，请耐心等待哦</view>
+    </view>
+    <view class="nav-right"></view>
+  </view>
+
+  <view class="order-card rx-card">
+    <image class="order-img" src="{{order.previewImage}}" mode="aspectFill"></image>
+    <view class="order-info">
+      <view class="order-title">{{order.patternName}} · {{order.type}}</view>
+      <view class="order-tags">
+        <text class="rx-tag">手工制作</text>
+        <text class="rx-tag">{{order.material}}</text>
+      </view>
+      <view class="order-eta">预计 {{order.makingDays}} 完成</view>
+    </view>
+  </view>
+
+  <view class="timeline-card rx-card">
+    <view class="timeline">
+      <view wx:for="{{steps}}" wx:key="key" class="step {{item.done ? 'done' : ''}} {{item.active ? 'active' : ''}}">
+        <view class="dot-wrap">
+          <view class="dot"></view>
+          <view wx:if="{{index !== steps.length - 1}}" class="line"></view>
+        </view>
+        <view class="step-body">
+          <view class="step-head">
+            <view class="step-label">{{item.label}}</view>
+            <view class="step-date">{{item.date}}</view>
+          </view>
+          <view class="step-desc">{{item.desc}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="tip-card rx-card">
+    <view class="tip-icon"></view>
+    <view class="tip-text">
+      <view class="tip-title">制作完成后会第一时间通知你</view>
+      <view class="tip-sub">你也可以在“我的作品”中查看进度</view>
+    </view>
+    <view class="tip-btn" bindtap="goWorks">查看作品 ›</view>
+  </view>
+</view>

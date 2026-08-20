@@ -1,0 +1,31 @@
+<view class="rx-page art-page" wx:if="{{article}}">
+  <view class="rx-bg"></view>
+
+  <view class="art-hero">
+    <view class="art-spark"><text class="rx-spark">✦</text> {{article.title}}</view>
+    <view class="art-sub">{{article.subtitle}}</view>
+    <view class="art-hero-line">{{article.hero}}</view>
+  </view>
+
+  <view class="rx-card art-intro">
+    <text>{{article.intro}}</text>
+  </view>
+
+  <view wx:for="{{article.sections}}" wx:key="h" class="rx-card art-section">
+    <view class="art-num">{{index + 1}}</view>
+    <view class="art-section-body">
+      <view class="art-h">{{item.h}}</view>
+      <view wx:if="{{item.p}}" class="art-p">{{item.p}}</view>
+      <view wx:if="{{item.chem}}" class="art-chem">{{item.chem}}</view>
+      <view wx:if="{{item.items}}" class="art-items">
+        <view wx:for="{{item.items}}" wx:for-item="it" wx:key="k" class="art-item">
+          <text class="art-item-k">{{it.k}}</text>
+          <text class="art-item-v">{{it.v}}</text>
+        </view>
+      </view>
+      <view wx:if="{{item.tip}}" class="art-tip">小贴士 · {{item.tip}}</view>
+    </view>
+  </view>
+
+  <view class="art-foot">每一次等待，都是色彩的成长。</view>
+</view>

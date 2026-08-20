@@ -1,0 +1,14 @@
+<cover-view class="tabbar">
+  <cover-view class="tab {{selected===0?'on':''}}" data-index="0" bindtap="switchTab">
+    <cover-view class="ic">🎨</cover-view>
+    <cover-view class="t">情绪染坊</cover-view>
+  </cover-view>
+  <cover-view class="tab {{selected===1?'on':''}}" data-index="1" bindtap="switchTab">
+    <cover-view class="ic">🪢</cover-view>
+    <cover-view class="t">正念DIY</cover-view>
+  </cover-view>
+  <cover-view class="tab {{selected===2?'on':''}}" data-index="2" bindtap="switchTab">
+    <cover-view class="ic">🖼</cover-view>
+    <cover-view class="t">我的作品</cover-view>
+  </cover-view>
+</cover-view>

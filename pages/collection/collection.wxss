@@ -8,7 +8,7 @@
   display: block;
   font-size: 44rpx;
   font-weight: 700;
-  color: #1a2b4d;
+  color: #173d79;
   font-family: "Songti SC", "STSong", serif;
   letter-spacing: 4rpx;
 }
@@ -30,12 +30,14 @@
   align-items: center;
   justify-content: space-between;
   gap: 24rpx;
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--glass-sheen), var(--glass-bg-strong);
+  -webkit-backdrop-filter: blur(16px) saturate(170%);
+  backdrop-filter: blur(16px) saturate(170%);
   border-radius: 24rpx;
   padding: 24rpx 28rpx;
   margin-bottom: 30rpx;
-  box-shadow: 0 8rpx 22rpx rgba(47, 68, 130, 0.08);
-  border: 1rpx solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 14rpx 44rpx rgba(31, 45, 90, 0.16), inset 0 1.5rpx 1rpx rgba(255,255,255,0.95), inset 0 -1.5rpx 1rpx rgba(24,32,64,0.10);
+  border: 1.5rpx solid var(--glass-border-bright);
 }
 .unlock-progress {
   flex: 1;
@@ -44,18 +46,18 @@
 .unlock-text {
   display: block;
   font-size: 26rpx;
-  color: #1a2b4d;
+  color: #173d79;
   margin-bottom: 12rpx;
 }
 .progress-bar {
   height: 14rpx;
-  background: rgba(75, 110, 230, 0.12);
+  background: rgba(52, 122, 240, 0.12);
   border-radius: 8rpx;
   overflow: hidden;
 }
 .progress-fill {
   height: 100%;
-  background: linear-gradient(135deg, #4b6ee6 0%, #7b5fe0 100%);
+  background: linear-gradient(135deg, #2a44c1 0%, #a160ef 100%);
   border-radius: 8rpx;
   transition: width 0.3s ease;
 }
@@ -65,25 +67,28 @@
   padding: 0 28rpx;
   height: 64rpx;
   line-height: 64rpx;
-  background: linear-gradient(135deg, #4b6ee6 0%, #7b5fe0 100%);
+  background: linear-gradient(135deg, #2a44c1 0%, #a160ef 100%);
   color: #fff;
   border-radius: 32rpx;
   font-size: 24rpx;
-  box-shadow: 0 8rpx 18rpx rgba(93, 95, 220, 0.22);
+  box-shadow: 0 8rpx 18rpx rgba(101, 124, 253, 0.22);
 }
 .filter-btn {
   padding: 12rpx 28rpx;
   border-radius: 30rpx;
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--glass-sheen), var(--glass-bg-strong);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   color: #5b6c8a;
   font-size: 26rpx;
-  border: 1rpx solid rgba(75, 110, 230, 0.18);
+  border: 1.5rpx solid var(--glass-border-bright);
+  box-shadow: inset 0 1rpx 0 rgba(255, 255, 255, 0.9);
 }
 .filter-btn.active {
-  background: linear-gradient(135deg, #4b6ee6 0%, #7b5fe0 100%);
+  background: linear-gradient(135deg, rgba(42, 68, 193, .92), rgba(161, 96, 239, .92));
   color: #fff;
   border-color: transparent;
-  box-shadow: 0 8rpx 18rpx rgba(93, 95, 220, 0.2);
+  box-shadow: 0 8rpx 18rpx rgba(101, 124, 253, 0.2), inset 0 1rpx 0 rgba(255, 255, 255, 0.5);
 }
 
 .pattern-grid {
@@ -93,12 +98,14 @@
 }
 .pattern-card {
   width: 324rpx;
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--glass-sheen), var(--glass-bg-strong);
+  -webkit-backdrop-filter: blur(18px) saturate(170%);
+  backdrop-filter: blur(18px) saturate(170%);
   border-radius: 28rpx;
   padding: 24rpx;
   text-align: center;
-  box-shadow: 0 8rpx 22rpx rgba(47, 68, 130, 0.08);
-  border: 1rpx solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 14rpx 44rpx rgba(31, 45, 90, 0.16), inset 0 1.5rpx 1rpx rgba(255,255,255,0.95), inset 0 -1.5rpx 1rpx rgba(24,32,64,0.10);
+  border: 1.5rpx solid var(--glass-border-bright);
   position: relative;
 }
 .pattern-card.locked {
@@ -107,7 +114,7 @@
 .pattern-thumb {
   width: 220rpx;
   height: 220rpx;
-  background: rgba(75, 110, 230, 0.08);
+  background: rgba(52, 122, 240, 0.08);
   border-radius: 50%;
   margin: 0 auto 16rpx;
   display: block;
@@ -116,7 +123,7 @@
   display: block;
   font-size: 30rpx;
   font-weight: 600;
-  color: #1a2b4d;
+  color: #173d79;
 }
 .pattern-tags {
   display: block;
@@ -149,16 +156,20 @@
 }
 .detail-card {
   width: 560rpx;
-  background: rgba(255, 255, 255, 0.96);
+  background: var(--glass-sheen), rgba(255, 255, 255, 0.40);
+  -webkit-backdrop-filter: blur(26px) saturate(180%);
+  backdrop-filter: blur(26px) saturate(180%);
+  border: 1.5rpx solid var(--glass-border-bright);
   border-radius: 36rpx;
   padding: 40rpx;
   text-align: center;
-  box-shadow: 0 20rpx 60rpx rgba(26, 43, 77, 0.25);
+  box-shadow: 0 24rpx 70rpx rgba(26, 43, 77, 0.34), inset 0 1.5rpx 1rpx rgba(255,255,255,0.95), inset 0 -1.5rpx 1rpx rgba(24,32,64,0.10);
+  overflow: hidden;
 }
 .detail-canvas {
   width: 400rpx;
   height: 400rpx;
-  background: rgba(75, 110, 230, 0.08);
+  background: rgba(52, 122, 240, 0.08);
   border-radius: 50%;
   margin: 0 auto 24rpx;
   display: block;
@@ -167,7 +178,7 @@
   display: block;
   font-size: 38rpx;
   font-weight: 700;
-  color: #1a2b4d;
+  color: #173d79;
   font-family: "Songti SC", "STSong", serif;
 }
 .detail-tags {
@@ -192,10 +203,10 @@ button {
   width: 100%;
   height: 84rpx;
   line-height: 84rpx;
-  background: linear-gradient(135deg, #4b6ee6 0%, #7b5fe0 100%);
+  background: linear-gradient(135deg, #2a44c1 0%, #a160ef 100%);
   color: #fff;
   border-radius: 42rpx;
   font-size: 30rpx;
   font-weight: 600;
-  box-shadow: 0 10rpx 24rpx rgba(93, 95, 220, 0.25);
+  box-shadow: 0 10rpx 24rpx rgba(101, 124, 253, 0.25);
 }

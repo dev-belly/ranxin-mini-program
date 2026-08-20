@@ -15,6 +15,7 @@ exports.main = async (event) => {
     concentration: payload.concentration || '',
     oxidationTime: payload.oxidationTime || '',
     untieMethod: payload.untieMethod || '',
+    mindfulNote: payload.mindfulNote || '',
     createdAt: Date.now()
   }
   const res = await db.collection('works').add({ data })

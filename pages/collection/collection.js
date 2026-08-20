@@ -27,10 +27,13 @@ Page({
 
   onLoad() {
     // 先解析资源就绪状态（真实图片优先），再渲染缩略图
+    // 兜底 map：保证每个纹样 id 都有 {file,hasImage} 占位，避免模板 assetMap[id].hasImage 访问 undefined 报错
+    const fallbackMap = {};
+    engine.PATTERN_CATALOG.forEach(p => { fallbackMap[p.id] = { file: null, hasImage: false }; });
     assets.resolvePatternAssets(engine.PATTERN_CATALOG).then(map => {
       this.setData({ assetMap: map }, () => this.loadUnlocked());
     }).catch(() => {
-      this.loadUnlocked();
+      this.setData({ assetMap: fallbackMap }, () => this.loadUnlocked());
     });
   },
 

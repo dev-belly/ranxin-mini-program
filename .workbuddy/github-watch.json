@@ -1,6 +1,6 @@
 {
   "a_tip": "e152bafee52c337214d8310db49c1e7813b72c5a",
-  "c_tip": "5a7847da9b006eccac5173e2481c569eb2725d38",
-  "updatedAt": "2026-08-18T07:48:04Z",
-  "note": "基线：A/C 当前仅有 init 脚手架，等待 A 推真实前端后由 B 照抄复刻"
+  "c_tip": "2db676942f60c6bb68c243bcf17e81c60101414d",
+  "updatedAt": "2026-08-18T13:02:02Z",
+  "note": "C 已推真实后端 D2（USE_MOCK=false，8接口走云函数）+ 压缩 assets/patterns。B 已安全合入后端（api.js/app.js/cloudfunctions/压缩图），保留 B 页面，USE_MOCK 保持 true 以便 touristappid 本地可跑；游戏页接 submitGame；saveWork 补 mindfulNote。C 越界大改了 B 的 4 个页面（c 分支），未采用，待与 C 协调。"
 }

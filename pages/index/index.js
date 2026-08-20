@@ -1,7 +1,8 @@
-// 归属：A｜产品前端 Owner（B 按设计稿重制首页）
+// 归属：A｜产品前端 Owner（B 按设计稿 1首页.html 重制）
 Page({
   data: {
-    // 顶部情绪标签（与设计稿 image1 对齐）
+    musicOn: false,
+    // 情绪胶囊（对齐 A：焦躁/疲惫/平静/开心/有点乱）
     emotions: [
       { key: 'anxious', label: '焦躁', active: true },
       { key: 'tired', label: '疲惫', active: false },
@@ -9,33 +10,46 @@ Page({
       { key: 'happy', label: '开心', active: false },
       { key: 'messy', label: '有点乱', active: false }
     ],
-    todayBest: 3280,
-    leaderboard: {
-      active: 'user',
-      scope: 'today',
-      list: [
-        { rank: 1, name: '@inkblue27', score: 128432, avatar: '/assets/patterns/hudie.png' },
-        { rank: 2, name: '@cloud_dye', score: 97310, avatar: '/assets/patterns/tuan.png' },
-        { rank: 3, name: '@xiao_ran77', score: 86540, avatar: '/assets/patterns/shui.png' }
-      ]
-    }
+    relaxDays: 0,
+    relaxCount: 0,
+    // 今日染力榜（对齐 A 稿 image1）
+    lbTab: 'user',
+    lbList: [
+      { rank: 1, name: '@inkblue27', score: '128,432', avatar: '/assets/patterns/tuan.png' },
+      { rank: 2, name: '@cloud_dye', score: '97,310', avatar: '/assets/patterns/shui.png' },
+      { rank: 3, name: '@xiao_ran77', score: '86,540', avatar: '/assets/patterns/cang.png' }
+    ],
+    // 一分钟非遗三卡（对齐 A：浅底深蓝标题 + 底部图区）
+    knowledge: [
+      { id: 'why-blue', art: 'why-blue', tag: '为什么不是蓝色？', title: '刚出缸的布，为何不蓝？', lead: '明明染的是板蓝根，为什么捞出来却是黄绿色？', img: '/assets/patterns/cang.png' },
+      { id: 'oxidation', art: 'oxidation', tag: '氧化的魔法', title: '板蓝根染液', lead: '为什么会从无色慢慢变成靛蓝？一场时间的魔法。', img: '/assets/patterns/shui.png' },
+      { id: 'pattern', art: 'pattern', tag: '纹样的秘密', title: '不同扎结方式', lead: '扎、缝、夹、缠，每一种都留下独一无二的纹样。', img: '/assets/patterns/tuan.png' }
+    ]
   },
 
   onLoad() {
-    // 若本地保存了今日最高分则读取
     try {
-      const best = wx.getStorageSync('ranxin_game_best');
-      if (best) this.setData({ todayBest: best });
+      const days = wx.getStorageSync('ranxin_relax_days');
+      const today = wx.getStorageSync('ranxin_relax_today');
+      if (days) this.setData({ relaxDays: days });
+      if (typeof today === 'number') this.setData({ relaxCount: today });
     } catch (e) {}
   },
 
+  onShow() {
+    const tabBar = this.getTabBar && this.getTabBar();
+    if (tabBar && tabBar.setData) tabBar.setData({ selected: 0 });
+  },
+
   toggleMusic() {
-    wx.showToast({ title: '背景音乐播放中', icon: 'none' });
+    const musicOn = !this.data.musicOn;
+    this.setData({ musicOn });
+    if (musicOn) wx.showToast({ title: '背景音乐播放中', icon: 'none' });
   },
 
   selectEmotion(e) {
     const { key } = e.currentTarget.dataset;
-    const emotions = this.data.emotions.map(item => ({ ...item, active: item.key === key }));
+    const emotions = this.data.emotions.map(it => ({ ...it, active: it.key === key }));
     this.setData({ emotions });
   },
 
@@ -43,21 +57,44 @@ Page({
     wx.navigateTo({ url: '/pages/mbti/index' });
   },
 
+  goDiy() {
+    wx.switchTab({ url: '/pages/diy/diy' });
+  },
+
   goGame() {
     wx.navigateTo({ url: '/pages/game/game' });
   },
 
-  goLeaderboard() {
-    wx.navigateTo({ url: '/pages/game/game?scene=leaderboard' });
+  goRelax() {
+    wx.navigateTo({ url: '/pages/relax/relax' });
   },
 
   goKnowledge() {
-    wx.navigateTo({ url: '/pages/collection/collection' });
+    wx.navigateTo({ url: '/pages/knowledge/knowledge' });
   },
 
-  switchLeaderboardTab(e) {
-    const { tab } = e.currentTarget.dataset;
-    const leaderboard = { ...this.data.leaderboard, active: tab };
-    this.setData({ leaderboard });
+  switchLbTab(e) {
+    const tab = e.currentTarget.dataset.tab;
+    const list = tab === 'user'
+      ? [
+        { rank: 1, name: '@inkblue27', score: '128,432', avatar: '/assets/patterns/tuan.png' },
+        { rank: 2, name: '@cloud_dye', score: '97,310', avatar: '/assets/patterns/shui.png' },
+        { rank: 3, name: '@xiao_ran77', score: '86,540', avatar: '/assets/patterns/cang.png' }
+      ]
+      : [
+        { rank: 1, name: '@blue_mori', score: '632,110', avatar: '/assets/patterns/he.png' },
+        { rank: 2, name: '@nightindigo', score: '543,221', avatar: '/assets/patterns/ling.png' },
+        { rank: 3, name: '@dyewave', score: '487,652', avatar: '/assets/patterns/die.png' }
+      ];
+    this.setData({ lbTab: tab, lbList: list });
+  },
+
+  goRank() {
+    wx.navigateTo({ url: '/pages/rank/rank' });
+  },
+
+  goArticle(e) {
+    const { art } = e.currentTarget.dataset;
+    wx.navigateTo({ url: '/pages/article/article?type=' + art });
   }
 });

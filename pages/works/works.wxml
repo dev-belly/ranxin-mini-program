@@ -32,7 +32,7 @@
         <view class="work-note" wx:if="{{item.mindfulNote}}">“{{item.mindfulNote}}”</view>
         <view class="work-actions">
           <text class="work-link" data-i="{{i}}" bindtap="shareWork">分享卡</text>
-          <text class="work-link" bindtap="customize">定制实物</text>
+          <text class="work-link" data-i="{{i}}" bindtap="customize">定制实物</text>
         </view>
       </view>
     </view>

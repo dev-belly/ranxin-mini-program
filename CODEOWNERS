@@ -1,0 +1,12 @@
+# 染心 · 协作边界（分工约定，违反将被拒绝合并）
+# B｜核心交互 Owner 的页面与全站视觉，仅 B（@dev-belly）可修改；C/A 不得越界。
+
+/pages/game/          @dev-belly   # B: 合成大染缸（三消小游戏）
+/pages/collection/    @dev-belly   # B: 纹样收藏库
+/pages/diy/           @dev-belly   # B: 正念 DIY 工坊
+/app.wxss             @dev-belly   # B: 全站视觉主题（rx 水彩蓝紫）
+/utils/pattern-engine.js  @dev-belly  # B: 纹样渲染引擎
+/utils/assets.js      @dev-belly   # B: 图片优先资源解析
+
+# C｜后端 Owner 的领地（B/A 不越界，由 C 维护）：
+# cloudfunctions/  utils/api.js  数据库 Schema

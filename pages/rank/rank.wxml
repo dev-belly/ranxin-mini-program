@@ -1,0 +1,47 @@
+<view class="rx-bg"></view>
+<view class="rx-page rank-page">
+  <view class="rank-head">
+    <view class="back" bindtap="goBack">‹</view>
+    <view class="rank-title">解压排行榜</view>
+    <view class="rank-spark">✦</view>
+  </view>
+
+  <view class="top-tabs">
+    <view class="top-tab {{topTab==='user'?'active':''}}" data-tab="user" bindtap="switchTop">用户榜</view>
+    <view class="top-tab {{topTab==='city'?'active':''}}" data-tab="city" bindtap="switchTop">城市榜</view>
+  </view>
+
+  <view class="sub-tabs">
+    <view class="sub-tab {{subTab==='today'?'active':''}}" data-tab="today" bindtap="switchSub">今日</view>
+    <view class="sub-tab {{subTab==='week'?'active':''}}" data-tab="week" bindtap="switchSub">本周</view>
+    <view class="sub-tab {{subTab==='all'?'active':''}}" data-tab="all" bindtap="switchSub">总榜</view>
+  </view>
+
+  <view class="top-card">
+    <view class="laurel">1</view>
+    <image class="top-avatar" src="{{topUser.avatar}}" mode="aspectFill"/>
+    <view class="top-info">
+      <view class="top-name">{{topUser.name}}</view>
+      <view class="top-label">{{topUser.label}}</view>
+      <view class="top-score">{{topUser.score}}</view>
+    </view>
+  </view>
+
+  <view class="rank-list">
+    <view wx:for="{{list}}" wx:key="rank" class="rank-row">
+      <view class="rank-num">{{item.rank < 10 ? '0' + item.rank : item.rank}}</view>
+      <image class="row-avatar" src="{{item.avatar}}" mode="aspectFill"/>
+      <view class="row-name">{{item.name}}</view>
+      <view class="row-score">{{item.score}}</view>
+    </view>
+  </view>
+
+  <view class="my-rank">
+    <text class="my-tag">✦ 我的排名</text>
+    <view class="my-row">
+      <image class="my-avatar" src="{{myRank.avatar}}" mode="aspectFill"/>
+      <view class="my-name">{{myRank.name}}</view>
+      <view class="my-current">当前第 <text class="my-num">{{myRank.rank}}</text></view>
+    </view>
+  </view>
+</view>

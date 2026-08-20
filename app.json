@@ -5,20 +5,25 @@
     "pages/works/works",
     "pages/game/game",
     "pages/collection/collection",
-    "pages/diy/diy"
+    "pages/diy/diy",
+    "pages/knowledge/knowledge",
+    "pages/article/article",
+    "pages/relax/relax",
+    "pages/product/product",
+    "pages/bargain/bargain",
+    "pages/bargainDetail/bargainDetail",
+    "pages/orderProgress/orderProgress",
+    "pages/rank/rank"
   ],
   "window": {
     "navigationBarTitleText": "染心",
-    "navigationBarBackgroundColor": "#f8f9fc",
+    "navigationBarBackgroundColor": "#fbfaf8",
     "navigationBarTextStyle": "black",
-    "backgroundColor": "#f8f9fc",
+    "backgroundColor": "#fbfaf8",
     "navigationStyle": "default"
   },
   "tabBar": {
-    "color": "#8a93a6",
-    "selectedColor": "#4f5fc9",
-    "backgroundColor": "#ffffff",
-    "borderStyle": "white",
+    "custom": true,
     "list": [
       { "pagePath": "pages/index/index", "text": "情绪染坊" },
       { "pagePath": "pages/diy/diy", "text": "正念DIY" },
