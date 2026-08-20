@@ -217,6 +217,7 @@
 
       <!-- 氧化：时长 + 前后对比 -->
       <block wx:if="{{step===2}}">
+        <text class="oxi-note">氧化过程中，靛蓝色会随着与空气接触逐渐加深。</text>
         <text class="ctrl-title">氧化设置</text>
         <view class="oxidation-set">
           <view class="oxi-label">预计氧化时长</view>
@@ -245,6 +246,11 @@
           <view class="sound-icon">{{soundOn?'🔊':'🔇'}}</view>
           <text class="sound-text">{{soundOn?'白噪音开启':'开启白噪音 / 触觉反馈'}}</text>
         </view>
+        <view class="tip-list">
+          <view class="tip-title">小贴士</view>
+          <view class="tip-item"><text class="tip-dot">✿</text>靛蓝遇空气中的氧气会发生氧化反应，颜色由浅变深、花纹更清晰立体</view>
+          <view class="tip-item"><text class="tip-dot">💧</text>保持布料湿润并通风，有助于获得更均匀的蓝色效果</view>
+        </view>
       </block>
 
       <!-- 拆结：方式 + 最终预览 + 小贴士 -->
@@ -267,6 +273,7 @@
           <slider min="0" max="100" value="{{unfoldProgress}}" bindchanging="onUnfoldChange" bindchange="onUnfoldChange" block-size="22" activeColor="#7d6bff" backgroundColor="#d7ddee"/>
           <text class="slider-val">{{unfoldProgress}}%</text>
         </view>
+        <view class="unfold-note">预计最终效果 · 实际效果会因布料、扎结松紧与染液浓度略有差异</view>
         <view class="tip-list">
           <view class="tip-title">拆结小贴士</view>
           <view class="tip-item"><text class="tip-dot">~</text>沿打结方向轻轻松开</view>

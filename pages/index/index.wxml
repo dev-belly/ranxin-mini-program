@@ -51,6 +51,17 @@
     </view>
   </view>
 
+  <!-- 合成大染缸游戏入口（对齐文档 Tab1 双入口：MBTI + 游戏） -->
+  <view class="card game-entry" bindtap="goGame">
+    <image class="card-img" src="/assets/patterns/shui.png" mode="aspectFill" />
+    <view class="game-copy">
+      <view class="eyebrow">合成大染缸</view>
+      <view class="game-h2">解压合成 · 收集纹样</view>
+      <view class="game-p">把相同纹样合到一起，收集稀有残片，解锁专属纹样</view>
+      <view class="glow-btn">开始解压 ›</view>
+    </view>
+  </view>
+
   <!-- DIY 卡：正念 DIY（首页蓝紫调入口，跳转正念 DIY tab） -->
   <view class="card diy-entry" bindtap="goDiy">
     <image class="card-img" src="/assets/patterns/he.png" mode="aspectFill" />
