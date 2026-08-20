@@ -65,43 +65,62 @@ Page({
 
   onUnload() {
     this._stop = true;
-    if (this._raf && typeof cancelAnimationFrame === 'function') cancelAnimationFrame(this._raf);
+    this._rafCancel(this._raf);
+  },
+
+  // 帧调度：微信 canvas 2d 必须用 canvas.requestAnimationFrame（全局 rAF 在部分真机只回调一次→循环卡死→玩不了）
+  _rafFn(cb) {
+    const c = this.canvas;
+    if (c && typeof c.requestAnimationFrame === 'function') return c.requestAnimationFrame(cb);
+    if (typeof requestAnimationFrame === 'function') return requestAnimationFrame(cb);
+    return setTimeout(() => cb(Date.now()), 16);
+  },
+  _rafCancel(id) {
+    const c = this.canvas;
+    if (c && typeof c.cancelAnimationFrame === 'function') return c.cancelAnimationFrame(id);
+    if (typeof cancelAnimationFrame === 'function') return cancelAnimationFrame(id);
+    return clearTimeout(id);
   },
 
   _loop() {
     if (this._stop) return;
     const now = Date.now();
-    const dt = this._last ? (now - this._last) / 1000 : 0;
+    let dt = this._last ? (now - this._last) / 1000 : 0;
     this._last = now;
-    const w = this.world;
-    if (w && !this.data.gameOver) {
-      w.step(dt);
-      // 合成音效：消费物理引擎抛出的合成事件（随风铃般轻响）
-      if (w.events && w.events.length) {
-        for (const ev of w.events) this.playMerge(ev.level);
-        w.events.length = 0;
+    if (dt > 0.05) dt = 0.05; // 防止切后台/卡顿导致 dt 爆炸→物理穿透堆叠
+    try {
+      const w = this.world;
+      if (w && !this.data.gameOver) {
+        w.step(dt);
+        // 合成音效：消费物理引擎抛出的合成事件（随风铃般轻响）
+        if (w.events && w.events.length) {
+          for (const ev of w.events) this.playMerge(ev.level);
+          w.events.length = 0;
+        }
+        // 首次合出终极「大染缸」奏柔和双音
+        if (!this._winPlayed && w.maxLevel >= MAX_LEVEL) { this._winPlayed = true; this.playWin(); }
+        // 分数/最高级变化才 setData，避免每帧刷新掉帧
+        if (w.score !== this._lastScore || w.maxLevel !== this._lastMax) {
+          this._lastScore = w.score;
+          this._lastMax = w.maxLevel;
+          this.setData({
+            score: w.score,
+            topName: LEVELS[w.maxLevel].name,
+            topLevel: w.maxLevel
+          });
+        }
+        // 合成时偶发正念提示
+        if (w.score > this._lastQuote && Math.random() < 0.5) {
+          this._lastQuote = w.score;
+          this.showQuote();
+        }
+        if (w.over) this._endGame();
       }
-      // 首次合出终极「大染缸」奏柔和双音
-      if (!this._winPlayed && w.maxLevel >= MAX_LEVEL) { this._winPlayed = true; this.playWin(); }
-      // 分数/最高级变化才 setData，避免每帧刷新掉帧
-      if (w.score !== this._lastScore || w.maxLevel !== this._lastMax) {
-        this._lastScore = w.score;
-        this._lastMax = w.maxLevel;
-        this.setData({
-          score: w.score,
-          topName: LEVELS[w.maxLevel].name,
-          topLevel: w.maxLevel
-        });
-      }
-      // 合成时偶发正念提示
-      if (w.score > this._lastQuote && Math.random() < 0.5) {
-        this._lastQuote = w.score;
-        this.showQuote();
-      }
-      if (w.over) this._endGame();
+      this.draw();
+    } catch (e) {
+      // 单帧异常绝不允许杀死循环（否则整局"点不动"）
     }
-    this.draw();
-    this._raf = requestAnimationFrame(() => this._loop());
+    this._raf = this._rafFn(() => this._loop());
   },
 
   // ---- 输入：移动瞄准 + 松手投放 ----
