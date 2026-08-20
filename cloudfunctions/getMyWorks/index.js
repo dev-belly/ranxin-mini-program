@@ -19,8 +19,18 @@ exports.main = async (event) => {
     .limit(pageSize)
     .get()
 
+  // 兼容历史数据：早期 createdAt 存的是数字时间戳，前端 works.js 用 .slice(0,10) 取日期，
+  // 数字没有 slice 方法会抛异常导致列表空白，统一转成 ISO 字符串
+  const list = (listRes.data || []).map(w => {
+    const item = Object.assign({}, w)
+    if (typeof item.createdAt === 'number') {
+      item.createdAt = new Date(item.createdAt).toISOString()
+    }
+    return item
+  })
+
   return {
-    list: listRes.data || [],
+    list,
     hasMore: page * pageSize < total
   }
 }

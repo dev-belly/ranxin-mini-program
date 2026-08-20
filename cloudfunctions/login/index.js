@@ -19,7 +19,8 @@ exports.main = async () => {
   }
 
   const now = Date.now()
-  const newUser = { nickname: '扎染旅人', createdAt: now }
+  // 云函数内写入不会自动带 _openid，必须手动补，否则下次登录按 _openid 查不到（每次都会新建用户）
+  const newUser = { nickname: '扎染旅人', createdAt: now, _openid: OPENID }
   await users.add({ data: newUser })
   return { user: Object.assign({ id: OPENID }, newUser) }
 }

@@ -26,7 +26,9 @@ exports.main = async (event) => {
     data: {
       patternId,
       source: event.source || {},
-      createdAt: Date.now()
+      createdAt: Date.now(),
+      // 云函数内写入不会自动带 _openid，必须手动补，否则解锁状态查不到
+      _openid: OPENID
     }
   })
 

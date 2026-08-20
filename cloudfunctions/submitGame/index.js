@@ -12,9 +12,9 @@ exports.main = async (event) => {
   const score = Number(event.score) || 0
   const duration = Number(event.duration) || 0
 
-  // 1. 记录成绩
+  // 1. 记录成绩（云函数内写入不会自动带 _openid，必须手动补）
   await db.collection('game_scores').add({
-    data: { score, duration, createdAt: Date.now() }
+    data: { score, duration, createdAt: Date.now(), _openid: OPENID || '' }
   })
 
   // 2. 分数不足 100：只记录成绩，不奖励纹样
@@ -42,7 +42,8 @@ exports.main = async (event) => {
       data: {
         patternId: nextId,
         source: { sourceType: 'game' },
-        createdAt: Date.now()
+        createdAt: Date.now(),
+        _openid: OPENID || ''
       }
     })
   }
