@@ -76,6 +76,13 @@ Page({
     const w = this.world;
     if (w && !this.data.gameOver) {
       w.step(dt);
+      // 合成音效：消费物理引擎抛出的合成事件（随风铃般轻响）
+      if (w.events && w.events.length) {
+        for (const ev of w.events) this.playMerge(ev.level);
+        w.events.length = 0;
+      }
+      // 首次合出终极「大染缸」奏柔和双音
+      if (!this._winPlayed && w.maxLevel >= MAX_LEVEL) { this._winPlayed = true; this.playWin(); }
       // 分数/最高级变化才 setData，避免每帧刷新掉帧
       if (w.score !== this._lastScore || w.maxLevel !== this._lastMax) {
         this._lastScore = w.score;
@@ -116,6 +123,7 @@ Page({
       x = raw - this.boardLeft;
     }
     this.world.drop(x);
+    this.playDrop(); // 落球轻响（首个手势处创建/唤醒音频上下文）
   },
 
   // ---- 绘制 ----
@@ -195,7 +203,49 @@ Page({
     this._quoteTimer = setTimeout(() => this.setData({ quoteVisible: false }), 2200);
   },
 
-  toggleMute() { this.setData({ muted: !this.data.muted }); },
+  toggleMute() {
+    const muted = !this.data.muted;
+    this.setData({ muted });
+    if (!muted) this._ensureAudio(); // 取消静音时唤醒音频上下文（需用户手势）
+  },
+
+  // ---- 音景（情绪疗愈 ASMR 占位）----
+  // 文档要求：使用真实录制的 ASMR 音效（古法捣衣木槌声、清澈水花漂洗声、绳结收紧声），
+  // 替代刺耳电子音，营造「视觉与触觉降噪」的正念沉浸。当前以柔和合成音占位，
+  // 待 A/C 提供音频素材后，请替换为真实录音（wx.createInnerAudioContext 播放素材文件）。
+  _ensureAudio() {
+    if (this._audioCtx) { try { this._audioCtx.resume && this._audioCtx.resume(); } catch (e) {} return this._audioCtx; }
+    try {
+      if (typeof wx === 'undefined' || !wx.createWebAudioContext) return null;
+      this._audioCtx = wx.createWebAudioContext();
+      this._master = this._audioCtx.createGain();
+      this._master.gain.value = 0.5; // 整体低音量，符合「色彩/听觉降噪」
+      this._master.connect(this._audioCtx.destination);
+    } catch (e) { this._audioCtx = null; }
+    return this._audioCtx;
+  },
+
+  _tone(freq, dur, type) {
+    if (this.data.muted) return;
+    const ac = this._ensureAudio();
+    if (!ac) return;
+    try {
+      const t0 = ac.currentTime;
+      const o = ac.createOscillator();
+      const g = ac.createGain();
+      o.type = type || 'sine';
+      o.frequency.setValueAtTime(freq, t0);
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(0.16, t0 + 0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      o.connect(g); g.connect(this._master || ac.destination);
+      o.start(t0); o.stop(t0 + dur + 0.02);
+    } catch (e) {}
+  },
+
+  playDrop() { this._tone(196, 0.09, 'sine'); },                              // 落球：低柔「咚」
+  playMerge(level) { this._tone(392 + (level || 0) * 56, 0.20, 'triangle'); }, // 合成：随等级升调
+  playWin() { this._tone(523, 0.5, 'sine'); setTimeout(() => this._tone(784, 0.6, 'sine'), 150); }, // 大染缸：柔和双音
 
   // ---- 结束 ----
   _endGame() {
@@ -268,6 +318,7 @@ Page({
     this._lastScore = 0;
     this._lastMax = 0;
     this._lastQuote = 0;
+    this._winPlayed = false;
     this._startTime = Date.now();
     this.setData({
       score: 0, topName: '染珠', topLevel: 0,
