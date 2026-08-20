@@ -53,6 +53,21 @@ function callCloud(name, data) {
   });
 }
 
+// 上传作品缩略图到云存储，返回永久 fileID
+// 替代本地临时路径（wxfile://tmp_xxx），避免重开小程序后图片丢失
+function uploadThumbToCloud(tempFilePath) {
+  return new Promise((resolve, reject) => {
+    var rand = Math.floor(Math.random() * 100000);
+    var cloudPath = 'works/' + Date.now() + '_' + rand + '.png';
+    wx.cloud.uploadFile({
+      cloudPath: cloudPath,
+      filePath: tempFilePath,
+      success: function (res) { resolve(res.fileID); },
+      fail: reject
+    });
+  });
+}
+
 // ============================================================
 // 接口 1/8：login —— 登录，返回用户信息（Owner: C）
 // 输入：{}
@@ -140,8 +155,9 @@ function saveDraft(payload) {
 
 // ============================================================
 // 接口 6/8：saveWork —— 保存/发布作品（Owner: C/B）
-// 输入：payload { draftId | finalPayload }
+// 输入：payload { draftId | finalPayload, thumb? }
 // 输出：{ workId }
+// 注：如果 thumb 是本地临时路径（wxfile://），会先上传到云存储
 // ============================================================
 function saveWork(payload) {
   payload = payload || {};
@@ -156,6 +172,19 @@ function saveWork(payload) {
       writeStorage('ranxin_works', clean);
       return { workId };
     });
+  }
+  // thumb 是本地临时路径时，先上传到云存储再保存
+  if (payload.thumb && typeof payload.thumb === 'string' && payload.thumb.indexOf('cloud://') !== 0) {
+    return uploadThumbToCloud(payload.thumb)
+      .then(function (fileID) {
+        payload.thumb = fileID;
+        return callCloud('saveWork', { payload });
+      })
+      .catch(function (err) {
+        // 上传失败时降级：保留原路径继续保存，不阻塞流程
+        console.warn('[saveWork] 缩略图上传云存储失败，降级保存', err);
+        return callCloud('saveWork', { payload });
+      });
   }
   return callCloud('saveWork', { payload });
 }
