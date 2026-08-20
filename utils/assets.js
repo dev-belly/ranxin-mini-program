@@ -2,7 +2,7 @@
 // 资源加载辅助：真实图片优先，程序化渲染兜底。
 // 用法：在页面 onLoad 时 resolvePatternAssets(catalog)，得到 { id: { file, hasImage } }。
 // 图片放入 assets/patterns/ 且文件名与 manifest.json 一致即可自动启用，无需改代码。
-const manifest = require('./patterns/manifest.json');
+const manifest = require('../assets/patterns/manifest.json');
 
 function assetPath(file) {
   if (!file) return '';
