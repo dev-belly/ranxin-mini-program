@@ -40,9 +40,18 @@ Page({
   },
 
   onReady() {
+    this._initCanvas(0);
+  },
+
+  _initCanvas(retry) {
+    retry = retry || 0;
     const query = wx.createSelectorQuery();
     query.select('#game-canvas').fields({ node: true, size: true }).exec((res) => {
-      if (!res[0] || !res[0].node) return;
+      // 节点未就绪或尺寸为 0 时重试，最多 8 次，避免画布空白无法游玩
+      if (!res[0] || !res[0].node || !res[0].width || !res[0].height) {
+        if (retry < 8) setTimeout(() => this._initCanvas(retry + 1), 80);
+        return;
+      }
       const canvas = res[0].node;
       const { width, height } = res[0];
       const dpr = (wx.getSystemInfoSync && wx.getSystemInfoSync().pixelRatio) || 2;
@@ -91,7 +100,11 @@ Page({
       if (w.over) this._endGame();
     }
     this.draw();
-    this._raf = requestAnimationFrame(() => this._loop());
+    // RAF 兼容：canvas 自带 > 全局 > setTimeout 兜底
+    const raf = (this.canvas && typeof this.canvas.requestAnimationFrame === 'function')
+      ? this.canvas.requestAnimationFrame.bind(this.canvas)
+      : (typeof requestAnimationFrame === 'function' ? requestAnimationFrame : (cb) => setTimeout(() => cb(Date.now()), 16));
+    this._raf = raf(() => this._loop());
   },
 
   // ---- 输入：移动瞄准 + 松手投放 ----
