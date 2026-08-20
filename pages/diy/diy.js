@@ -11,9 +11,11 @@ const FOLD_TYPES = [
 ];
 
 const DYES = [
-  { label: '板蓝根靛蓝', name: '板蓝根', desc: '大理白族经典靛蓝', color: '#1E4D8C' },
-  { label: '姜黄', name: '栀子黄', desc: '温暖明亮的植物黄', color: '#D99E2B' },
-  { label: '茜草红', name: '茜草', desc: '取自茜草的赤红', color: '#B83B3B' }
+  { label: '板蓝根', name: '板蓝根', desc: '大理白族经典靛蓝', color: '#1E4D8C' },
+  { label: '靛青', name: '靛青', desc: '深邃沉稳的靛蓝', color: '#2E5AAC' },
+  { label: '紫草', name: '紫草', desc: '取自紫草的温润紫', color: '#6B3FA0' },
+  { label: '茜草', name: '茜草', desc: '取自茜草的赤红', color: '#B83B3B' },
+  { label: '栀子黄', name: '栀子黄', desc: '温暖明亮的植物黄', color: '#D99E2B' }
 ];
 
 const MOODS = [
@@ -78,7 +80,7 @@ Page({
     dyeMethods: [
       { id: 'full', name: '整体浸染', desc: '将布料完全浸入染液中，适合基础图案', recommend: false },
       { id: 'local', name: '局部入染', desc: '仅浸入局部区域，适合创造层次效果', recommend: true },
-      { id: 'drop', name: '点滴滴落', desc: '适合创造自然随性的纹样效果', recommend: false }
+      { id: 'drop', name: '点染滴落', desc: '适合创造自然随性的纹样效果', recommend: false }
     ],
     // 氧化时长（分钟）
     oxidationMinutes: 3,

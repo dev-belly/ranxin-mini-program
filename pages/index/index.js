@@ -61,6 +61,10 @@ Page({
     wx.switchTab({ url: '/pages/diy/diy' });
   },
 
+  goGame() {
+    wx.navigateTo({ url: '/pages/game/game' });
+  },
+
   goRelax() {
     wx.navigateTo({ url: '/pages/relax/relax' });
   },

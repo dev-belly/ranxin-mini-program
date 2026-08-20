@@ -558,6 +558,7 @@
 .method-check { width: 40rpx; height: 40rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg,#5c6df4,#8e6bed); color: #fff; font-size: 22rpx; }
 
 /* 氧化 */
+.oxi-note { display: block; font-size: 24rpx; color: #59709e; margin-bottom: 16rpx; line-height: 1.6; }
 .oxidation-set { padding: 22rpx; border-radius: 22rpx; background: var(--glass-sheen), var(--glass-bg); }
 .oxi-label { font-size: 24rpx; color: #5d75a0; }
 .oxi-minutes { display: flex; align-items: center; justify-content: center; gap: 30rpx; margin: 18rpx 0; }
@@ -579,6 +580,7 @@
 .unfold-icon { font-size: 48rpx; }
 .unfold-name { font-size: 28rpx; font-weight: 600; color: #20417d; margin-top: 8rpx; }
 .unfold-desc { font-size: 22rpx; color: #6b7c9e; margin-top: 4rpx; }
+.unfold-note { display: block; font-size: 22rpx; color: #8290ad; margin-top: 18rpx; text-align: center; }
 .tip-list { margin-top: 22rpx; padding: 22rpx; border-radius: 22rpx; background: linear-gradient(135deg, rgba(255,245,200,.3), rgba(255,255,255,.6)); border: 1rpx solid rgba(255,235,180,.6); }
 .tip-title { font-size: 26rpx; font-weight: 700; color: #8c6a1d; margin-bottom: 12rpx; }
 .tip-item { display: flex; align-items: center; gap: 12rpx; font-size: 24rpx; color: #6b5a2f; margin-top: 8rpx; }
