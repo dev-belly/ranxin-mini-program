@@ -1,15 +1,13 @@
 .game-page {
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  padding: 24rpx 24rpx 60rpx;
   box-sizing: border-box;
-  padding: 24rpx 24rpx 40rpx;
-  overflow: hidden;
 }
 
 /* 标题（对齐 A：✦合成大染缸✦ + ✿副标题✿） */
 .title-wrap {
-  flex: 0 0 auto;
   text-align: center;
   margin: 8rpx 0 20rpx;
 }
@@ -43,7 +41,6 @@
 
 /* HUD（对齐 A .stat 白卡圆角 + 深蓝数字） */
 .game-hud {
-  flex: 0 0 auto;
   display: flex;
   gap: 16rpx;
   margin-bottom: 20rpx;
@@ -108,11 +105,11 @@
 .frag-name { font-size: 24rpx; color: #173d79; }
 .frag-count { font-size: 26rpx; font-weight: 700; color: #c08a16; }
 
-/* 棋盘：自适应撑满剩余高度（flex:1），在小屏上也给足落球空间，避免几秒堆满判负 */
+/* 棋盘：竖屏更高的落球区（用 flex 撑满剩余高度，避免 aspect-ratio 在真机失效导致高度 0 白屏） */
 .board-wrap {
-  flex: 1 1 auto;
   width: 100%;
-  min-height: 440rpx;
+  flex: 1 1 auto;
+  min-height: 300rpx;
   background: linear-gradient(160deg, #5c8df5, #2b5bc7);
   border-radius: 28rpx;
   padding: 12rpx;
