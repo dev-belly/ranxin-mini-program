@@ -41,10 +41,10 @@ Page({
 
   onReady() {
     const query = wx.createSelectorQuery();
-    query.select('#game-canvas').fields({ node: true, size: true }).exec((res) => {
+    query.select('#game-canvas').fields({ node: true, size: true, rect: true }).exec((res) => {
       if (!res[0] || !res[0].node) return;
       const canvas = res[0].node;
-      const { width, height } = res[0];
+      const { width, height, left, top } = res[0];
       const dpr = (wx.getSystemInfoSync && wx.getSystemInfoSync().pixelRatio) || 2;
       canvas.width = width * dpr;
       canvas.height = height * dpr;
@@ -53,6 +53,9 @@ Page({
       this.ctx.scale(dpr, dpr);
       this.boardW = width;
       this.boardH = height;
+      // canvas 相对视口左上角偏移，touch 事件坐标需减去它才是棋盘内坐标
+      this.boardLeft = left || 0;
+      this.boardTop = top || 0;
       this.world = new PhysicsWorld(width, height);
       this.setData({ ready: true });
       this._last = 0;
@@ -99,15 +102,19 @@ Page({
     if (!this.world || this.data.gameOver) return;
     const t = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]);
     if (!t) return;
-    const x = t.x != null ? t.x : (t.clientX != null ? t.clientX - this.boardLeft : this.boardW / 2);
-    this.world.setAim(x);
+    // 微信 touch 的 x/clientX 是相对视口的，需减去 canvas 左上角偏移
+    const raw = (t.x != null) ? t.x : (t.clientX != null ? t.clientX : (this.boardW / 2 + this.boardLeft));
+    this.world.setAim(raw - this.boardLeft);
   },
 
   onTouchEnd(e) {
     if (!this.world || this.data.gameOver) return;
     const t = (e.changedTouches && e.changedTouches[0]) || (e.touches && e.touches[0]);
     let x = this.world.aimX;
-    if (t) x = t.x != null ? t.x : (t.clientX != null ? t.clientX - this.boardLeft : x);
+    if (t) {
+      const raw = (t.x != null) ? t.x : (t.clientX != null ? t.clientX : (x + this.boardLeft));
+      x = raw - this.boardLeft;
+    }
     this.world.drop(x);
   },
 
