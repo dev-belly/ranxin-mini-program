@@ -1,4 +1,4 @@
-.product-page { padding-top: 20rpx; }
+.product-page { padding-top: calc(env(safe-area-inset-top) + 86rpx); }
 
 .nav-bar {
   display: flex;
@@ -15,27 +15,54 @@
   box-shadow: var(--glass-thickness);
 }
 .nav-title {
-  font-size: 34rpx; font-weight: 700; color: #173d79; letter-spacing: 2rpx;
+  font-size: 42rpx; font-weight: 700; color: #173d79; letter-spacing: 3rpx;
   font-family: "Songti SC", "STSong", "SimSun", serif;
 }
 .nav-right { width: 60rpx; }
 
 .preview-card {
-  padding: 30rpx;
+  position: relative;
+  padding: 10rpx;
   display: flex; flex-direction: column; align-items: center;
   margin-bottom: 28rpx;
+  overflow: visible;
 }
+.artwork-proof {
+  position: absolute;
+  left: 28rpx;
+  bottom: 26rpx;
+  z-index: 4;
+  min-width: 250rpx;
+  padding: 9rpx 14rpx 9rpx 9rpx;
+  border-radius: 23rpx;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  color: #274477;
+  background: rgba(255,255,255,.9);
+  border: 1rpx solid rgba(255,255,255,.95);
+  box-shadow: 0 9rpx 25rpx rgba(28,48,98,.16);
+}
+.artwork-proof image { width: 72rpx; height: 72rpx; flex: 0 0 auto; border-radius: 17rpx; background: #eaf0fb; }
+.artwork-proof > view { display: flex; flex-direction: column; gap: 4rpx; }
+.artwork-proof > view text:first-child { font-size: 21rpx; font-weight: 700; }
+.artwork-proof > view text:last-child { font-size: 17rpx; color: #73809c; }
 .preview-img {
-  width: 420rpx; height: 420rpx; border-radius: 28rpx;
+  width: 100%; height: 620rpx; border-radius: 30rpx;
   background: #eef1f8; object-fit: cover;
   box-shadow: 0 16rpx 48rpx rgba(20, 30, 70, 0.12);
 }
-.pattern-tag { margin-top: 20rpx; }
+.pattern-tag {
+  position: absolute; right: 28rpx; bottom: 26rpx; z-index: 3;
+  padding: 10rpx 22rpx; background: rgba(255,255,255,.78);
+  box-shadow: 0 8rpx 24rpx rgba(29,54,108,.12);
+}
+.tag-flower { color: #5d64de; margin-right: 8rpx; }
 
 .options-block { margin-bottom: 28rpx; }
 .opt-group { margin-bottom: 26rpx; }
 .opt-label {
-  font-size: 28rpx; font-weight: 700; color: #173d79;
+  font-size: 32rpx; font-weight: 700; color: #173d79;
   margin-bottom: 14rpx; display: flex; align-items: center; gap: 8rpx;
 }
 .opt-label::before {
@@ -44,8 +71,12 @@
 .opt-chips { display: flex; flex-wrap: wrap; }
 
 .workshop-card {
-  padding: 28rpx;
+  padding: 30rpx;
   margin-bottom: 120rpx;
+  min-height: 210rpx;
+  background:
+    radial-gradient(260rpx 190rpx at 94% 76%, rgba(113,150,236,.18), transparent 68%),
+    var(--glass-sheen), var(--glass-bg-strong);
 }
 .ws-label {
   display: inline-flex; align-items: center;
@@ -55,7 +86,7 @@
   margin-bottom: 14rpx;
 }
 .ws-title {
-  font-size: 30rpx; font-weight: 700; color: #173d79; margin-bottom: 10rpx;
+  font-size: 34rpx; font-weight: 700; color: #173d79; margin-bottom: 12rpx;
 }
 .ws-meta {
   font-size: 24rpx; color: #4f5f7a; margin-bottom: 8rpx;
@@ -68,7 +99,7 @@
 .bottom-bar {
   position: fixed; left: 0; right: 0; bottom: 0;
   padding: 24rpx 32rpx calc(24rpx + env(safe-area-inset-bottom));
-  background: rgba(251, 250, 248, 0.92);
+  background: rgba(251, 250, 248, 0.86);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   backdrop-filter: blur(20px) saturate(180%);
   border-top: 1.5rpx solid var(--glass-border);
@@ -82,6 +113,7 @@
 .price-note { font-size: 22rpx; color: #8b97b3; }
 .actions { display: flex; gap: 16rpx; }
 .actions .rx-btn-secondary,
-.actions .rx-btn-primary { flex: 1; text-align: center; }
+.actions .rx-btn-primary { flex: 1; text-align: center; padding-left: 12rpx; padding-right: 12rpx; }
 .confirm-btn { padding: 22rpx 0; }
 .bargain-btn { padding: 22rpx 0; }
+.people-icon { font-size: 30rpx; margin-right: 6rpx; }

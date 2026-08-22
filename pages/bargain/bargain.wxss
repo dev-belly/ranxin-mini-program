@@ -1,4 +1,4 @@
-.bargain-page { padding-top: 20rpx; }
+.bargain-page { padding-top: calc(env(safe-area-inset-top) + 86rpx); }
 
 .nav-bar {
   display: flex; align-items: center; justify-content: space-between;
@@ -13,10 +13,12 @@
 }
 .nav-center { text-align: center; flex: 1; }
 .nav-title {
-  font-size: 34rpx; font-weight: 700; color: #173d79; letter-spacing: 2rpx;
+  font-size: 54rpx; font-weight: 700; color: #173d79; letter-spacing: 3rpx;
   font-family: "Songti SC", "STSong", "SimSun", serif;
 }
-.nav-sub { font-size: 22rpx; color: #8b97b3; margin-top: 4rpx; }
+.title-spark { color: #7b80ea; font-size: 25rpx; }
+.nav-orbit { width: 360rpx; height: 42rpx; margin: -26rpx auto -10rpx; border-top: 2rpx solid rgba(98,94,218,.32); border-radius: 50%; transform: rotate(-3deg); }
+.nav-sub { font-size: 22rpx; color: #8b87a6; margin-top: 4rpx; letter-spacing: 2rpx; }
 .nav-right { width: 60rpx; }
 
 .tabs {
@@ -25,7 +27,7 @@
 }
 .tab {
   position: relative;
-  font-size: 28rpx; color: #8b97b3; padding: 12rpx 28rpx;
+  font-size: 30rpx; color: #6d7082; padding: 18rpx 52rpx;
   border-radius: 999rpx;
   background: var(--glass-sheen), var(--glass-bg);
   border: 1.5rpx solid var(--glass-border);
@@ -40,15 +42,19 @@
 .empty { text-align: center; color: #8b97b3; padding: 80rpx 0; font-size: 26rpx; }
 
 .card {
-  display: flex; align-items: center; gap: 22rpx;
-  padding: 24rpx; margin-bottom: 24rpx;
+  display: flex; align-items: stretch; gap: 26rpx;
+  padding: 26rpx; margin-bottom: 28rpx;
+  min-height: 300rpx;
+  background:
+    radial-gradient(190rpx 220rpx at 102% 0%, rgba(125,158,236,.12), transparent 70%),
+    var(--glass-sheen), rgba(255,255,255,.50);
 }
 .card-img {
-  width: 170rpx; height: 170rpx; border-radius: 20rpx;
+  width: 230rpx; height: 250rpx; border-radius: 24rpx;
   background: #eef1f8; flex-shrink: 0;
 }
 .card-body { flex: 1; min-width: 0; }
-.card-title { font-size: 30rpx; font-weight: 700; color: #173d79; }
+.card-title { font-size: 32rpx; font-weight: 700; color: #173d79; margin-top: 8rpx; }
 .card-sub {
   display: inline-block; margin-top: 8rpx; margin-bottom: 10rpx;
   font-size: 20rpx; color: #2a44c1;
@@ -68,14 +74,18 @@
   background: linear-gradient(90deg, #ff7a7a, #ff9e9e);
 }
 
-.card-foot { display: flex; align-items: center; justify-content: space-between; }
+.card-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 14rpx; }
 .avatars { display: flex; }
 .avatar {
-  width: 44rpx; height: 44rpx; border-radius: 50%;
+  width: 46rpx; height: 46rpx; border-radius: 50%;
   background: linear-gradient(135deg, #d0d8f0, #a8b6e8);
   border: 2rpx solid #fff;
   margin-left: -10rpx;
 }
+.avatar-1 { background: linear-gradient(135deg, #f6c6d2, #8f6ca9); }
+.avatar-2 { background: linear-gradient(135deg, #a8d5ef, #416fa7); }
+.avatar-3 { background: linear-gradient(135deg, #f6dca9, #9e704e); }
+.avatar-4 { background: linear-gradient(135deg, #d1e3c2, #6f9b7a); }
 .avatar:first-child { margin-left: 0; }
 .mini {
   font-size: 22rpx; padding: 12rpx 24rpx; border-radius: 999rpx;

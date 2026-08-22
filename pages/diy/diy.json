@@ -1,4 +1,8 @@
 {
   "navigationBarTitleText": "正念DIY工坊",
-  "usingComponents": {}
+  "backgroundColor": "#f7f9ff",
+  "backgroundTextStyle": "dark",
+  "usingComponents": {
+    "rx-back": "/components/rx-back/rx-back"
+  }
 }

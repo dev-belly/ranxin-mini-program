@@ -1,13 +1,14 @@
 <view class="rx-bg"></view>
 <view class="rx-page detail-page" wx:if="{{bargain}}">
   <view class="nav-bar">
-    <view class="back" bindtap="goBack">‹</view>
-    <view class="share-top" bindtap="inviteHelp">分享活动</view>
+    <rx-back bind:back="goBack" />
+    <button class="share-top" open-type="share">↗ 分享活动</button>
   </view>
 
   <view class="headline">{{shareMessage}}</view>
 
-  <view class="ring-card rx-card">
+  <view class="ring-card">
+    <view class="ring-spark spark-a">✦</view><view class="ring-spark spark-b">✦</view>
     <view class="progress-ring">
       <view class="ring-bg"></view>
       <view class="ring-fill" style="background: conic-gradient(#5d78fd {{progressPercent}}%, rgba(93,120,253,0.12) {{progressPercent}}%);"></view>
@@ -37,7 +38,7 @@
           <view class="record-name">{{item.name}}</view>
           <view class="record-time">{{item.time}}</view>
         </view>
-        <view class="record-amount">-{{item.amount > 0 ? item.amount : -item.amount}}</view>
+        <view class="record-amount">-¥{{item.amountText}}</view>
       </view>
     </view>
   </view>
@@ -46,6 +47,6 @@
 </view>
 
 <view class="bottom-bar" wx:if="{{bargain}}">
-  <view class="rx-btn-primary invite-btn" bindtap="mockHelp">邀请好友帮我砍</view>
-  <view class="rx-btn-secondary buy-btn" bindtap="buyNow">¥{{bargain.currentPrice}} 直接购买</view>
+  <button class="rx-btn-primary invite-btn share-button" open-type="share"><text class="magic-icon">✧</text><view class="btn-copy"><text>邀请好友帮我砍</text><text class="btn-sub">多邀多砍，优惠更多</text></view><text class="arrow">›</text></button>
+  <view class="rx-btn-secondary buy-btn" bindtap="buyNow"><text class="cart-icon">♧</text><view class="btn-copy"><text>¥{{bargain.currentPrice}} 直接购买</text><text class="btn-sub">无需等待，立即拥有</text></view><text class="arrow">›</text></view>
 </view>

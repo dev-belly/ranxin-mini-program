@@ -1,0 +1,164 @@
+{
+  "version": 1,
+  "bundle": "main package",
+  "sourceOfTruth": "User-provided 染心 DIY HTML prototypes",
+  "imagePolicy": "Transparent mood illustrations remain PNG; all other images are JPEG quality 65 at source dimensions; MP4 files are byte-identical.",
+  "assetCount": 7,
+  "totalBytes": 91188,
+  "assets": [
+    {
+      "file": "mood-anxious.png",
+      "role": "有点焦躁情绪插画",
+      "source": "/Users/guoyuanyuan/Desktop/染心第一部分/2DIY入口.html",
+      "sourceLine": 532,
+      "sourceMediaIndex": 10,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 72,
+        "height": 72
+      },
+      "sourceBytes": 7909,
+      "sourceSha256": "a853e9132c81217fa8fad2c80f428b28ce71cb6fcda6100daed5372da523b865",
+      "mime": "image/png",
+      "dimensions": {
+        "width": 72,
+        "height": 72
+      },
+      "conversion": "byte-identical copy",
+      "bytes": 7909,
+      "sha256": "a853e9132c81217fa8fad2c80f428b28ce71cb6fcda6100daed5372da523b865"
+    },
+    {
+      "file": "mood-tired.png",
+      "role": "有些疲惫情绪插画",
+      "source": "/Users/guoyuanyuan/Desktop/染心第一部分/2DIY入口.html",
+      "sourceLine": 533,
+      "sourceMediaIndex": 11,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 75,
+        "height": 74
+      },
+      "sourceBytes": 7951,
+      "sourceSha256": "6ce2bf613cf86b7c7d2406f9e61791b7208d054bddb5b0c76fad25f735f46c79",
+      "mime": "image/png",
+      "dimensions": {
+        "width": 75,
+        "height": 74
+      },
+      "conversion": "byte-identical copy",
+      "bytes": 7951,
+      "sha256": "6ce2bf613cf86b7c7d2406f9e61791b7208d054bddb5b0c76fad25f735f46c79"
+    },
+    {
+      "file": "mood-messy.png",
+      "role": "脑子很乱情绪插画",
+      "source": "/Users/guoyuanyuan/Desktop/染心第一部分/2DIY入口.html",
+      "sourceLine": 534,
+      "sourceMediaIndex": 12,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 75,
+        "height": 71
+      },
+      "sourceBytes": 8791,
+      "sourceSha256": "fb460221cb5b3cfb0f5c80ec8fa39ae22041a75d7aa4e960d99fc894e74ff38a",
+      "mime": "image/png",
+      "dimensions": {
+        "width": 75,
+        "height": 71
+      },
+      "conversion": "byte-identical copy",
+      "bytes": 8791,
+      "sha256": "fb460221cb5b3cfb0f5c80ec8fa39ae22041a75d7aa4e960d99fc894e74ff38a"
+    },
+    {
+      "file": "mood-quiet.png",
+      "role": "需要安静情绪插画",
+      "source": "/Users/guoyuanyuan/Desktop/染心第一部分/2DIY入口.html",
+      "sourceLine": 535,
+      "sourceMediaIndex": 13,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 72,
+        "height": 72
+      },
+      "sourceBytes": 7454,
+      "sourceSha256": "8dc2de502c0ffe63a0763036cd84a84d2a4101eff3020f7cd2e72e276dd08321",
+      "mime": "image/png",
+      "dimensions": {
+        "width": 72,
+        "height": 72
+      },
+      "conversion": "byte-identical copy",
+      "bytes": 7454,
+      "sha256": "8dc2de502c0ffe63a0763036cd84a84d2a4101eff3020f7cd2e72e276dd08321"
+    },
+    {
+      "file": "mood-calm.png",
+      "role": "很平静情绪插画",
+      "source": "/Users/guoyuanyuan/Desktop/染心第一部分/2DIY入口.html",
+      "sourceLine": 536,
+      "sourceMediaIndex": 14,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 75,
+        "height": 74
+      },
+      "sourceBytes": 7759,
+      "sourceSha256": "ade8d2f9691ac0db67ac30a454b462d78572af46fbc924f9f158f7200100993b",
+      "mime": "image/png",
+      "dimensions": {
+        "width": 75,
+        "height": 74
+      },
+      "conversion": "byte-identical copy",
+      "bytes": 7759,
+      "sha256": "ade8d2f9691ac0db67ac30a454b462d78572af46fbc924f9f158f7200100993b"
+    },
+    {
+      "file": "mood-good.png",
+      "role": "今天不错情绪插画",
+      "source": "/Users/guoyuanyuan/Desktop/染心第一部分/2DIY入口.html",
+      "sourceLine": 537,
+      "sourceMediaIndex": 15,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 75,
+        "height": 72
+      },
+      "sourceBytes": 8459,
+      "sourceSha256": "915ed31320275954a3d9a28479d3e8c5e13e836e731b2d3c09e57ea592617e02",
+      "mime": "image/png",
+      "dimensions": {
+        "width": 75,
+        "height": 72
+      },
+      "conversion": "byte-identical copy",
+      "bytes": 8459,
+      "sha256": "915ed31320275954a3d9a28479d3e8c5e13e836e731b2d3c09e57ea592617e02"
+    },
+    {
+      "file": "entry-tuan.jpg",
+      "role": "DIY入口团花推荐图",
+      "source": "/Users/guoyuanyuan/Desktop/染心第一部分/2DIY入口.html",
+      "sourceLine": 550,
+      "sourceMediaIndex": 16,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 469,
+        "height": 508
+      },
+      "sourceBytes": 354816,
+      "sourceSha256": "e32a666c91eecca90196441c986219bbb13154365136bb246117f6cf6057c303",
+      "mime": "image/jpeg",
+      "dimensions": {
+        "height": 508,
+        "width": 469
+      },
+      "conversion": "JPEG quality 65 via macOS sips",
+      "bytes": 42865,
+      "sha256": "ddc44464eafcbfc04c7fb0ea985c0a76ebb919569c3706fdca3940ae2f66a3eb"
+    }
+  ]
+}

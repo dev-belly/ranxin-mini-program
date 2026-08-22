@@ -7,6 +7,8 @@
     <view class="art-hero-line">{{article.hero}}</view>
   </view>
 
+  <image wx:if="{{article.cover}}" class="art-cover" src="{{article.cover}}" mode="widthFix"></image>
+
   <view class="rx-card art-intro">
     <text>{{article.intro}}</text>
   </view>
@@ -24,6 +26,7 @@
         </view>
       </view>
       <view wx:if="{{item.tip}}" class="art-tip">小贴士 · {{item.tip}}</view>
+      <image wx:if="{{item.img}}" class="art-img" src="{{item.img}}" mode="widthFix"></image>
     </view>
   </view>
 

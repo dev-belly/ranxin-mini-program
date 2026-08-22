@@ -1,41 +1,97 @@
 <view class="rx-page mbti-page">
   <view class="rx-bg"></view>
+  <view class="mbti-ink mbti-ink-top"></view>
+  <view class="mbti-ink mbti-ink-bottom"></view>
+  <view class="status-spacer"></view>
 
-  <block wx:if="{{!result}}">
-    <view class="mbti-head">
-      <view class="mbti-title">灵魂扎染纹样测试</view>
-      <view class="mbti-sub">30 道情境题，找到属于你的白族扎染纹样</view>
-    </view>
-    <view class="progress">
-      <view class="progress-bar" style="width:{{step / total * 100}}%"></view>
-    </view>
-    <view class="q-counter">情境题 {{step + 1}} / {{total}}</view>
+  <view class="custom-nav">
+    <rx-back bind:back="goBack" />
+    <view class="nav-title">{{result ? '测试结果' : (started ? '灵魂扎染测试' : '')}}</view>
+    <view class="nav-space"></view>
+  </view>
 
-    <view class="q-card rx-card" wx:for="{{questions}}" wx:key="title" wx:if="{{index === step}}">
-      <view class="q-title">{{item.title}}</view>
-      <view class="q-options">
-        <view class="q-opt" wx:for="{{item.options}}" wx:for-item="opt" wx:for-index="oi" wx:key="label"
-              data-q="{{step}}" data-o="{{oi}}" bindtap="choose">
-          <text class="q-letter">{{letters[oi]}}</text>
-          <text class="q-label">{{opt.label}}</text>
+  <!-- A 稿：测试说明页 -->
+  <block wx:if="{{!started && !result}}">
+    <view class="intro-art-wrap">
+      <view class="intro-orbit orbit-a"></view>
+      <view class="intro-orbit orbit-b"></view>
+      <image class="intro-art" src="/assets/patterns/tuan.jpg" mode="aspectFill" />
+      <text class="intro-spark spark-a">✦</text>
+      <text class="intro-spark spark-b">✦</text>
+    </view>
+    <view class="intro-copy">
+      <view class="intro-kicker">测测你的</view>
+      <view class="intro-title">灵魂扎染纹样</view>
+      <view class="intro-sub">如果情绪可以被染成纹色，你会是什么纹色？</view>
+    </view>
+    <view class="intro-stats">
+      <view class="intro-stat"><text class="intro-number">10</text><view class="intro-label">道随机题</view></view>
+      <view class="stat-line"></view>
+      <view class="intro-stat"><text class="intro-number">1</text><view class="intro-label">分钟左右</view></view>
+      <view class="stat-line"></view>
+      <view class="intro-stat"><text class="intro-number">1</text><view class="intro-label">张专属纹样</view></view>
+    </view>
+    <view class="sample-card liquid-glass-card">
+      <image class="sample-img" src="/assets/patterns/cang.jpg" mode="aspectFill" />
+      <view class="sample-copy">
+        <view class="sample-hint">你可能会得到 <text class="sample-spark">✦</text></view>
+        <view class="sample-name">INFP · 苍山暮雪</view>
+        <view class="sample-color">板蓝根旋青</view>
+        <view class="sample-pattern">推荐纹样：苍山纹</view>
+        <view class="sample-tags"><text class="type-tag">安静</text><text class="type-tag">松弛</text><text class="type-tag">内向生长</text></view>
+      </view>
+    </view>
+    <button class="start-btn" bindtap="startTest"><text class="start-spark">✦</text> 开始测试 <text class="start-spark">✦</text></button>
+    <view class="disclaimer">测试结果仅用于趣味体验与内容诠释，不作为专业心理评估依据。</view>
+  </block>
+
+  <!-- 30 题题库中每次随机抽取 10 道四选一情境题 -->
+  <block wx:elif="{{started && !result}}">
+    <view class="question-stage">
+      <view class="q-counter">{{step + 1 < 10 ? '0' : ''}}{{step + 1}} / {{total}}</view>
+      <view class="progress">
+        <view class="progress-bar" style="width:{{step / total * 100}}%"></view>
+        <view class="progress-star" style="left:{{step / total * 100}}%">✦</view>
+      </view>
+      <view class="q-card" wx:for="{{questions}}" wx:key="title" wx:if="{{index === step}}">
+        <view class="q-title">{{item.title}}</view>
+        <view class="q-options">
+          <view class="q-opt {{selectedOption === oi ? 'selected' : ''}}"
+            wx:for="{{item.options}}" wx:for-item="opt" wx:for-index="oi" wx:key="label"
+            data-q="{{step}}" data-o="{{oi}}" bindtap="choose" hover-class="q-opt-hover">
+            <text class="q-letter">{{letters[oi]}}</text>
+            <text class="q-label">{{opt.label}}</text>
+            <image wx:if="{{selectedOption === oi}}" class="option-flower" src="/assets/patterns/tuan.jpg" mode="aspectFill" />
+          </view>
         </view>
       </view>
     </view>
   </block>
 
+  <!-- A 稿：结果海报式页面 -->
   <block wx:else>
-    <view class="result-card rx-card">
-      <view class="result-eyebrow">你的灵魂扎染色彩</view>
-      <view class="result-type">{{result.type}}</view>
-      <view class="result-name">{{result.name}}</view>
-      <image class="result-pattern" src="{{result.thumb}}" mode="aspectFill"/>
-      <view class="result-color">{{result.patternName}} · {{result.color}}</view>
-      <view class="result-story">{{result.story}}</view>
-      <view class="result-tip">专属纹样已解锁，去正念 DIY 用起来 →</view>
-      <button class="rx-btn-primary" bindtap="goDiy">开始创作</button>
-      <button class="rx-btn-secondary" bindtap="makePoster">生成分享卡</button>
-      <button class="rx-btn-text" bindtap="restart">重新测一次</button>
+    <view class="result-heading">测试完成<text class="result-heading-spark">✦</text></view>
+    <view class="result-poster liquid-glass-card">
+      <view class="poster-brand">染心</view>
+      <view class="poster-brand-sub">灵魂扎染测试</view>
+      <view class="poster-orbit"></view>
+      <image class="result-pattern" src="{{result.thumb}}" mode="aspectFill" />
+      <view class="result-eyebrow">✦ 我的灵魂扎染纹样 ✦</view>
+      <view class="result-type">{{result.type}} · {{result.name}}</view>
+      <view class="result-color">对应扎染纹样：<text class="result-pattern-name">{{result.patternName}}</text></view>
+      <view class="result-recommendation">它最适合承接你此刻的性格节奏，已为你解锁并带入纹样 DIY。</view>
+      <view class="result-tags"><text class="type-tag" wx:for="{{result.tags}}" wx:key="*this">{{item}}</text></view>
+      <view class="result-story">“{{result.story}}”</view>
+      <view class="unlock-tip">专属纹样已解锁，可直接用于正念 DIY</view>
     </view>
+    <view class="sync-state" wx:if="{{saving}}">正在同步结果…</view>
+    <view class="sync-state sync-error" wx:elif="{{saveFailed}}" bindtap="retrySave">已保存在本机，点此重试云端同步</view>
+    <view class="result-actions">
+      <button class="result-btn result-btn-primary" bindtap="makePoster">保存图片</button>
+      <button class="result-btn result-btn-secondary" open-type="share">发给朋友</button>
+    </view>
+    <button class="diy-btn" bindtap="goDiy">用这张纹样开始创作</button>
+    <button class="restart-btn" bindtap="restart">换一组随机题再测</button>
   </block>
 
   <canvas type="2d" id="share-canvas" class="share-canvas"></canvas>

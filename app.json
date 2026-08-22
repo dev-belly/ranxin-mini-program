@@ -3,7 +3,6 @@
     "pages/index/index",
     "pages/mbti/index",
     "pages/works/works",
-    "pages/game/game",
     "pages/collection/collection",
     "pages/diy/diy",
     "pages/knowledge/knowledge",
@@ -13,7 +12,26 @@
     "pages/bargain/bargain",
     "pages/bargainDetail/bargainDetail",
     "pages/orderProgress/orderProgress",
+    "pages/poster/poster",
     "pages/rank/rank"
+  ],
+  "subPackages": [
+    {
+      "root": "packageDiy",
+      "name": "diyFlow",
+      "pages": [
+        "pages/flow/flow"
+      ]
+    },
+    {
+      "root": "packageGame",
+      "name": "gamePlay",
+      "pages": [
+        "pages/game/game",
+        "pages/gameMerge/gameMerge",
+        "pages/gameHub/gameHub"
+      ]
+    }
   ],
   "window": {
     "navigationBarTitleText": "染心",
@@ -30,6 +48,7 @@
       { "pagePath": "pages/works/works", "text": "我的作品" }
     ]
   },
+  "lazyCodeLoading": "requiredComponents",
   "style": "v2",
   "sitemapLocation": "sitemap.json"
 }

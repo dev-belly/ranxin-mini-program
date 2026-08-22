@@ -1,4 +1,7 @@
 {
   "navigationBarTitleText": "好友砍价大厅",
-  "usingComponents": {}
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "rx-back": "/components/rx-back/rx-back"
+  }
 }

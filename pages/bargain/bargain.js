@@ -6,7 +6,7 @@ const MOCK_ONGOING = [
     id: 'b_1',
     patternName: '雨落苍山',
     type: '方巾',
-    previewImage: '/assets/patterns/cang.png',
+    previewImage: '/assets/patterns/cang.jpg',
     originalPrice: 169,
     currentPrice: 123,
     targetPrice: 89,
@@ -19,7 +19,7 @@ const MOCK_ONGOING = [
     id: 'b_2',
     patternName: '云见之蓝',
     type: '抱枕',
-    previewImage: '/assets/patterns/shui.png',
+    previewImage: '/assets/patterns/shui.jpg',
     originalPrice: 129,
     currentPrice: 99,
     targetPrice: 79,
@@ -32,7 +32,7 @@ const MOCK_ONGOING = [
     id: 'b_3',
     patternName: '水波轻响',
     type: '茶席',
-    previewImage: '/assets/patterns/tuan.png',
+    previewImage: '/assets/patterns/tuan.jpg',
     originalPrice: 199,
     currentPrice: 166,
     targetPrice: 129,
@@ -48,7 +48,7 @@ const MOCK_COMPLETED = [
     id: 'b_4',
     patternName: '栀子朝阳',
     type: '帆布袋',
-    previewImage: '/assets/patterns/ling.png',
+    previewImage: '/assets/patterns/ling.jpg',
     originalPrice: 149,
     currentPrice: 99,
     targetPrice: 99,
@@ -93,10 +93,13 @@ Page({
         return true;
       });
     };
-    this.setData({
-      ongoingList: dedup(ongoing),
-      completedList: dedup(completed)
+    const decorate = (arr) => dedup(arr).map(item => {
+      const target = Number(item.targetPrice != null ? item.targetPrice : (item.currentPrice - item.needCut));
+      const total = Math.max(1, Number(item.originalPrice) - target);
+      const cut = Math.max(0, Number(item.originalPrice) - Number(item.currentPrice));
+      return { ...item, progressPercent: Math.min(100, Math.round(cut / total * 100)) };
     });
+    this.setData({ ongoingList: decorate(ongoing), completedList: decorate(completed) });
   },
 
   switchTab(e) {

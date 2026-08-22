@@ -1,10 +1,11 @@
 <view class="rx-bg"></view>
 <view class="rx-page bargain-page">
   <view class="nav-bar">
-    <view class="back" bindtap="goBack">‹</view>
+    <rx-back bind:back="goBack" />
     <view class="nav-center">
-      <view class="nav-title">好友砍价大厅</view>
-      <view class="nav-sub">一起把喜欢的作品带回家</view>
+      <view class="nav-title"><text class="title-spark">✦</text> 好友砍价大厅 <text class="title-spark">✦</text></view>
+      <view class="nav-orbit"></view>
+      <view class="nav-sub">◇ 一起把喜欢的作品带回家 ◇</view>
     </view>
     <view class="nav-right"></view>
   </view>
@@ -34,12 +35,12 @@
         </view>
         <view class="progress-wrap">
           <view class="progress-track">
-            <view class="progress-bar" style="width: {{item.cutTotal / (item.cutTotal + item.needCut) * 100}}%"></view>
+            <view class="progress-bar" style="width: {{item.progressPercent}}%"></view>
           </view>
         </view>
         <view class="card-foot">
           <view class="avatars">
-            <view wx:for="{{item.helpers}}" wx:key="*this" wx:for-item="h" class="avatar"></view>
+            <view wx:for="{{item.helpers}}" wx:key="*this" wx:for-item="h" class="avatar avatar-{{index}}"></view>
           </view>
           <view class="rx-btn-primary mini">继续邀请好友</view>
         </view>

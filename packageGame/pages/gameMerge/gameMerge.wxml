@@ -1,0 +1,99 @@
+<!-- 合成大染缸 · 落球合成（无限模式，对齐 合成大染缸版本2.html） -->
+<view class="viewport">
+<view class="merge-back-shell"><rx-back bind:back="goBack" /></view>
+<view class="page" style="transform: translate({{pageOffsetX}}px, {{pageOffsetY}}px) scale({{pageScale}});">
+
+  <image class="pageBg" src="/packageGame/assets/game/merge/background.jpg" mode="scaleToFill"/>
+
+  <!-- 得分云 -->
+  <image class="scoreCloudBg" src="/packageGame/assets/game/merge/score_cloud.png" mode="scaleToFill"/>
+  <view class="scoreLabel">得分</view>
+  <view class="scoreValue">{{scoreDisplay}}</view>
+  <view class="goldStar">✦</view>
+  <view class="scoreGoal">不超过堆叠上限即可继续</view>
+  <view class="rewardHint">{{rewardHint}}</view>
+
+  <!-- HTML 原稿右上角音乐键；小程序中避开原生胶囊区域 -->
+  <view class="musicBtn" bindtap="onToggleMute" aria-label="音乐">
+    <image class="musicBtnIcon" src="/packageGame/assets/game/merge/icon_music.png" mode="aspectFit"/>
+  </view>
+
+  <!-- 标题 -->
+  <view class="title">合成大染缸</view>
+  <view class="titleLine"></view>
+  <view class="titleFlower">✿</view>
+
+  <!-- 下一个 -->
+  <view class="nextLabel">下一个</view>
+  <view class="nextPiece">
+    <image class="nextPieceImg" src="{{nextImg}}" mode="aspectFill"/>
+  </view>
+
+  <!-- 游戏区 -->
+  <view class="gameShell">
+    <image class="gameShellBg" src="/packageGame/assets/game/merge/game-shell.png" mode="scaleToFill"/>
+    <!-- 结束遮罩 -->
+    <view class="gameOver {{overVisible ? 'show' : ''}}">
+      <view class="overCard">
+        <view class="overTitle">{{overTitle}}</view>
+        <view class="overText">{{overText}}</view>
+        <view class="restart" bindtap="onRestart">再来一局</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 规则卡 -->
+  <image class="ruleCard" src="/packageGame/assets/game/merge/rule_card.jpg" mode="scaleToFill"/>
+
+  <!-- 控制栏 -->
+  <view class="controls">
+    <view class="ctrl" bindtap="onReroll">
+      <view class="badge">{{rerollsText}}</view>
+      <image class="ctrlIcon" src="/packageGame/assets/game/merge/icon_reroll.png" mode="aspectFit"/>
+      <view class="ctrlLabel">换一次</view>
+    </view>
+    <view class="ctrl" bindtap="onRemove">
+      <view class="badge">{{removalsText}}</view>
+      <image class="ctrlIcon" src="/packageGame/assets/game/merge/icon_remove.png" mode="aspectFit"/>
+      <view class="ctrlLabel">消除一个</view>
+    </view>
+    <view class="ctrl" bindtap="onToggleMute">
+      <image class="ctrlIcon" src="/packageGame/assets/game/merge/icon_mute.png" mode="aspectFit"/>
+      <view class="ctrlLabel">{{muteLabel}}</view>
+    </view>
+  </view>
+
+  <!-- 纹样奖励弹窗 -->
+  <view class="rewardModalMask {{rewardModalVisible ? 'show' : ''}}">
+    <view class="rewardModalCard">
+      <view class="rewardBadge">纹样奖励</view>
+      <view class="rewardCongrats">恭喜你</view>
+      <view class="rewardBundleTitle">{{rewardBundleTitle}}</view>
+      <view class="{{rewardGridClass}}">
+        <view class="rewardItem" wx:for="{{rewardItems}}" wx:key="name">
+          <image class="rewardPatternImg" src="/packageGame/assets/game/merge/reward_{{item.pattern}}.png" mode="aspectFit"/>
+          <view class="rewardItemName">{{item.name}}</view>
+          <view class="rewardItemSource">{{item.source}}</view>
+        </view>
+      </view>
+      <view class="rewardThreshold">{{rewardThreshold}}</view>
+      <view class="rewardCollect" bindtap="onRewardCollect">收下纹样，继续合成</view>
+    </view>
+  </view>
+
+  <!-- 轻提示 -->
+  <view class="toast {{toastVisible ? 'show' : ''}}">{{toastText}}</view>
+
+</view>
+
+<!--
+  type=2d canvas 是微信原生绘图层，放在 transform 容器里会出现“画面对、
+  触摸区只剩左侧”的双重缩放。把它放在设计稿层外，并用真实屏幕坐标覆盖
+  染缸内框，画面与拖动范围才能同时和 HTML 对齐。
+-->
+<canvas hidden="{{overVisible || rewardModalVisible}}"
+        type="2d" id="playCanvas" class="playCanvas"
+        style="left:{{canvasDisplayLeft}}px;top:{{canvasDisplayTop}}px;width:{{canvasDisplayWidth}}px;height:{{canvasDisplayHeight}}px;"
+        bindtouchstart="onCanvasTouchStart" bindtouchmove="onCanvasTouchMove"
+        bindtouchend="onCanvasTouchEnd" bindtouchcancel="onCanvasTouchCancel"></canvas>
+</view>

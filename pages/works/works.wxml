@@ -1,50 +1,86 @@
 <view class="rx-page works-page">
   <view class="rx-bg"></view>
+  <view class="works-ink works-ink-top"></view>
+  <view class="works-ink works-ink-right"></view>
+  <view class="status-spacer"></view>
 
   <view class="works-head">
-    <view class="works-title">我的作品</view>
-    <view class="works-sub">正念 DIY 的每一件，都是唯一的那一块</view>
+    <view class="works-title">我的作品<text class="works-title-spark">✦</text></view>
+    <button class="head-create" bindtap="goDiy" aria-label="新建作品">＋</button>
   </view>
 
-  <!-- 分类筛选 -->
-  <scroll-view scroll-x class="filter-bar" wx:if="{{filterOptions.length > 1}}">
-    <view class="filter-chip {{filter === item.id ? 'active' : ''}}"
-          wx:for="{{filterOptions}}" wx:key="id" data-id="{{item.id}}" bindtap="setFilter">
-      {{item.name}}
+  <view class="profile-row">
+    <view class="profile-avatar">染</view>
+    <view class="profile-copy">
+      <view class="profile-name">{{userName}}</view>
+      <view class="profile-meta">{{list.length}} 件数字作品 · {{unlockedCount}} 个已解锁纹样</view>
+    </view>
+  </view>
+
+  <scroll-view scroll-x class="filter-bar" enable-flex>
+    <view class="filter-inner">
+      <view class="filter-chip {{filter === item.id ? 'active' : ''}}"
+        wx:for="{{filterOptions}}" wx:key="id" data-id="{{item.id}}" bindtap="setFilter">
+        {{item.name}}
+      </view>
     </view>
   </scroll-view>
 
-  <view wx:if="{{loading}}" class="hint">加载中…</view>
-
-  <view wx:elif="{{displayList.length === 0}}" class="empty">
-    <view class="empty-emoji">🪡</view>
-    <view class="empty-text">还没有作品，去「正念DIY」创作第一件吧</view>
-    <button class="rx-btn-primary empty-btn" bindtap="goDiy">去创作</button>
+  <view wx:if="{{loading}}" class="state-card liquid-glass-card">
+    <view class="loading-orb"></view>
+    <view class="state-title">正在整理你的作品…</view>
   </view>
 
-  <view wx:else class="work-list">
-    <view class="work-card rx-card" wx:for="{{displayList}}" wx:key="workId" wx:for-index="i">
-      <image class="work-img" src="/assets/patterns/{{item.patternId}}.png" mode="aspectFill"/>
+  <view wx:elif="{{loadError}}" class="state-card liquid-glass-card">
+    <view class="state-icon">↻</view>
+    <view class="state-title">作品暂时没有加载出来</view>
+    <view class="state-desc">你的本地作品不会丢失，可以再试一次。</view>
+    <button class="state-btn" bindtap="retryLoad">重新加载</button>
+  </view>
+
+  <view wx:elif="{{displayList.length === 0 && list.length > 0}}" class="state-card liquid-glass-card">
+    <view class="state-icon">◇</view>
+    <view class="state-title">这个分类还没有作品</view>
+    <view class="state-desc">换一个染料分类看看吧。</view>
+    <button class="state-btn" data-id="all" bindtap="setFilter">查看全部</button>
+  </view>
+
+  <view wx:elif="{{displayList.length === 0}}" class="empty-card liquid-glass-card">
+    <view class="empty-art">
+      <image class="empty-art-image" src="/assets/patterns/tuan.jpg" mode="aspectFill" />
+    </view>
+    <view class="state-title">第一块布，正等着你染开</view>
+    <view class="state-desc">从情绪出发，完成扎、染、等、拆，作品会真实保存在这里。</view>
+    <button class="create-first" bindtap="goDiy">创作第一件作品</button>
+  </view>
+
+  <view wx:else class="work-grid">
+    <view class="work-card liquid-glass-card" wx:for="{{displayList}}" wx:key="workId" wx:for-index="i">
+      <image class="work-img" src="{{item.displayThumb}}" mode="aspectFill"
+        data-id="{{item.workId}}" binderror="onThumbError" bindtap="toggleWorkActions" />
       <view class="work-body">
-        <view class="work-name">{{item.title}}</view>
-        <view class="work-meta">{{item.patternName}} · {{item.date}}{{item.fabric ? ' · ' + item.fabric : ''}}</view>
-        <view class="work-story">{{item.story}}</view>
+        <view class="work-name" data-id="{{item.workId}}" bindtap="toggleWorkActions">{{item.title}}</view>
+        <view class="work-bottom">
+          <view class="work-date">{{item.shortDate || item.patternName}}</view>
+          <view class="work-status {{item.orderStatus ? 'making' : ''}}" data-id="{{item.workId}}" bindtap="customize">{{item.statusLabel}}</view>
+        </view>
         <view class="work-note" wx:if="{{item.mindfulNote}}">“{{item.mindfulNote}}”</view>
-        <view class="work-actions">
-          <text class="work-link" data-i="{{i}}" bindtap="shareWork">分享卡</text>
-          <text class="work-link" data-i="{{i}}" bindtap="customize">定制实物</text>
+        <view class="work-actions" wx:if="{{expandedWorkId === item.workId}}">
+          <button class="work-action" data-id="{{item.workId}}" catchtap="shareWork">保存卡片</button>
+          <button class="work-action" open-type="share" data-id="{{item.workId}}" catchtap="rememberShareTarget">发给朋友</button>
+          <button class="work-action primary" data-id="{{item.workId}}" catchtap="customize">定制实物</button>
         </view>
       </view>
     </view>
   </view>
 
-  <!-- 商城 / 实物转化（C 后端职责，前端入口） -->
-  <view class="mall-block rx-card">
-    <view class="mall-title">商城 · 实物转化</view>
-    <view class="mall-desc">把数字作品变成能摸到的扎染：C2M 定制、四季 DIY 订阅盒、大理工坊成品。</view>
+  <view class="mall-block liquid-glass-card">
+    <view class="mall-kicker">让数字作品走进生活</view>
+    <view class="mall-title">把这一块，交给大理工坊</view>
+    <view class="mall-desc">选择围巾、茶席、抱枕或帆布袋，让你的专属纹样成为真实作品。</view>
     <view class="mall-actions">
-      <button class="rx-btn-secondary mall-btn" bindtap="customize">定制我的作品</button>
-      <button class="rx-btn-secondary mall-btn" bindtap="openMall">逛逛商城</button>
+      <button class="mall-btn mall-btn-primary" bindtap="customize">定制我的作品</button>
+      <button class="mall-btn mall-btn-secondary" bindtap="openMall">查看实物灵感</button>
     </view>
   </view>
 

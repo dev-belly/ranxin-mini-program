@@ -1,14 +1,18 @@
 <view class="rx-bg"></view>
 <view class="rx-page product-page">
   <view class="nav-bar">
-    <view class="back" bindtap="goBack">‹</view>
+    <rx-back bind:back="goBack" />
     <view class="nav-title">把它做成真的</view>
     <view class="nav-right"></view>
   </view>
 
   <view class="preview-card rx-card">
     <image class="preview-img" src="{{previewImage}}" mode="aspectFill" lazy-load></image>
-    <view class="pattern-tag rx-tag">纹样：{{patternName}}</view>
+    <view wx:if="{{hasCustomArtwork}}" class="artwork-proof">
+      <image src="{{artworkImage}}" mode="aspectFill"></image>
+      <view><text>本次作品纹样</text><text>已带入定制方案</text></view>
+    </view>
+    <view class="pattern-tag rx-tag"><text class="tag-flower">✤</text>纹样：{{patternName}}</view>
   </view>
 
   <view class="options-block">
@@ -26,7 +30,7 @@
   </view>
 
   <view class="workshop-card rx-card">
-    <view class="ws-label">制作方式</view>
+    <view class="ws-label"><text class="ws-icon">◌</text> 制作方式</view>
     <view class="ws-title">云南大理合作工坊手工制作</view>
     <view class="ws-meta">预计 {{makingDays}} 完成</view>
     <view class="ws-desc">你的数字作品将发送至合作工坊进行制作</view>
@@ -42,7 +46,7 @@
     <text class="price-note">含手工制作与基础包装</text>
   </view>
   <view class="actions">
-    <view class="rx-btn-secondary confirm-btn" bindtap="confirmOrder">确认定制</view>
-    <view class="rx-btn-primary bargain-btn" bindtap="inviteBargain">邀请好友砍价</view>
+    <view class="rx-btn-primary confirm-btn" bindtap="confirmOrder">确认定制</view>
+    <view class="rx-btn-secondary bargain-btn" bindtap="inviteBargain"><text class="people-icon">♧</text> 邀请好友砍价</view>
   </view>
 </view>

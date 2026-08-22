@@ -1,17 +1,25 @@
 <view class="collection-page">
-  <view class="rx-bg"></view>
-  <text class="page-title">纹样收集</text>
-  <text class="page-subtitle">你在游戏与 DIY 中解锁的灵魂纹样</text>
+  <view class="collection-bg"></view>
+  <view class="collection-nav">
+    <rx-back bind:back="goBack" />
+    <view class="nav-heading"><text class="nav-heading-spark">✦</text>纹样收集<text class="nav-heading-spark">✦</text></view>
+    <view class="nav-space"></view>
+  </view>
+  <view class="collection-content">
+  <text class="page-title">我的灵魂纹样</text>
+  <text class="page-subtitle">你在游戏、MBTI 与 DIY 中解锁的每一枚纹样</text>
 
   <view class="unlock-banner">
     <view class="unlock-progress">
-      <text class="unlock-text">已收集纹样 {{unlockedCount}}/{{total}}</text>
+      <view class="unlock-row"><text class="unlock-text">已收集纹样</text><text class="unlock-count">{{unlockedCount}} / {{total}}</text></view>
       <view class="progress-bar">
         <view class="progress-fill" style="width:{{unlockedCount / total * 100}}%"></view>
       </view>
     </view>
-    <button class="banner-btn" bindtap="goGame">玩合成大染缸，解锁更多纹样</button>
+    <button class="banner-btn" bindtap="goGame">玩游戏解锁</button>
   </view>
+
+  <view wx:if="{{loadError}}" class="offline-note">当前使用本机解锁记录，网络恢复后会自动同步</view>
 
   <view class="filter-bar">
     <view class="filter-btn {{filter==='all'?'active':''}}" data-key="all" bindtap="setFilter">全部</view>
@@ -32,19 +40,31 @@
       <canvas wx:else type="2d" id="col-{{item.id}}" class="pattern-thumb" style="width:220rpx;height:220rpx"></canvas>
       <text class="pattern-name">{{item.name}}</text>
       <text class="pattern-tags">{{item.tags}}</text>
-      <view wx:if="{{!item.unlocked}}" class="lock-badge">未解锁</view>
+      <view wx:if="{{item.unlocked}}" class="unlock-badge">已解锁</view>
+      <view wx:else class="lock-badge">🔒 未解锁</view>
     </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading-card">
+    <view class="loading-orb"></view>
+    <text>正在整理你的纹样收藏…</text>
+  </view>
+
+  <view wx:if="{{!loading && filter==='unlocked' && unlockedCount===0}}" class="empty-card">完成一次 MBTI 或游戏，就会在这里收获第一枚纹样。</view>
   </view>
 
   <!-- 详情弹窗 -->
   <view wx:if="{{detail}}" class="detail-mask" bindtap="closeDetail">
-    <view class="detail-card">
+    <view class="detail-card" catchtap="noop">
       <image wx:if="{{detail.hasImage}}" class="detail-canvas" src="/assets/patterns/{{detail.file}}" mode="aspectFit"></image>
       <canvas wx:else type="2d" id="detail-canvas" class="detail-canvas" style="width:400rpx;height:400rpx"></canvas>
+      <view class="detail-state {{detail.unlocked?'on':'off'}}">{{detail.unlocked?'✦ 已解锁':'🔒 尚未解锁'}}</view>
       <text class="detail-name">{{detail.name}}</text>
       <text class="detail-tags">{{detail.tags}}</text>
       <text class="detail-story">{{detail.story}}</text>
-      <button class="primary-btn" bindtap="closeDetail">知道了</button>
+      <button wx:if="{{detail.unlocked}}" class="primary-btn" bindtap="usePattern">用这枚纹样开始创作 ✦</button>
+      <button wx:else class="primary-btn" bindtap="goGame">去游戏解锁</button>
+      <button class="detail-close" bindtap="closeDetail">稍后再说</button>
     </view>
   </view>
 </view>

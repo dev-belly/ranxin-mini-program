@@ -1,0 +1,585 @@
+{
+  "version": 1,
+  "bundle": "packageDiy subpackage",
+  "sourceOfTruth": "User-provided 染心 DIY HTML prototypes",
+  "imagePolicy": "Transparent mood illustrations remain PNG; all other images are JPEG quality 65 at source dimensions; MP4 files are byte-identical.",
+  "assetCount": 26,
+  "totalBytes": 869830,
+  "assets": [
+    {
+      "file": "pattern-shui.jpg",
+      "role": "水波纹",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.2选择纹样(1).html",
+      "sourceLine": 177,
+      "sourceMediaIndex": 1,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 400,
+        "height": 292
+      },
+      "sourceBytes": 159100,
+      "sourceSha256": "ca483378e43f690068790bbf5187235c84647018bf339e85b03bf7532ced16b5",
+      "mime": "image/jpeg",
+      "dimensions": {
+        "height": 292,
+        "width": 400
+      },
+      "conversion": "JPEG quality 65 via macOS sips",
+      "bytes": 20981,
+      "sha256": "a86f244b080e22a39c9039c02fe170e80cd3e595a92b1697ebe17ba5a3c7e868"
+    },
+    {
+      "file": "pattern-hudie.jpg",
+      "role": "蝴蝶纹",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.2选择纹样(1).html",
+      "sourceLine": 183,
+      "sourceMediaIndex": 2,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 400,
+        "height": 292
+      },
+      "sourceBytes": 159795,
+      "sourceSha256": "317521cf76a04e7109dd16fc486216804fc9d53a6ffc0ba063b99e5b68fe1db2",
+      "mime": "image/jpeg",
+      "dimensions": {
+        "height": 292,
+        "width": 400
+      },
+      "conversion": "JPEG quality 65 via macOS sips",
+      "bytes": 20413,
+      "sha256": "d70140aea4a5a2a63dd80a90565c1f0fec5a82dd8fdb582b8f3708e828f23d48"
+    },
+    {
+      "file": "pattern-tuan.jpg",
+      "role": "团花纹",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.2选择纹样(1).html",
+      "sourceLine": 189,
+      "sourceMediaIndex": 3,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 400,
+        "height": 279
+      },
+      "sourceBytes": 167516,
+      "sourceSha256": "ffe6c7392bda141ca7591772de60b17331513f745281121cbf4ddd1acf32c6ba",
+      "mime": "image/jpeg",
+      "dimensions": {
+        "height": 279,
+        "width": 400
+      },
+      "conversion": "JPEG quality 65 via macOS sips",
+      "bytes": 23292,
+      "sha256": "ceb894d9eca6e930eaf8e9dca8d2fb21401d991a539a1f02df4200d361c95ebf"
+    },
+    {
+      "file": "pattern-ling.jpg",
+      "role": "菱形纹",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.2选择纹样(1).html",
+      "sourceLine": 195,
+      "sourceMediaIndex": 4,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 400,
+        "height": 279
+      },
+      "sourceBytes": 166106,
+      "sourceSha256": "045a0796ac57bc37cf7c7b83f09583dc9ea1d7c1e0c62d98203fd4fce40b8089",
+      "mime": "image/jpeg",
+      "dimensions": {
+        "height": 279,
+        "width": 400
+      },
+      "conversion": "JPEG quality 65 via macOS sips",
+      "bytes": 23397,
+      "sha256": "3fa3b6238b38f7e8712335870d135c7bb9e57f34e738d68642d0341d7b2641c5"
+    },
+    {
+      "file": "pattern-cang.jpg",
+      "role": "苍山纹",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.2选择纹样(1).html",
+      "sourceLine": 201,
+      "sourceMediaIndex": 5,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 400,
+        "height": 279
+      },
+      "sourceBytes": 163470,
+      "sourceSha256": "08eb229bf3a49d5a22d88e47c67bf230e0a4b3d8389a724605b3bf410edb8d17",
+      "mime": "image/jpeg",
+      "dimensions": {
+        "height": 279,
+        "width": 400
+      },
+      "conversion": "JPEG quality 65 via macOS sips",
+      "bytes": 22200,
+      "sha256": "45ddf71555fa4752e66ff96faec5cbfa0a1e489071114a39938b83d4e51e9548"
+    },
+    {
+      "file": "pattern-heling.jpg",
+      "role": "鹤翎纹",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.2选择纹样(1).html",
+      "sourceLine": 207,
+      "sourceMediaIndex": 6,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 400,
+        "height": 279
+      },
+      "sourceBytes": 168908,
+      "sourceSha256": "09d5e7b9c12b57a0ce7ae3fde74c86a455b87837359cf1e5b674b0e340e482fa",
+      "mime": "image/jpeg",
+      "dimensions": {
+        "height": 279,
+        "width": 400
+      },
+      "conversion": "JPEG quality 65 via macOS sips",
+      "bytes": 24284,
+      "sha256": "31099677550ffbd42c6d6b427dfe2937bfceaf1b8a74e979057fa778c9bb15b8"
+    },
+    {
+      "file": "pattern-lianyi.jpg",
+      "role": "涟漪纹",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.2选择纹样(1).html",
+      "sourceLine": 214,
+      "sourceMediaIndex": 7,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 400,
+        "height": 292
+      },
+      "sourceBytes": 155983,
+      "sourceSha256": "2827a385c0cb538f874edf5bebf72046e5a03c50b14c807f63c0f3648e1613e6",
+      "mime": "image/jpeg",
+      "dimensions": {
+        "height": 292,
+        "width": 400
+      },
+      "conversion": "JPEG quality 65 via macOS sips",
+      "bytes": 20366,
+      "sha256": "a916501b75be63290a655f64a1f57b1e1a01856b96293740245b8bf4275eb97e"
+    },
+    {
+      "file": "pattern-xuelun.jpg",
+      "role": "雪轮纹",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.2选择纹样(1).html",
+      "sourceLine": 220,
+      "sourceMediaIndex": 8,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 400,
+        "height": 292
+      },
+      "sourceBytes": 158369,
+      "sourceSha256": "705c2b957e9a6f3c284dacd35192fe2ba624f19e8f95aaad638fbf1ad65f393d",
+      "mime": "image/jpeg",
+      "dimensions": {
+        "height": 292,
+        "width": 400
+      },
+      "conversion": "JPEG quality 65 via macOS sips",
+      "bytes": 22176,
+      "sha256": "da67db85e28325abde70f0dc3ca0f84124ddab5faef4a980d2dc665d5ecc8d5c"
+    },
+    {
+      "file": "pattern-dieying.jpg",
+      "role": "蝶影纹",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.2选择纹样(1).html",
+      "sourceLine": 226,
+      "sourceMediaIndex": 9,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 400,
+        "height": 292
+      },
+      "sourceBytes": 163235,
+      "sourceSha256": "345fefeb164bb16bdf41c507173da800d0fc511162bd0bfaa13934d234c5d13a",
+      "mime": "image/jpeg",
+      "dimensions": {
+        "height": 292,
+        "width": 400
+      },
+      "conversion": "JPEG quality 65 via macOS sips",
+      "bytes": 20348,
+      "sha256": "0d470f2ea41fec21370adaf9d1257b0bdd3393fb13e07c1a77f9ef7806b17073"
+    },
+    {
+      "file": "pattern-xingling.jpg",
+      "role": "星菱纹",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.2选择纹样(1).html",
+      "sourceLine": 231,
+      "sourceMediaIndex": 10,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 400,
+        "height": 292
+      },
+      "sourceBytes": 146892,
+      "sourceSha256": "aa093fd0cc173ef9ad54f5843f39955c1b9b54c06fbb7d30495b96ecf1281aec",
+      "mime": "image/jpeg",
+      "dimensions": {
+        "height": 292,
+        "width": 400
+      },
+      "conversion": "JPEG quality 65 via macOS sips",
+      "bytes": 20941,
+      "sha256": "3b936194593f1947098c7a10d6f960e1202da8113f65a099bc92975b340d4602"
+    },
+    {
+      "file": "pattern-yuguang.jpg",
+      "role": "羽光纹",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.2选择纹样(1).html",
+      "sourceLine": 236,
+      "sourceMediaIndex": 11,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 400,
+        "height": 292
+      },
+      "sourceBytes": 169877,
+      "sourceSha256": "a20b83ae04a262d03af9820af89f41d1a56ebda09f758e2f3036eed1341c7a34",
+      "mime": "image/jpeg",
+      "dimensions": {
+        "height": 292,
+        "width": 400
+      },
+      "conversion": "JPEG quality 65 via macOS sips",
+      "bytes": 23911,
+      "sha256": "30116758c393de2c8f3835e25d6749fdfd690946fb8593394efc79a9267ca8aa"
+    },
+    {
+      "file": "pattern-dieling.jpg",
+      "role": "叠岭纹",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.2选择纹样(1).html",
+      "sourceLine": 241,
+      "sourceMediaIndex": 12,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 400,
+        "height": 292
+      },
+      "sourceBytes": 174766,
+      "sourceSha256": "7b3a4f98be92a8ab0aefb1b03469abc7a2ef8aa755bf8d96c2cc59ef9593a3d5",
+      "mime": "image/jpeg",
+      "dimensions": {
+        "height": 292,
+        "width": 400
+      },
+      "conversion": "JPEG quality 65 via macOS sips",
+      "bytes": 23727,
+      "sha256": "c45534421c03ee22229ff72d6d54330551af381bf8c0d526bc013992019e6836"
+    },
+    {
+      "file": "craft-base.jpg",
+      "role": "纹样DIY实时画布底图",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.3diy扎染(1).html",
+      "sourceLine": 113,
+      "sourceMediaIndex": 1,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 874,
+        "height": 700
+      },
+      "sourceBytes": 919630,
+      "sourceSha256": "1f297dfc2f6837902b32fd99f0e4755e523fc8071908bddc78bba414a1e84f10",
+      "mime": "image/jpeg",
+      "dimensions": {
+        "height": 700,
+        "width": 874
+      },
+      "conversion": "JPEG quality 65 via macOS sips",
+      "bytes": 145547,
+      "sha256": "2cd2ee81f6bbf77ee77be8d9fddf4a8749b9ad95402d6d542bd8ebc3b51eaceb"
+    },
+    {
+      "file": "craft-thumb.jpg",
+      "role": "纹样DIY信息卡缩略图",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.3diy扎染(1).html",
+      "sourceLine": 194,
+      "sourceMediaIndex": 2,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 172,
+        "height": 185
+      },
+      "sourceBytes": 60294,
+      "sourceSha256": "9c0427d4a321f40c89db836ac4beb81a3e28f09e7fac53988eb4f83e2ae3a799",
+      "mime": "image/jpeg",
+      "dimensions": {
+        "height": 185,
+        "width": 172
+      },
+      "conversion": "JPEG quality 65 via macOS sips",
+      "bytes": 12634,
+      "sha256": "ff9c09019ff9920315cea22c32fd82744993008839c10db67dd8bac4aedb17a1"
+    },
+    {
+      "file": "plant.jpg",
+      "role": "板蓝根植物装饰图",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.3diy扎染(1).html",
+      "sourceLine": 204,
+      "sourceMediaIndex": 3,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 300,
+        "height": 220
+      },
+      "sourceBytes": 112333,
+      "sourceSha256": "baf78ff9a8b5513abb71dcdcbe13620f4733ba508fb2e9665178f68adb03d995",
+      "mime": "image/jpeg",
+      "dimensions": {
+        "height": 220,
+        "width": 300
+      },
+      "conversion": "JPEG quality 65 via macOS sips",
+      "bytes": 20169,
+      "sha256": "9bafe802cebb26ffa3c4f0122133c5418f6827a87d62c25f41daa4caecff42c6"
+    },
+    {
+      "file": "dye-full.jpg",
+      "role": "整体浸染方式图",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.4入染.html",
+      "sourceLine": 262,
+      "sourceMediaIndex": 1,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 126,
+        "height": 122
+      },
+      "sourceBytes": 15759,
+      "sourceSha256": "df87c19a4fb274d0bf691bb468c89d428d45886343dce9e11268cf27fc4aa0ba",
+      "mime": "image/jpeg",
+      "dimensions": {
+        "height": 122,
+        "width": 126
+      },
+      "conversion": "JPEG quality 65 via macOS sips",
+      "bytes": 3262,
+      "sha256": "bcd0904bc5d2380d7bd2dcfd6f14a67d3d4ff4952d37929cc186f5fa19205ef7"
+    },
+    {
+      "file": "dye-local.jpg",
+      "role": "局部入染方式图",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.4入染.html",
+      "sourceLine": 263,
+      "sourceMediaIndex": 2,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 128,
+        "height": 139
+      },
+      "sourceBytes": 19038,
+      "sourceSha256": "8592458bca4938eafed02b831c8ce1fc0111b3e19655c73611ec96f06fd70fb1",
+      "mime": "image/jpeg",
+      "dimensions": {
+        "height": 139,
+        "width": 128
+      },
+      "conversion": "JPEG quality 65 via macOS sips",
+      "bytes": 3759,
+      "sha256": "dbbeda995c519c2bdb989fc9dbe2fd50f129d8686e1b07696fc6febd399851fb"
+    },
+    {
+      "file": "dye-drop.jpg",
+      "role": "点染滴落方式图",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.4入染.html",
+      "sourceLine": 264,
+      "sourceMediaIndex": 3,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 102,
+        "height": 130
+      },
+      "sourceBytes": 11684,
+      "sourceSha256": "8c525dbb802ddc562029b8ca8039647c73b4cc49e3647b9e462f0bdec486ac58",
+      "mime": "image/jpeg",
+      "dimensions": {
+        "height": 130,
+        "width": 102
+      },
+      "conversion": "JPEG quality 65 via macOS sips",
+      "bytes": 2429,
+      "sha256": "d5a528058aa6c6c8f3e1d139dbce2eb6567f6d33cdb0e0b13c8c8b40f6f897bf"
+    },
+    {
+      "file": "dye-preview.jpg",
+      "role": "入染实时效果预览底图",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.4入染.html",
+      "sourceLine": 534,
+      "sourceMediaIndex": 4,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 210,
+        "height": 190
+      },
+      "sourceBytes": 60414,
+      "sourceSha256": "2752f2f4c1690f9b68a757b9a969e643fc61c0a584c2d7f217a18f5f86f72713",
+      "mime": "image/jpeg",
+      "dimensions": {
+        "height": 190,
+        "width": 210
+      },
+      "conversion": "JPEG quality 65 via macOS sips",
+      "bytes": 10547,
+      "sha256": "30b0782c573549e80ac20283e94a6c4b8951f976e90d4b11673fb3675ac46943"
+    },
+    {
+      "file": "oxidation-tip.jpg",
+      "role": "氧化小贴士装饰图",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.5氧化.html",
+      "sourceLine": 202,
+      "sourceMediaIndex": 1,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 235,
+        "height": 185
+      },
+      "sourceBytes": 46031,
+      "sourceSha256": "09e60c9141ba686a648679a37ad066710fea8a6aa28f482dd3e37c6c0a7f1c5a",
+      "mime": "image/jpeg",
+      "dimensions": {
+        "height": 185,
+        "width": 235
+      },
+      "conversion": "JPEG quality 65 via macOS sips",
+      "bytes": 7516,
+      "sha256": "84f9081fceadd4a4e67221dfec9cfb6f3936b0c8d8ec4d9127ee6c7c46d3cbac"
+    },
+    {
+      "file": "oxidation-current.jpg",
+      "role": "氧化当前效果图",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.5氧化.html",
+      "sourceLine": 362,
+      "sourceMediaIndex": 2,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 370,
+        "height": 402
+      },
+      "sourceBytes": 232510,
+      "sourceSha256": "5f65c32a51650600d93c67fa34a1d69d0651cb8840106aa8e3513ba77c1fd7dd",
+      "mime": "image/jpeg",
+      "dimensions": {
+        "height": 402,
+        "width": 370
+      },
+      "conversion": "JPEG quality 65 via macOS sips",
+      "bytes": 37553,
+      "sha256": "0734b99848bf2f99d9d64232532f09f2786544d97e41ddda50dadfc461e0c456"
+    },
+    {
+      "file": "oxidation-future.jpg",
+      "role": "氧化预计效果图",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.5氧化.html",
+      "sourceLine": 366,
+      "sourceMediaIndex": 3,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 377,
+        "height": 402
+      },
+      "sourceBytes": 240722,
+      "sourceSha256": "7c3e999a11c6ee6782f93636245d586d77aa9f70b739beb86d4fd78a1d8b7a41",
+      "mime": "image/jpeg",
+      "dimensions": {
+        "height": 402,
+        "width": 377
+      },
+      "conversion": "JPEG quality 65 via macOS sips",
+      "bytes": 38794,
+      "sha256": "fbc01e425a40894991b8fa3eb3ac87d2f3518e9e3dbde490c8c12e103db09e3c"
+    },
+    {
+      "file": "oxidation.mp4",
+      "role": "扎染氧化演示视频",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.5氧化.html",
+      "sourceLine": 412,
+      "sourceMediaIndex": 4,
+      "sourceMime": "video/mp4",
+      "sourceDimensions": {
+        "width": 360,
+        "height": 420
+      },
+      "sourceBytes": 175113,
+      "sourceSha256": "d656b6d8c90611ce417bd211e2c4bc0bf9945c476f2136ee6ffbcdebc7b5b7a4",
+      "mime": "video/mp4",
+      "dimensions": {
+        "width": 360,
+        "height": 420
+      },
+      "durationSeconds": 6,
+      "conversion": "byte-identical copy",
+      "bytes": 175113,
+      "sha256": "d656b6d8c90611ce417bd211e2c4bc0bf9945c476f2136ee6ffbcdebc7b5b7a4"
+    },
+    {
+      "file": "unfold-final.jpg",
+      "role": "拆结最终效果图",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.6拆结.html",
+      "sourceLine": 336,
+      "sourceMediaIndex": 1,
+      "sourceMime": "image/png",
+      "sourceDimensions": {
+        "width": 797,
+        "height": 342
+      },
+      "sourceBytes": 415829,
+      "sourceSha256": "3f88b97f9d1a7933e0a5c4e633c7bf98ca6bf5ffc962a36802f03ca174acafd1",
+      "mime": "image/jpeg",
+      "dimensions": {
+        "height": 342,
+        "width": 797
+      },
+      "conversion": "JPEG quality 65 via macOS sips",
+      "bytes": 67956,
+      "sha256": "cfbe764f658261d5fda394a74c0b3fa310c331872c2d39c584896a39681a635e"
+    },
+    {
+      "file": "unfold-hand.mp4",
+      "role": "手工拆结演示视频",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.6拆结.html",
+      "sourceLine": 434,
+      "sourceMediaIndex": 2,
+      "sourceMime": "video/mp4",
+      "sourceDimensions": {
+        "width": 480,
+        "height": 320
+      },
+      "sourceBytes": 41035,
+      "sourceSha256": "aef984300dcf22d3fbd5b9ef3750dd5ccc9066825ef31e919852966d8f088c6d",
+      "mime": "video/mp4",
+      "dimensions": {
+        "width": 480,
+        "height": 320
+      },
+      "durationSeconds": 5,
+      "conversion": "byte-identical copy",
+      "bytes": 41035,
+      "sha256": "aef984300dcf22d3fbd5b9ef3750dd5ccc9066825ef31e919852966d8f088c6d"
+    },
+    {
+      "file": "unfold-scissor.mp4",
+      "role": "剪刀拆结演示视频",
+      "source": "/Users/guoyuanyuan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_jxdq7j5weil222_931a/temp/RWTemp/2026-08/19ceadc975400cb91802624c789ff82f/2.6拆结.html",
+      "sourceLine": 435,
+      "sourceMediaIndex": 3,
+      "sourceMime": "video/mp4",
+      "sourceDimensions": {
+        "width": 480,
+        "height": 320
+      },
+      "sourceBytes": 37480,
+      "sourceSha256": "ebaa4d9209da910a3804e5e485f4c6963c8afd214b67620284fe6f63bc8d4e38",
+      "mime": "video/mp4",
+      "dimensions": {
+        "width": 480,
+        "height": 320
+      },
+      "durationSeconds": 5,
+      "conversion": "byte-identical copy",
+      "bytes": 37480,
+      "sha256": "ebaa4d9209da910a3804e5e485f4c6963c8afd214b67620284fe6f63bc8d4e38"
+    }
+  ]
+}

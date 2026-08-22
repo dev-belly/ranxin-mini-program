@@ -1,5 +1,5 @@
-// 归属：B｜核心交互 Owner（按 A 设计稿：30 道情境题 · A/B/C/D）
-// MBTI 扎染灵魂色彩测试：30 题 → 加权 ei/sn/tf/jp → 匹配 16 型 → 推荐纹样+色彩
+// 归属：B｜核心交互 Owner（随机 10 道情境题 · A/B/C/D）
+// MBTI 扎染灵魂色彩测试：30 题题库随机抽 10 题 → 四维计分 → 推荐纹样+色彩
 const api = require('../../utils/api.js');
 const engine = require('../../utils/pattern-engine.js');
 
@@ -10,7 +10,7 @@ const TYPE_TABLE = {
   ENTJ: { name: '远见统帅', pattern: 'ling', color: '蓝金撞色', story: '掌控与远见，棱角分明的你。' },
   ENTP: { name: '点子发动机', pattern: 'hudie', color: '多色彩', story: '自由创意导向，蝴蝶纹随你飞舞。' },
   INFJ: { name: '温柔理想家', pattern: 'cang', color: '蓝紫渐变', story: '内心有光，山水之间见温柔。' },
-  INFP: { name: '灵魂诗人', pattern: 'he', color: '柔彩晕染', story: '内心小世界，卷草纹生生不息。' },
+  INFP: { name: '苍山暮雪', pattern: 'cang', color: '板蓝根旋青', story: '比起成为一种确定的颜色，你更喜欢慢慢晕染。' },
   ENFJ: { name: '燃灯者', pattern: 'tuan', color: '暖色彩', story: '照亮他人，团花聚合如你。' },
   ENFP: { name: '自由精灵', pattern: 'hudie', color: '多色彩', story: '外向、创意导向，蝴蝶纹最自由。' },
   ISTJ: { name: '稳健守序者', pattern: 'ling', color: '靛蓝', story: '可靠踏实，菱形纹的秩序美。' },
@@ -208,36 +208,95 @@ const QUESTIONS = [
 ];
 
 const LETTERS = ['A', 'B', 'C', 'D'];
+const TEST_LENGTH = 10;
+
+function pickRandomQuestions() {
+  const pool = QUESTIONS.map((question, sourceIndex) => Object.assign({ sourceIndex }, question));
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = pool[i];
+    pool[i] = pool[j];
+    pool[j] = temp;
+  }
+  return pool.slice(0, TEST_LENGTH);
+}
 
 Page({
   data: {
+    started: false,
     step: 0,
-    total: QUESTIONS.length,
-    questions: QUESTIONS,
+    total: TEST_LENGTH,
+    questions: [],
     letters: LETTERS,
     answers: [],
     result: null,
+    selectedOption: -1,
+    saving: false,
+    saveFailed: false,
     posterPath: ''
   },
 
-  choose(e) {
-    const q = e.currentTarget.dataset.q;
-    const w = QUESTIONS[q].options[e.currentTarget.dataset.o].w;
-    const answers = this.data.answers.slice();
-    answers[q] = w;
-    const step = this.data.step + 1;
-    this.setData({ answers, step });
-    if (step >= QUESTIONS.length) this.finish();
+  startTest() {
+    this._answerLocked = false;
+    this.setData({
+      started: true,
+      step: 0,
+      total: TEST_LENGTH,
+      questions: pickRandomQuestions(),
+      answers: [],
+      selectedOption: -1,
+      result: null,
+      posterPath: ''
+    });
   },
 
-  finish() {
+  goBack() {
+    if (this.data.result) {
+      this.setData({ result: null, started: true, step: this.data.total - 1, selectedOption: -1 });
+      return;
+    }
+    if (this.data.started && this.data.step > 0) {
+      const step = this.data.step - 1;
+      this.setData({ step, answers: this.data.answers.slice(0, step), selectedOption: -1 });
+      return;
+    }
+    if (this.data.started) {
+      this.setData({ started: false, step: 0, answers: [], selectedOption: -1 });
+      return;
+    }
+    wx.navigateBack({ delta: 1 });
+  },
+
+  choose(e) {
+    if (this._answerLocked) return;
+    this._answerLocked = true;
+    const q = Number(e.currentTarget.dataset.q);
+    const oi = Number(e.currentTarget.dataset.o);
+    const question = this.data.questions[q];
+    if (!question || !question.options[oi]) {
+      this._answerLocked = false;
+      return;
+    }
+    const w = question.options[oi].w;
+    const answers = this.data.answers.slice();
+    answers[q] = w;
+    this.setData({ selectedOption: oi });
+    setTimeout(() => {
+      const step = this.data.step + 1;
+      this.setData({ answers, step, selectedOption: -1 });
+      this._answerLocked = false;
+      if (step >= this.data.total) this.finish(answers);
+    }, 180);
+  },
+
+  finish(finalAnswers) {
     const sum = { ei: 0, sn: 0, tf: 0, jp: 0 };
-    this.data.answers.forEach(w => {
+    (finalAnswers || this.data.answers).forEach(w => {
       if (!w) return;
       for (const k in w) sum[k] += w[k];
     });
     const type = (sum.ei > 0 ? 'E' : 'I') + (sum.sn > 0 ? 'N' : 'S') +
-                 (sum.tf > 0 ? 'F' : 'T') + (sum.jp > 0 ? 'P' : 'J');
+                 (sum.tf > 0 ? 'F' : 'T') + (sum.jp > 0 ? 'J' : 'P');
     const t = TYPE_TABLE[type] || TYPE_TABLE.INFP;
     const p = engine.getPatternById(t.pattern);
     const result = {
@@ -247,20 +306,54 @@ Page({
       patternName: p ? p.name : t.pattern,
       color: t.color,
       story: t.story,
-      thumb: '/assets/patterns/' + t.pattern + '.png'
+      thumb: '/assets/patterns/' + t.pattern + '.jpg',
+      tags: [
+        type[0] === 'I' ? '安静内省' : '热烈联结',
+        type[1] === 'N' ? '自由想象' : '细腻踏实',
+        type[3] === 'J' ? '有序生长' : '松弛流动'
+      ]
     };
-    api.saveMbtiResult({ answers: this.data.answers, mbtiType: type, patternId: t.pattern }).then(() => {
+    const payload = { answers: finalAnswers || this.data.answers, mbtiType: type, patternId: t.pattern };
+    this._pendingPayload = payload;
+    try {
       wx.setStorageSync('ranxin_diy_prefill', t.pattern);
-      this.unlockPattern(t.pattern);
-      this.setData({ result });
+      wx.setStorageSync('ranxin_last_mbti_result', result);
+    } catch (err) {}
+    this.unlockPattern(t.pattern);
+    // 先展示结果，再异步保存；网络失败不再把用户卡在最后一题。
+    this.setData({ result, saving: true, saveFailed: false });
+    api.saveMbtiResult(payload).then(() => {
+      this.setData({ saving: false, saveFailed: false });
+    }).catch(() => {
+      this.setData({ saving: false, saveFailed: true });
+    });
+  },
+
+  retrySave() {
+    if (!this._pendingPayload || this.data.saving) return;
+    this.setData({ saving: true, saveFailed: false });
+    api.saveMbtiResult(this._pendingPayload).then(() => {
+      this.setData({ saving: false, saveFailed: false });
+      wx.showToast({ title: '结果已同步', icon: 'success' });
+    }).catch(() => {
+      this.setData({ saving: false, saveFailed: true });
+      wx.showToast({ title: '仍未同步，已保存在本机', icon: 'none' });
     });
   },
 
   unlockPattern(id) {
-    let unlocked = wx.getStorageSync('ranxin_unlocked_patterns') || [];
-    if (!unlocked.includes(id)) {
+    const validIds = engine.PATTERN_CATALOG.map(p => p.id);
+    if (validIds.indexOf(id) < 0) return;
+    const raw = wx.getStorageSync('ranxin_unlocked_patterns') || [];
+    let unlocked = Array.isArray(raw) ? raw.filter(x => validIds.indexOf(x) >= 0) : [];
+    const isNew = !unlocked.includes(id);
+    if (isNew) {
       unlocked.push(id);
       wx.setStorageSync('ranxin_unlocked_patterns', unlocked);
+    }
+    // 每次都做幂等同步：即使本地已解锁，也能补偿上一次云端失败。
+    if (typeof api !== 'undefined' && api.unlockPattern) {
+      api.unlockPattern(id, { sourceType: 'mbti' }).catch(() => {});
     }
   },
 
@@ -305,6 +398,19 @@ Page({
     });
   },
 
+  onShareAppMessage() {
+    const r = this.data.result;
+    return {
+      title: r ? '我的灵魂扎染纹样是 ' + r.type + ' · ' + r.patternName : '测测你的灵魂扎染纹样',
+      path: '/pages/mbti/index',
+      imageUrl: this.data.posterPath || (r && r.thumb) || ''
+    };
+  },
+
   goDiy() { wx.switchTab({ url: '/pages/diy/diy' }); },
-  restart() { this.setData({ step: 0, answers: [], result: null, posterPath: '' }); }
+  restart() {
+    this._answerLocked = false;
+    this._pendingPayload = null;
+    this.setData({ saving: false, saveFailed: false }, () => this.startTest());
+  }
 });

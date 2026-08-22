@@ -1,4 +1,7 @@
 {
-  "navigationBarTitleText": "情绪测试",
-  "usingComponents": {}
+  "navigationBarTitleText": "灵魂扎染测试",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "rx-back": "/components/rx-back/rx-back"
+  }
 }

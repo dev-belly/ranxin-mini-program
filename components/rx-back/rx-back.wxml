@@ -1,0 +1,3 @@
+<button class="rx-back-button {{theme === 'dark' ? 'is-dark' : ''}}" bindtap="handleBack" aria-label="返回上一页">
+  <view class="rx-back-chevron"></view>
+</button>

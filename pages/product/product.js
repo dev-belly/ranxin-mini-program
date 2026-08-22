@@ -1,19 +1,17 @@
-/* 把它做成真的 - 实物定制页（前端 mock）
- * TODO: 接入 C 后端：创建订单 / 计算价格 / 发起砍价
- */
+/* A 稿：把数字作品做成真的。当前保留本地演示数据，交互与价格状态均可用。 */
 Page({
   data: {
     patternName: '雨落苍山',
-    previewImage: '/assets/patterns/tuan.png',
+    previewImage: '/assets/patterns/pillow.png',
     optionGroups: [
       {
         key: 'type',
         label: '做成什么？',
         choices: [
-          { id: 'bag', label: '帆布袋', price: 169 },
-          { id: 'pillow', label: '抱枕', price: 149 },
-          { id: 'scarf', label: '方巾', price: 129 },
-          { id: 'cloth', label: '茶席', price: 189 }
+          { id: 'bag', label: '帆布袋', price: 139, image: '/assets/patterns/bag.png' },
+          { id: 'pillow', label: '抱枕', price: 139, image: '/assets/patterns/pillow.png' },
+          { id: 'scarf', label: '方巾', price: 129, image: '/assets/patterns/scarf.png' },
+          { id: 'cloth', label: '茶席', price: 159, image: '/assets/patterns/cloth.png' }
         ]
       },
       {
@@ -36,20 +34,40 @@ Page({
       }
     ],
     selected: { type: 'pillow', material: 'linen', size: 'M' },
-    price: 179,
-    makingDays: '7-12 天'
+    price: 169,
+    makingDays: '7-12 天',
+    artworkImage: '',
+    hasCustomArtwork: false
   },
 
   onLoad(opts) {
-    const patternName = opts.patternName || wx.getStorageSync('ranxin_last_pattern_name') || '雨落苍山';
-    const previewImage = opts.previewImage || wx.getStorageSync('ranxin_last_pattern_image') || '/assets/patterns/tuan.png';
-    this.setData({ patternName, previewImage });
-    this.calcPrice();
+    opts = opts || {};
+    const prefill = wx.getStorageSync('ranxin_product_prefill') || {};
+    const storedName = wx.getStorageSync('ranxin_last_pattern_name');
+    const patternName = opts.patternName || prefill.patternName || storedName || '雨落苍山';
+    const artworkImage = opts.previewImage || prefill.finalImage || prefill.thumb || prefill.previewImage || wx.getStorageSync('ranxin_last_pattern_image') || '';
+    // 大图展示实物载体，小图展示本次 DIY 成品；切换载体时纹样不会丢失。
+    const requestedType = opts.type || prefill.type || this.data.selected.type;
+    const defaultType = this.data.optionGroups[0].choices.find(c => c.id === requestedType)
+      || this.data.optionGroups[0].choices.find(c => c.id === this.data.selected.type);
+    const previewImage = (defaultType && defaultType.image) || '/assets/patterns/pillow.png';
+    this.setData({
+      patternName,
+      previewImage,
+      artworkImage,
+      hasCustomArtwork: Boolean(artworkImage),
+      'selected.type': defaultType ? defaultType.id : this.data.selected.type
+    }, () => this.calcPrice());
   },
 
   selectOption(e) {
     const { group, id } = e.currentTarget.dataset;
-    this.setData({ [`selected.${group}`]: id });
+    const next = { [`selected.${group}`]: id };
+    if (group === 'type') {
+      const item = this.data.optionGroups[0].choices.find(c => c.id === id);
+      if (item && item.image) next.previewImage = item.image;
+    }
+    this.setData(next);
     this.calcPrice();
   },
 
@@ -63,7 +81,7 @@ Page({
   },
 
   buildOrder() {
-    const { patternName, previewImage, selected, optionGroups, price, makingDays } = this.data;
+    const { patternName, previewImage, artworkImage, selected, optionGroups, price, makingDays } = this.data;
     const typeItem = optionGroups[0].choices.find(c => c.id === selected.type);
     const matItem = optionGroups[1].choices.find(c => c.id === selected.material);
     const sizeItem = optionGroups[2].choices.find(c => c.id === selected.size);
@@ -71,19 +89,22 @@ Page({
       id: 'o_' + Date.now(),
       patternName,
       previewImage,
+      artworkImage,
       type: typeItem ? typeItem.label : '抱枕',
       material: matItem ? matItem.label : '棉麻',
       size: sizeItem ? sizeItem.label : 'M',
       price,
       makingDays,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      statusIndex: 2,
+      status: 'making'
     };
   },
 
   confirmOrder() {
     const order = this.buildOrder();
     wx.setStorageSync('ranxin_last_order', order);
-    wx.showToast({ title: '已确认定制', icon: 'success' });
+    wx.showToast({ title: '作品已确认', icon: 'success' });
     setTimeout(() => {
       wx.navigateTo({ url: '/pages/orderProgress/orderProgress' });
     }, 600);
@@ -95,6 +116,7 @@ Page({
       id: 'b_' + Date.now(),
       patternName: order.patternName,
       previewImage: order.previewImage,
+      artworkImage: order.artworkImage,
       type: order.type,
       material: order.material,
       size: order.size,

@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "作品海报",
+  "navigationStyle": "custom",
+  "backgroundColor": "#fbfcff",
+  "backgroundTextStyle": "dark",
+  "disableScroll": false,
+  "usingComponents": {
+    "rx-back": "/components/rx-back/rx-back"
+  }
+}

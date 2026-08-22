@@ -1,0 +1,7 @@
+{
+  "navigationStyle": "custom",
+  "disableScroll": true,
+  "usingComponents": {
+    "rx-back": "/components/rx-back/rx-back"
+  }
+}

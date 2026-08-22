@@ -1,0 +1,56 @@
+<view class="rx-bg"></view>
+<view class="poster-page">
+  <view class="nav-bar">
+    <rx-back bind:back="goBack" />
+    <view class="nav-title">作品海报</view>
+    <button class="nav-right share-btn" open-type="share" aria-label="分享作品海报">
+      <view class="share-icon"></view>
+    </button>
+  </view>
+
+  <view class="poster-wrap">
+    <image wx:if="{{posterImage}}" class="poster-img" src="{{posterImage}}" mode="widthFix" binderror="onPosterPreviewError"/>
+    <view wx:elif="{{posterError}}" class="poster-loading poster-failed">
+      <view class="error-mark">↻</view>
+      <text>海报这次没有画出来</text>
+      <button class="retry-poster" bindtap="retryPoster">重新生成</button>
+    </view>
+    <view wx:else class="poster-loading">
+      <view class="loading-orb"></view>
+      <text>正在绘制作品海报…</text>
+    </view>
+  </view>
+
+  <view class="actions">
+    <view class="btn save {{saving || !posterImage ? 'disabled' : ''}}" bindtap="savePoster">
+      <text class="save-text">保存海报</text>
+      <text class="save-star">✦</text>
+    </view>
+    <view class="btn real" bindtap="openRealModal">
+      <text>把作品变成实物</text>
+      <text class="arrow">→</text>
+    </view>
+  </view>
+
+  <canvas type="2d" id="poster-canvas" class="poster-canvas"></canvas>
+
+  <!-- 载体选择弹窗 -->
+  <view class="modal-mask {{showRealModal ? 'show' : ''}}" bindtap="closeRealModal">
+    <view class="modal" catchtap="noop">
+      <view class="modal-close" bindtap="closeRealModal">×</view>
+      <view class="modal-title">把作品变成实物</view>
+      <view class="modal-desc">选择你想制作的载体，继续进入定制页面。</view>
+      <view class="product-grid">
+        <view wx:for="{{products}}" wx:key="id"
+              class="product {{selectedProduct === item.id ? 'selected' : ''}}"
+              data-id="{{item.id}}"
+              bindtap="selectProduct">
+          <image class="product-img" src="{{item.image}}" mode="aspectFill"/>
+          <text class="product-label">{{item.label}}</text>
+          <view class="product-check" wx:if="{{selectedProduct === item.id}}">✓</view>
+        </view>
+      </view>
+      <view class="modal-action" bindtap="continueCustomize">继续定制</view>
+    </view>
+  </view>
+</view>

@@ -1,4 +1,7 @@
 {
   "navigationBarTitleText": "砍价详情",
-  "usingComponents": {}
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "rx-back": "/components/rx-back/rx-back"
+  }
 }

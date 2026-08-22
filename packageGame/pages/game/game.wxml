@@ -1,0 +1,170 @@
+<view class="game-scene">
+  <view class="play-layer {{winVisible ? 'is-blurred' : ''}}">
+    <image class="page-background" src="/packageGame/assets/game/game-bg.jpg" mode="scaleToFill"/>
+
+    <view class="game-page">
+      <view class="game-back-shell"><rx-back bind:back="goBack" /></view>
+
+      <view class="title-wrap">
+        <view class="title-line">
+          <text class="title-spark">✦</text>
+          <text class="game-title">合成大染缸</text>
+          <text class="title-spark">✦</text>
+        </view>
+        <view class="game-subtitle">
+          <text>✿</text>
+          <text>三消相同纹样，合成更高分数！</text>
+          <text>✿</text>
+        </view>
+      </view>
+
+      <view class="music-button {{musicOn ? 'active' : ''}}" bindtap="toggleMusic" aria-label="音乐">
+        <text class="music-note">♪</text>
+      </view>
+
+      <view class="stats">
+        <view class="stat stat-goal">
+          <text class="stat-label">目标分数</text>
+          <text class="stat-value">{{targetDisplay}}</text>
+          <view class="goal-track">
+            <view class="goal-fill" style="{{progressStyle}}"></view>
+          </view>
+          <view class="goal-stars"><text>★</text><text>★</text><text>★</text></view>
+        </view>
+        <view class="stat">
+          <text class="stat-label">当前分数</text>
+          <text class="stat-value">{{scoreDisplay}}</text>
+        </view>
+        <view class="stat">
+          <text class="stat-label">剩余步数</text>
+          <text class="stat-value">{{moves}}</text>
+        </view>
+      </view>
+
+      <view class="board-wrap">
+        <image class="board-badge" src="/packageGame/assets/game/board-badge.png" mode="aspectFit"/>
+        <view class="board" aria-label="扎染三消棋盘">
+          <view
+            class="tile {{item.selected ? 'selected' : ''}} {{item.clearing ? 'clearing' : ''}} {{item.spawned ? 'spawned' : ''}} {{item.hidden ? 'hidden' : ''}}"
+            wx:for="{{tiles}}"
+            wx:key="index"
+            data-index="{{item.index}}"
+            bindtouchstart="onTileTouchStart"
+            bindtouchmove="onTileTouchMove"
+            bindtouchend="onTileTouchEnd"
+            bindtouchcancel="onTileTouchCancel"
+          >
+            <image class="tile-image" src="{{item.src}}" mode="scaleToFill"/>
+          </view>
+
+          <view class="ghost-layer" wx:if="{{ghosts.length}}">
+            <image
+              wx:for="{{ghosts}}"
+              wx:key="id"
+              class="ghost"
+              src="{{item.src}}"
+              mode="scaleToFill"
+              style="left:{{item.left}}px;top:{{item.top}}px;width:{{item.size}}px;height:{{item.size}}px;transform:translate({{item.tx}}px,{{item.ty}}px);"
+            />
+          </view>
+        </view>
+      </view>
+
+      <view class="tools">
+        <view class="tool {{swapLeft ? '' : 'disabled'}}" bindtap="useSwapTool">
+          <view class="tool-circle">
+            <text class="tool-glyph swap-glyph">↻</text>
+            <view class="tool-count">{{swapLeft}}</view>
+          </view>
+          <text class="tool-label">换一换</text>
+        </view>
+        <view class="tool {{clearLeft ? '' : 'disabled'}} {{clearMode ? 'active' : ''}}" bindtap="beginClearTool">
+          <view class="tool-circle">
+            <text class="tool-glyph clear-glyph">✧</text>
+            <view class="tool-count">{{clearLeft}}</view>
+          </view>
+          <text class="tool-label">消除一个</text>
+        </view>
+        <view class="tool {{shuffleLeft ? '' : 'disabled'}}" bindtap="useShuffleTool">
+          <view class="tool-circle">
+            <text class="tool-glyph shuffle-glyph">⤨</text>
+            <view class="tool-count">{{shuffleLeft}}</view>
+          </view>
+          <text class="tool-label">打乱</text>
+        </view>
+        <view class="tool locked">
+          <view class="tool-circle lock-circle">
+            <view class="lock-icon"><text class="lock-loop"></text><text class="lock-body"></text></view>
+          </view>
+          <text class="tool-label">敬请期待</text>
+        </view>
+      </view>
+
+      <view class="rules">
+        <view class="rules-head">
+          <text class="rules-title">玩法</text>
+          <view class="reward-chip" wx:if="{{nextRewardName}}">
+            <image class="reward-chip-thumb" src="{{nextRewardThumb}}" mode="aspectFit"/>
+            <view class="reward-chip-text">
+              <text class="reward-chip-label">通关解锁</text>
+              <text class="reward-chip-name">{{nextRewardName}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="rules-row">
+          <view class="rule-card">
+            <text class="rule-num">1</text>
+            <text class="rule-text">交换相邻方块</text>
+          </view>
+          <view class="rule-card">
+            <text class="rule-num">2</text>
+            <text class="rule-text">三连同纹样消除</text>
+          </view>
+          <view class="rule-card">
+            <text class="rule-num">3</text>
+            <text class="rule-text">满{{targetDisplay}}分通关</text>
+          </view>
+        </view>
+
+        <view class="rules-foot" wx:if="{{collectProgress}}">
+          <view class="foot-pip"></view>
+          <text class="foot-text">{{collectProgress}}</text>
+        </view>
+      </view>
+
+      <view class="toast {{toastVisible ? 'show' : ''}}">{{toastText}}</view>
+    </view>
+  </view>
+
+  <view class="win-overlay" wx:if="{{winVisible}}">
+    <view class="win-card">
+      <view class="win-title">染力达成 ✦</view>
+      <view class="win-score">{{winScore}} 分</view>
+      <view class="win-stars">
+        <text class="{{winStars>=1?'bright':''}}">★</text>
+        <text class="{{winStars>=2?'bright':''}}">★</text>
+        <text class="{{winStars>=3?'bright':''}}">★</text>
+      </view>
+      <view class="win-copy">你在 <text class="win-highlight">{{winDuration}}</text> 秒、剩余 <text class="win-highlight">{{winMoves}}</text> 步内完成了这缸蓝。</view>
+      <view class="win-reward" wx:if="{{rewardName}}">
+        <image wx:if="{{rewardThumb}}" class="reward-thumb" src="{{rewardThumb}}" mode="aspectFit"/>
+        <view class="reward-info {{rewardThumb ? '' : 'reward-info-no-thumb'}}">
+          <view class="reward-name">✦ {{rewardName}}</view>
+          <view wx:if="{{rewardStory}}" class="reward-story">{{rewardStory}}</view>
+        </view>
+      </view>
+      <view class="win-props" wx:if="{{winProps}}">{{winProps}}</view>
+      <view class="win-progress" wx:if="{{collectProgress}}">{{collectProgress}}</view>
+      <view class="continue-button" bindtap="continuePlay">继续玩</view>
+    </view>
+    <view class="confetti-layer" wx:if="{{winVisible}}">
+      <text class="confetti" style="left:12%;color:#f5a623;animation-delay:0s;">✦</text>
+      <text class="confetti" style="left:26%;color:#7a69ee;animation-delay:.3s;">★</text>
+      <text class="confetti" style="left:42%;color:#f5a623;animation-delay:.15s;">✦</text>
+      <text class="confetti" style="left:58%;color:#5278ef;animation-delay:.5s;">✿</text>
+      <text class="confetti" style="left:72%;color:#7a69ee;animation-delay:.25s;">★</text>
+      <text class="confetti" style="left:88%;color:#f5a623;animation-delay:.4s;">✦</text>
+    </view>
+  </view>
+</view>

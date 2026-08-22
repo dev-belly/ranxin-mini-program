@@ -1,0 +1,262 @@
+<view class="flow-page">
+  <view class="flow-grain"></view>
+  <view class="flow-wash wash-a"></view>
+  <view class="flow-wash wash-b"></view>
+
+  <view class="flow-nav">
+    <view class="flow-back-shell">
+      <rx-back bind:back="goBack" />
+    </view>
+    <view class="flow-title">
+      <text wx:if="{{stage==='fabric'}}">选择布料</text>
+      <text wx:elif="{{stage==='pattern'}}">选择纹样</text>
+      <text wx:elif="{{stage==='craft'}}">纹样DIY</text>
+      <text wx:elif="{{stage==='dye'}}">入染</text>
+      <text wx:elif="{{stage==='oxidation'}}">氧化</text>
+      <text wx:else>拆结</text>
+      <view class="title-stars"><text>✦</text><text>✦</text></view>
+    </view>
+  </view>
+
+  <view wx:if="{{stage!=='pattern'}}" class="process-steps">
+    <view wx:for="{{stages}}" wx:key="id" class="process-step {{index===stageIndex?'active':''}} {{index<stageIndex?'done':''}}">
+      <view class="process-line" wx:if="{{index<5}}"></view>
+      <view class="process-dot"></view>
+      <text>{{item.label}}</text>
+    </view>
+  </view>
+
+  <!-- 选布料：承接入口六步中的第 1 步 -->
+  <scroll-view wx:if="{{stage==='fabric'}}" scroll-y class="stage-scroll fabric-stage" enhanced show-scrollbar="{{false}}">
+    <view class="stage-subtitle">不同材质，会留下不同的染色痕迹</view>
+    <view class="fabric-grid">
+      <view wx:for="{{fabrics}}" wx:key="id" class="fabric-card {{selectedFabricId===item.id?'selected':''}}" data-id="{{item.id}}" bindtap="chooseFabric">
+        <image class="fabric-image" src="{{item.thumb}}" mode="aspectFill" />
+        <view class="fabric-copy">
+          <view class="fabric-name">{{item.name}}</view>
+          <view class="fabric-tag">{{item.tag}}</view>
+          <view class="fabric-desc">{{item.desc}}</view>
+        </view>
+        <view class="choice-ring">{{selectedFabricId===item.id?'✓':''}}</view>
+      </view>
+    </view>
+    <button class="primary-button" bindtap="goFabricNext">下一步 · 选择纹样 <text>›</text></button>
+  </scroll-view>
+
+  <!-- A 2.2：两页，每页 2×3，共 12 枚 -->
+  <scroll-view wx:if="{{stage==='pattern'}}" scroll-y enhanced show-scrollbar="{{false}}" class="pattern-stage">
+    <view class="stage-subtitle">选择你今天想染下的形状</view>
+    <view class="pattern-tabs">
+      <view wx:for="{{patternCategories}}" wx:key="*this" class="pattern-tab {{activeCategory===item?'active':''}}" data-category="{{item}}" bindtap="setPatternCategory" aria-role="button" aria-label="{{item}}"><text class="pattern-tab-label">{{item}}</text></view>
+    </view>
+    <view class="page-count">{{patternPage + 1}} / 2</view>
+    <view class="pattern-viewport" bindtouchstart="onPatternTouchStart" bindtouchend="onPatternTouchEnd">
+      <view class="pattern-grid">
+        <block wx:for="{{currentPatterns}}" wx:key="id">
+          <view class="pattern-card {{selectedPatternId===item.id?'selected':''}} {{item.unlocked?'':'locked'}}" data-id="{{item.id}}" bindtap="choosePattern">
+            <view class="pattern-image-shell">
+              <image class="pattern-image" src="{{item.thumb}}" mode="aspectFill" />
+              <view class="pattern-check" wx:if="{{selectedPatternId===item.id && item.unlocked}}">✓</view>
+              <view class="pattern-lock" wx:if="{{!item.unlocked}}">未解锁</view>
+            </view>
+            <view class="pattern-info"><text>{{item.name}}</text><text>{{item.desc}}</text></view>
+          </view>
+        </block>
+      </view>
+    </view>
+    <view class="pattern-pager">
+      <view class="pager-hit {{patternPage===0?'disabled':''}}" bindtap="prevPatternPage" aria-role="button" aria-label="上一页"><text>‹</text></view>
+      <view class="page-dots"><view class="page-dot {{patternPage===0?'active':''}}"></view><view class="page-dot {{patternPage===1?'active':''}}"></view></view>
+      <view class="pager-hit {{patternPage===1?'disabled':''}}" bindtap="nextPatternPage" aria-role="button" aria-label="下一页"><text>›</text></view>
+    </view>
+    <view class="story-card" bindtap="openPatternStory">
+      <view class="story-title"><text>✦</text> 纹样故事 · {{selectedPattern.name}}</view>
+      <view class="story-body">{{selectedPattern.story}}</view>
+      <view class="story-actions">
+        <view class="story-link">查看技法与寓意 <text>→</text></view>
+        <view class="story-cta" catchtap="beginCraft" aria-role="button">用这枚纹样开始扎结 <text>›</text></view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- A 2.3：可拖节点、撤销/重做、四项参数同时可见 -->
+  <scroll-view wx:if="{{stage==='craft'}}" scroll-y class="stage-scroll craft-stage" enhanced show-scrollbar="{{false}}">
+    <view class="craft-subtitle">拖动、旋转与扎结，做出你的专属纹样</view>
+    <view class="craft-art-card">
+      <image class="craft-base-image" src="/packageDiy/assets/craft-base.jpg" mode="aspectFill" />
+      <!-- Canvas 2D 在 iOS 真机同样属于原生层。确认弹窗打开时必须卸载，
+           否则它会盖住普通 view 弹窗的标题与正文。 -->
+      <canvas wx:if="{{!showCraftConfirm}}" type="2d" id="craft-canvas" class="craft-canvas" aria-label="实时生成的扎染纹样"></canvas>
+      <!-- Canvas 2D 是原生绘图层；操作控件必须用 cover-view 才不会被画布遮住。 -->
+      <cover-view wx:if="{{!showCraftConfirm}}" id="node-layer" class="node-layer" catchtouchmove="onNodeTouchMove" bindtouchstart="onCanvasTouchStart" bindtouchend="onNodeTouchEnd" bindtouchcancel="onNodeTouchEnd">
+        <cover-view wx:for="{{guideLines}}" wx:key="index" class="guide-line" style="{{item.style}}"></cover-view>
+        <cover-view class="center-node">＋</cover-view>
+        <cover-view wx:for="{{nodePoints}}" wx:key="index" class="drag-node" style="{{item.style}}" data-index="{{item.index}}" catchtouchstart="onNodeTouchStart">✦</cover-view>
+      </cover-view>
+      <cover-view wx:if="{{!showCraftConfirm}}" class="art-tool undo {{!canUndo?'disabled':''}}" bindtap="undo">↶ 撤销</cover-view>
+      <cover-view wx:if="{{!showCraftConfirm}}" class="art-tool redo {{!canRedo?'disabled':''}}" bindtap="redo">重做 ↷</cover-view>
+      <cover-view wx:if="{{!showCraftConfirm}}" class="live-note">纹样实时生成中</cover-view>
+      <cover-view wx:if="{{!showCraftConfirm}}" class="gesture-hint">☝ 拖动节点调整位置　◌ 双指旋转全局角度</cover-view>
+    </view>
+
+    <view class="parameter-card">
+      <view class="parameter-row symmetry-row">
+        <view class="parameter-head"><text>对称</text><text>{{symmetry}}瓣 ›</text></view>
+        <view class="symmetry-options">
+          <button wx:for="{{symmetryOptions}}" wx:key="*this" class="symmetry-dot {{symmetry===item?'active':''}}" data-value="{{item}}" bindtap="setSymmetry"><text></text><text>{{item}}</text></button>
+        </view>
+      </view>
+      <view class="parameter-row">
+        <view class="parameter-head"><text>扎结力度</text><text>{{tightness}}</text></view>
+        <view class="range-row"><text>松</text><slider min="0" max="100" value="{{tightness}}" bindchanging="onTightnessChanging" bindchange="onTightnessChange" activeColor="#7568f8" backgroundColor="#dbe0ed" block-size="18"/><text>紧</text></view>
+      </view>
+      <view class="parameter-row">
+        <view class="parameter-head"><text>留白面积</text><text>{{whitespace}}%</text></view>
+        <view class="range-row"><text>少</text><slider min="0" max="100" value="{{whitespace}}" bindchanging="onWhitespaceChanging" bindchange="onWhitespaceChange" activeColor="#7568f8" backgroundColor="#dbe0ed" block-size="18"/><text>多</text></view>
+      </view>
+      <view class="parameter-row">
+        <view class="parameter-head"><text>旋转角度</text><text>{{rotation}}°</text></view>
+        <view class="range-row"><text>-180°</text><slider min="-180" max="180" value="{{rotation}}" bindchanging="onRotationChanging" bindchange="onRotationChange" activeColor="#7568f8" backgroundColor="#dbe0ed" block-size="18"/><text>180°</text></view>
+      </view>
+    </view>
+
+    <view class="craft-info-card">
+      <image src="/packageDiy/assets/craft-thumb.jpg" mode="aspectFill" />
+      <view class="craft-info-copy">
+        <view>当前纹样：{{selectedPattern.name}} <text>{{symmetry}}瓣对称</text></view>
+        <text>推荐情绪：慢下来</text>
+        <text>植物染料：板蓝根</text>
+        <text>预计时长：6分钟</text>
+      </view>
+      <image class="plant-art" src="/packageDiy/assets/plant.jpg" mode="aspectFit" />
+    </view>
+    <view class="craft-tip"><text>✦</text><text class="strong">小提示：</text>扎得更紧，染色边界会更清晰。</view>
+    <view class="dual-actions"><button class="secondary-button" bindtap="resetCraft">↻ 重置纹样</button><button class="primary-button compact" bindtap="openCraftConfirm">下一步 · 开始入染 ›</button></view>
+  </scroll-view>
+
+  <!-- A 2.4：颜色/浓度/方式三者实时改变效果 -->
+  <scroll-view wx:if="{{stage==='dye'}}" scroll-y class="stage-scroll dye-stage" enhanced show-scrollbar="{{false}}">
+    <view class="glass-card dye-color-card">
+      <view class="section-title">选择染液颜色</view>
+      <view class="dye-colors">
+        <button wx:for="{{dyes}}" wx:key="id" class="dye-option {{dyeName===item.name?'selected':''}}" data-id="{{item.id}}" bindtap="chooseDye">
+          <view class="dye-swatch" style="background:{{item.color}}"><text wx:if="{{dyeName===item.name}}">✓</text></view><text>{{item.name}}</text>
+        </button>
+      </view>
+    </view>
+    <view class="dye-preview-row">
+      <view class="glass-card concentration-card">
+        <view class="section-title">染液浓度 <text class="info-dot" bindtap="showConcentrationInfo">i</text></view>
+        <view class="concentration-value">{{concentration}}%</view>
+        <slider min="10" max="100" value="{{concentration}}" bindchanging="onConcentrationChanging" bindchange="onConcentrationChange" activeColor="#7568f8" backgroundColor="#dbe0ed" block-size="19"/>
+        <view class="range-ends"><text>淡</text><text>浓</text></view>
+      </view>
+      <view class="glass-card effect-card">
+        <view class="section-title">最终效果预览</view>
+        <view class="dye-canvas-shell"><image class="dye-preview-base" src="/packageDiy/assets/dye-preview.jpg" mode="aspectFill"/><canvas type="2d" id="dye-canvas" class="dye-canvas"></canvas><view class="effect-label">{{dyeName}}染色 · {{concentration}}%浓度效果</view></view>
+      </view>
+    </view>
+    <view class="glass-card methods-card">
+      <view class="section-title">入染方式</view>
+      <button wx:for="{{dyeMethods}}" wx:key="id" class="dye-method {{dyeMethod===item.id?'selected':''}}" data-id="{{item.id}}" bindtap="chooseDyeMethod">
+        <image src="/packageDiy/assets/dye-{{item.id}}.jpg" mode="aspectFit" /><view><view class="method-name">{{item.name}} <text wx:if="{{item.id==='local'}}">推荐</text></view><text>{{item.desc}}</text></view><view class="choice-ring">{{dyeMethod===item.id?'✓':''}}</view>
+      </button>
+    </view>
+    <button class="primary-button" bindtap="openDyeConfirm">开始入染</button>
+    <button class="secondary-button full" bindtap="openDyeVideo">▷ 查看入染视频</button>
+  </scroll-view>
+
+  <!-- A 2.5：1–5 分钟可调、双图预览、进度与演示视频同步 -->
+  <scroll-view wx:if="{{stage==='oxidation'}}" scroll-y class="stage-scroll oxidation-stage" enhanced show-scrollbar="{{false}}">
+    <view class="glass-card oxidation-settings">
+      <view class="section-title">氧化设置</view>
+      <view class="oxidation-label">预计氧化时长 <text class="info-dot" bindtap="showOxidationInfo">i</text></view>
+      <view class="minute-control">
+        <button bindtap="decreaseOxidationMinutes" disabled="{{oxidationStarted}}" aria-label="减少氧化时长">−</button>
+        <view><text class="minute-number">{{oxidationMinutes}}</text><text>分钟</text></view>
+        <button bindtap="increaseOxidationMinutes" disabled="{{oxidationStarted}}" aria-label="增加氧化时长">＋</button>
+      </view>
+      <slider min="1" max="5" step="1" value="{{oxidationMinutes}}" bindchanging="onOxidationMinutesChange" bindchange="onOxidationMinutesChange" disabled="{{oxidationStarted}}" activeColor="#7568f8" backgroundColor="#dbe0ed" block-size="19" />
+      <view class="oxidation-range-labels"><text>1分钟</text><text>3分钟</text><text>5分钟</text></view>
+      <view class="oxidation-note">♨ 氧化过程中，靛蓝色会随着与空气接触逐渐加深。</view>
+    </view>
+    <view class="glass-card oxidation-preview-card">
+      <view class="section-title">预计效果预览</view>
+      <view class="oxidation-images">
+        <view class="oxidation-image"><image src="/packageDiy/assets/oxidation-current.jpg" mode="aspectFill"/><text>当前效果</text></view>
+        <view class="compare-center">›</view>
+        <view class="oxidation-image future"><image src="/packageDiy/assets/oxidation-future.jpg" mode="aspectFill" style="{{oxidationPreviewStyle}}"/><text>预计效果</text></view>
+      </view>
+      <view class="color-scale"><text>颜色较浅</text><view><view class="color-scale-dot" wx:for="{{colorScale}}" wx:key="*this" style="opacity:{{item}}"></view></view><text>颜色更深、花纹更清晰</text></view>
+      <view class="preview-disclaimer">效果预览仅供参考，实际效果可能因布料、环境略有差异。</view>
+    </view>
+    <view class="glass-card oxidation-tip-card">
+      <view><text class="tip-heading">◉ 小贴士</text><text>靛蓝是一种天然染料，遇空气中的氧气会发生氧化反应，颜色会由浅变深，花纹也会更加清晰立体。保持布料湿润并通风，有助于获得更均匀的蓝色效果。</text></view>
+      <image src="/packageDiy/assets/oxidation-tip.jpg" mode="aspectFit" />
+    </view>
+    <button wx:if="{{!oxidationDone}}" class="primary-button" bindtap="openOxidation">开始氧化 ✣</button>
+    <button wx:else class="primary-button" bindtap="continueToUnfold">氧化完成 · 开始拆结 ›</button>
+    <button class="secondary-button full" bindtap="goBack">不满意，返回上一步</button>
+    <view class="button-note">可返回重新调整入染颜色与浓度</view>
+  </scroll-view>
+
+  <!-- A 2.6：无错误的“展开到80%”门禁，主出口直达实物 -->
+  <scroll-view wx:if="{{stage==='unfold'}}" scroll-y class="stage-scroll unfold-stage" enhanced show-scrollbar="{{false}}">
+    <view class="unfold-intro"><text>✦</text> 轻轻拆开束缚，让纹样慢慢显现 <text>✦</text></view>
+    <view class="glass-card unfold-method-card">
+      <view class="section-title"><text class="title-spark">✦</text> 拆结方式 <text class="title-spark">✦</text></view>
+      <view class="unfold-methods">
+        <button class="unfold-method {{unfoldMethod==='hand'?'selected':''}}" data-id="hand" bindtap="chooseUnfoldMethod"><view class="method-badge hand-badge"><text class="method-icon">☝</text></view><text class="method-bold">手工拆结</text><text>轻柔拆解，保留细节</text><view class="choice-ring">{{unfoldMethod==='hand'?'✓':''}}</view></button>
+        <button class="unfold-method {{unfoldMethod==='scissor'?'selected':''}}" data-id="scissor" bindtap="chooseUnfoldMethod"><view class="method-badge scissor-badge"><text class="method-icon">✂</text></view><text class="method-bold">剪刀辅助</text><text>更快速，适合较紧结扣</text><view class="choice-ring">{{unfoldMethod==='scissor'?'✓':''}}</view></button>
+      </view>
+      <view class="unfold-method-note">✦ {{unfoldMethodNote}}</view>
+    </view>
+    <view class="glass-card final-preview-card">
+      <view class="section-title"><view class="flower-badge">✿</view> 预计最终效果 <text class="title-spark">✦</text></view>
+      <view class="preview-frame">
+        <image src="{{finalImage}}" mode="aspectFill" />
+      </view>
+      <view>实际效果会因布料、扎结松紧与染液浓度略有差异</view>
+    </view>
+    <view class="glass-card unfold-tips">
+      <view class="section-title"><view class="bulb-badge">✦</view> 拆结小贴士 <text class="title-spark">✦</text></view>
+      <view><text>⌁</text>沿打结方向轻轻松开</view><view><text>✂</text>局部过紧可用剪刀辅助</view><view><text>♧</text>拆结后及时清洗定色</view>
+    </view>
+    <view class="dual-actions"><button class="secondary-button" bindtap="goBack">返回上一步</button><button class="primary-button compact" bindtap="makePhysical" loading="{{savingPhysical}}">把作品变成实物 ✦</button></view>
+    <button class="works-link" bindtap="goToPoster" loading="{{savingPhysical}}">保存并生成作品海报 →</button>
+    <button class="works-link" bindtap="saveAndViewWorks" loading="{{savingPhysical}}">先保存并查看我的作品 →</button>
+  </scroll-view>
+
+  <!-- 纹样故事 -->
+  <view wx:if="{{showPatternStory}}" class="modal-mask" bindtap="closePatternStory"><view class="modal-card story-modal" catchtap="noop"><view class="modal-title">{{selectedPattern.name}} · 技法与寓意</view><view class="modal-copy">{{selectedPattern.story}}</view><view class="modal-actions"><button bindtap="closePatternStory">知道了</button><button class="modal-primary" bindtap="beginCraft">用这枚纹样</button></view></view></view>
+
+  <!-- 纹样DIY → 入染确认 -->
+  <view wx:if="{{showCraftConfirm}}" class="modal-mask craft-confirm-mask" catchtouchmove="noop">
+    <view class="modal-card craft-confirm-card" catchtap="noop">
+      <view class="modal-title">准备开始入染</view>
+      <view class="modal-copy craft-confirm-copy">你的 {{symmetry}} 瓣「{{selectedPattern.name}}」已经准备好。确认后将完整保留这次创作参数。</view>
+      <view class="craft-confirm-meta">
+        <text>{{symmetry}} 瓣对称</text>
+        <text>扎结 {{tightness}}</text>
+        <text>留白 {{whitespace}}%</text>
+        <text>旋转 {{rotation}}°</text>
+      </view>
+      <view class="modal-actions craft-confirm-actions">
+        <button class="craft-confirm-secondary" hover-class="craft-confirm-button-hover" catchtap="closeCraftConfirm">继续调整</button>
+        <button class="modal-primary craft-confirm-primary" hover-class="craft-confirm-button-hover" catchtap="confirmCraft">开始入染</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 入染方案确认 -->
+  <view wx:if="{{showDyeConfirm}}" class="modal-mask"><view class="modal-card"><view class="modal-title">准备开始入染</view><view class="modal-copy">当前方案：{{dyeName}}，{{concentration}}%浓度，{{selectedDyeMethod.name}}。确认后进入入染演示。</view><view class="modal-actions"><button bindtap="closeDyeConfirm">继续调整</button><button class="modal-primary" bindtap="confirmDyePlan">开始入染</button></view></view></view>
+
+  <!-- 入染演示 -->
+  <view wx:if="{{showDyeVideo}}" class="modal-mask" bindtap="closeDyeVideo"><view class="video-modal" catchtap="noop"><view class="modal-title">{{dyeVideoTitle}}</view><view class="video-copy">{{dyeVideoCaption}}</view><view class="dye-demo"><image src="/packageDiy/assets/dye-{{dyeMethod}}.jpg" mode="aspectFill"/><view class="dye-demo-play">▷</view><view class="dye-demo-tag">{{dyeVideoTag}}</view></view><view class="modal-actions"><button bindtap="closeDyeVideo">继续调整</button><button class="modal-primary" bindtap="confirmDyeAndContinue">确认方案 · 进入氧化</button></view></view></view>
+
+  <!-- 氧化过程：真实秒级计时完成后才能进入拆结，视频仅用于演示 -->
+  <view wx:if="{{showOxidationVideo}}" class="modal-mask locked-mask"><view class="video-modal oxidation-video-modal"><view class="modal-title">扎染氧化过程</view><view class="video-copy">靛蓝与空气接触后会逐渐氧化显色，颜色由浅变深，纹样也会更清晰。</view><video wx:if="{{!oxidationError}}" id="oxidationVideo" src="{{oxidationVideoSrc}}" autoplay muted controls object-fit="cover" bindplay="onOxidationPlay" bindpause="onOxidationPause" bindtimeupdate="onOxidationTimeUpdate" bindended="onOxidationEnded" binderror="onOxidationError"></video><view wx:else class="oxidation-fallback"><image src="/packageDiy/assets/oxidation-future.jpg" mode="aspectFill" style="{{oxidationPreviewStyle}}"/><view class="fallback-ripple ripple-a"></view><view class="fallback-ripple ripple-b"></view><text class="oxidation-fallback-copy">视频暂不可用，正在用实时显色动画完成氧化</text></view><view class="video-status"><text>{{oxidationStatus}}</text><text class="video-countdown">{{oxidationCountdown}}</text></view><view class="video-progress"><view class="video-progress-bar" style="width:{{oxidationProgress}}%"></view></view><button wx:if="{{!oxidationDone}}" class="video-close" bindtap="stopOxidation">停止并返回</button><button wx:else class="modal-primary video-finish" bindtap="continueToUnfold">氧化完成 · 开始拆结</button></view></view>
+
+  <!-- 拆结方式视频 -->
+  <view wx:if="{{showUnfoldVideo}}" class="modal-mask" bindtap="closeUnfoldVideo"><view class="video-modal" catchtap="noop"><view class="modal-title">{{unfoldVideoTitle}}</view><view class="video-copy">{{unfoldVideoCaption}}</view><video wx:if="{{!unfoldVideoError}}" id="unfoldVideo" src="{{unfoldVideoSrc}}" autoplay muted controls object-fit="cover" bindplay="onUnfoldVideoPlay" bindpause="onUnfoldVideoPause" bindended="onUnfoldVideoEnded" binderror="onUnfoldVideoError"></video><view wx:else class="unfold-video-fallback"><image src="{{finalImage}}" mode="aspectFill"/><view><text>演示视频暂不可用</text><text>{{unfoldVideoCaption}}</text></view></view><button class="video-close" bindtap="closeUnfoldVideo">关闭</button></view></view>
+</view>
