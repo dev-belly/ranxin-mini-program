@@ -47,7 +47,7 @@
 
   <view wx:elif="{{displayList.length === 0}}" class="empty-card liquid-glass-card">
     <view class="empty-art">
-      <image class="empty-art-image" src="/assets/patterns/tuan.jpg" mode="aspectFill" />
+      <image class="empty-art-image" src="/assets/patterns/tuan.png" mode="aspectFill" />
     </view>
     <view class="state-title">第一块布，正等着你染开</view>
     <view class="state-desc">从情绪出发，完成扎、染、等、拆，作品会真实保存在这里。</view>

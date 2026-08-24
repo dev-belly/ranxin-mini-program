@@ -306,7 +306,7 @@ Page({
       patternName: p ? p.name : t.pattern,
       color: t.color,
       story: t.story,
-      thumb: '/assets/patterns/' + t.pattern + '.jpg',
+      thumb: '/assets/patterns/' + t.pattern + '.png',
       tags: [
         type[0] === 'I' ? '安静内省' : '热烈联结',
         type[1] === 'N' ? '自由想象' : '细腻踏实',

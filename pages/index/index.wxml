@@ -29,7 +29,7 @@
   </scroll-view>
 
   <view class="card hero" bindtap="goMbti" hover-class="card-pressed">
-    <image class="card-img hero-art" src="/assets/patterns/tuan.jpg" mode="aspectFill" />
+    <image class="card-img hero-art" src="/assets/patterns/tuan.png" mode="aspectFill" />
     <view class="hero-orbit"></view>
     <view class="hero-copy">
       <view class="eyebrow">MBTI 灵魂扎染</view>
@@ -41,11 +41,11 @@
   </view>
 
   <view class="card game-entry" bindtap="goGame" hover-class="card-pressed">
-    <image class="card-img game-art" src="/assets/patterns/shui.jpg" mode="aspectFill" />
+    <image class="card-img game-art" src="/assets/patterns/shui.png" mode="aspectFill" />
     <view class="game-bubbles">
-      <image class="game-bubble game-bubble-a" src="/assets/patterns/tuan.jpg" mode="aspectFill" />
-      <image class="game-bubble game-bubble-b" src="/assets/patterns/he.jpg" mode="aspectFill" />
-      <image class="game-bubble game-bubble-c" src="/assets/patterns/ling.jpg" mode="aspectFill" />
+      <image class="game-bubble game-bubble-a" src="/assets/patterns/tuan.png" mode="aspectFill" />
+      <image class="game-bubble game-bubble-b" src="/assets/patterns/he.png" mode="aspectFill" />
+      <image class="game-bubble game-bubble-c" src="/assets/patterns/ling.png" mode="aspectFill" />
     </view>
     <view class="game-copy">
       <view class="game-h2">合成大染缸</view>

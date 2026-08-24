@@ -1,11 +1,11 @@
 {
   "patterns": {
-    "hudie": "hudie.jpg",
-    "tuan": "tuan.jpg",
-    "shui": "shui.jpg",
-    "cang": "cang.jpg",
-    "ling": "ling.jpg",
-    "he": "he.jpg"
+    "hudie": "hudie.png",
+    "tuan": "tuan.png",
+    "shui": "shui.png",
+    "cang": "cang.png",
+    "ling": "ling.png",
+    "he": "he.png"
   },
   "products": {
     "scarf": "scarf.png",

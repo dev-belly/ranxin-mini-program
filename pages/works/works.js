@@ -44,7 +44,7 @@ Page({
         if (w.patternId && !seen[w.patternId]) {
           seen[w.patternId] = true;
         }
-        const fallbackThumb = w.patternId ? '/assets/patterns/' + w.patternId + '.jpg' : '/assets/patterns/tuan.jpg';
+        const fallbackThumb = w.patternId ? '/assets/patterns/' + w.patternId + '.png' : '/assets/patterns/tuan.png';
         const dyeName = w.dyeName || '板蓝根';
         return {
           workId: w.workId || w._id || ('local_work_' + index),

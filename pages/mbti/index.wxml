@@ -15,7 +15,7 @@
     <view class="intro-art-wrap">
       <view class="intro-orbit orbit-a"></view>
       <view class="intro-orbit orbit-b"></view>
-      <image class="intro-art" src="/assets/patterns/tuan.jpg" mode="aspectFill" />
+      <image class="intro-art" src="/assets/patterns/tuan.png" mode="aspectFill" />
       <text class="intro-spark spark-a">✦</text>
       <text class="intro-spark spark-b">✦</text>
     </view>
@@ -32,7 +32,7 @@
       <view class="intro-stat"><text class="intro-number">1</text><view class="intro-label">张专属纹样</view></view>
     </view>
     <view class="sample-card liquid-glass-card">
-      <image class="sample-img" src="/assets/patterns/cang.jpg" mode="aspectFill" />
+      <image class="sample-img" src="/assets/patterns/cang.png" mode="aspectFill" />
       <view class="sample-copy">
         <view class="sample-hint">你可能会得到 <text class="sample-spark">✦</text></view>
         <view class="sample-name">INFP · 苍山暮雪</view>
@@ -61,7 +61,7 @@
             data-q="{{step}}" data-o="{{oi}}" bindtap="choose" hover-class="q-opt-hover">
             <text class="q-letter">{{letters[oi]}}</text>
             <text class="q-label">{{opt.label}}</text>
-            <image wx:if="{{selectedOption === oi}}" class="option-flower" src="/assets/patterns/tuan.jpg" mode="aspectFill" />
+            <image wx:if="{{selectedOption === oi}}" class="option-flower" src="/assets/patterns/tuan.png" mode="aspectFill" />
           </view>
         </view>
       </view>
