@@ -1,0 +1,53 @@
+:host {
+  display: inline-flex;
+  width: 56rpx;
+  height: 56rpx;
+  min-width: 56rpx;
+  max-width: 56rpx;
+  flex: 0 0 56rpx;
+  overflow: visible;
+}
+
+.rx-back-button {
+  width: 56rpx;
+  height: 56rpx;
+  min-width: 56rpx;
+  max-width: 56rpx;
+  margin: 0;
+  padding: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  line-height: 1;
+  background: rgba(255,254,249,.94);
+  border: 1.5rpx solid rgba(29,72,121,.12);
+  box-shadow: 0 5rpx 14rpx rgba(28,61,104,.10), inset 0 1rpx 0 rgba(255,255,255,.96);
+  transition: transform .16s ease, box-shadow .16s ease;
+}
+.rx-back-button::after { border: 0; }
+.rx-back-button:active {
+  transform: scale(.93);
+  box-shadow: 0 2rpx 8rpx rgba(37,61,110,.10), inset 0 1rpx 0 rgba(255,255,255,.98);
+}
+.rx-back-button.is-dark {
+  background: rgba(21,48,101,.70);
+  border-color: rgba(255,255,255,.30);
+  box-shadow: 0 9rpx 24rpx rgba(8,20,56,.22), inset 0 1rpx 0 rgba(255,255,255,.22);
+  -webkit-backdrop-filter: blur(16rpx);
+  backdrop-filter: blur(16rpx);
+}
+.rx-back-chevron {
+  width: 16rpx;
+  height: 16rpx;
+  margin-left: 5rpx;
+  border-left: 3.5rpx solid #174783;
+  border-bottom: 3.5rpx solid #174783;
+  border-radius: 2rpx;
+  transform: rotate(45deg);
+  box-sizing: border-box;
+}
+.is-dark .rx-back-chevron {
+  border-color: #fff;
+}

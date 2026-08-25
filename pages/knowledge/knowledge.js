@@ -9,6 +9,14 @@ Page({
   },
   goArticle(e) {
     const { type } = e.currentTarget.dataset;
-    wx.navigateTo({ url: '/pages/article/article?type=' + type });
+    wx.navigateTo({
+      url: '/pages/article/article?type=' + encodeURIComponent(type || 'oxidation'),
+      fail: () => wx.showToast({ title: '文章打开失败，请重试', icon: 'none' })
+    });
+  },
+  goBack() {
+    wx.navigateBack({
+      fail: () => wx.switchTab({ url: '/pages/index/index' })
+    });
   }
 });

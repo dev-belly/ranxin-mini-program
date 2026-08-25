@@ -1,0 +1,14 @@
+{
+  "pageBg": "/packageGame/assets/game/merge/background.jpg",
+  "scoreCloud": "/packageGame/assets/game/merge/score_cloud.png",
+  "gameShell": "/packageGame/assets/game/merge/game-shell.png",
+  "ruleCard": "/packageGame/assets/game/merge/rule_card.jpg",
+  "pieces": {
+    "leaf": "/packageGame/assets/game/merge/leaf.png",
+    "dye": "/packageGame/assets/game/merge/dye.png",
+    "flower": "/packageGame/assets/game/merge/flower.png",
+    "pattern": "/packageGame/assets/game/merge/pattern.png",
+    "cloth": "/packageGame/assets/game/merge/cloth.png",
+    "vat": "/packageGame/assets/game/merge/vat.png"
+  }
+}

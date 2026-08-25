@@ -1,4 +1,7 @@
 {
   "navigationBarTitleText": "纹样收集",
-  "usingComponents": {}
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "rx-back": "/components/rx-back/rx-back"
+  }
 }

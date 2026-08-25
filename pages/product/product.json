@@ -1,4 +1,7 @@
 {
   "navigationBarTitleText": "把它做成真的",
-  "usingComponents": {}
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "rx-back": "/components/rx-back/rx-back"
+  }
 }

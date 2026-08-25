@@ -32,6 +32,18 @@ Page({
   },
 
   updateComputed(item) {
+    const helperSeeds = [
+      { name: '小王', time: '刚刚帮砍', amount: -4.28 },
+      { name: 'Linda', time: '2 分钟前帮砍', amount: -6.71 },
+      { name: '阿哲', time: '10 分钟前帮砍', amount: -3.52 },
+      { name: '小棠', time: '30 分钟前帮砍', amount: -7.89 }
+    ];
+    const helpers = (item.helpers || []).map((helper, index) => {
+      const h = (helper && typeof helper === 'object') ? helper : helperSeeds[index % helperSeeds.length];
+      const amount = Number(h.amount || 0);
+      return { ...h, amount, amountText: Math.abs(amount).toFixed(2) };
+    });
+    item = { ...item, helpers };
     const totalCut = item.originalPrice - item.targetPrice;
     const leftAmount = Math.max(0, item.currentPrice - item.targetPrice);
     const progressPercent = totalCut > 0 ? ((item.originalPrice - item.currentPrice) / totalCut) * 100 : 0;
@@ -39,7 +51,7 @@ Page({
     const needInvites = avgCut > 0 ? Math.max(1, Math.ceil(leftAmount / avgCut)) : 2;
     this.setData({
       bargain: item,
-      leftAmount,
+      leftAmount: Number(leftAmount.toFixed(2)),
       progressPercent,
       needInvites,
       shareMessage: `再邀 ${needInvites} 位好友，立减 ¥${leftAmount} 带走`
@@ -52,33 +64,21 @@ Page({
   },
 
   buyNow() {
-    const order = this.data.bargain;
+    const bargain = this.data.bargain || {};
+    const order = {
+      ...bargain,
+      price: bargain.currentPrice,
+      makingDays: bargain.makingDays || '7-12 天',
+      material: bargain.material || '棉麻',
+      createdAt: bargain.createdAt || new Date().toISOString(),
+      statusIndex: 2,
+      status: 'making'
+    };
     wx.setStorageSync('ranxin_last_order', order);
     wx.showToast({ title: '已按当前价下单', icon: 'success' });
     setTimeout(() => {
       wx.navigateTo({ url: '/pages/orderProgress/orderProgress' });
     }, 600);
-  },
-
-  mockHelp() {
-    // 模拟好友帮砍，方便演示
-    const names = ['小王', 'Linda', '阿哲', '小棠', '阿宁', 'Momo'];
-    const cut = Number((Math.random() * 6 + 2).toFixed(2));
-    const bargain = { ...this.data.bargain };
-    bargain.currentPrice = Math.max(bargain.targetPrice, Number((bargain.currentPrice - cut).toFixed(2)));
-    bargain.cutTotal = Number((bargain.cutTotal + cut).toFixed(2));
-    bargain.helpers = bargain.helpers || [];
-    bargain.helpers.push({
-      name: names[Math.floor(Math.random() * names.length)],
-      time: '刚刚帮砍',
-      amount: -cut
-    });
-    if (bargain.currentPrice <= bargain.targetPrice) {
-      bargain.status = 'completed';
-    }
-    this.saveBargain(bargain);
-    this.updateComputed(bargain);
-    wx.showToast({ title: `好友已砍 ¥${cut.toFixed(2)}`, icon: 'none' });
   },
 
   saveBargain(bargain) {
@@ -98,6 +98,14 @@ Page({
     return {
       title: this.data.shareMessage || '帮我砍一刀，把扎染作品带回家',
       path: '/pages/bargainDetail/bargainDetail?id=' + b.id
+    };
+  },
+
+  onShareTimeline() {
+    const b = this.data.bargain || {};
+    return {
+      title: this.data.shareMessage || '帮我把这件扎染作品带回家',
+      query: 'id=' + (b.id || '')
     };
   }
 });

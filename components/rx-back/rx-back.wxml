@@ -1,0 +1,3 @@
+<button class="rx-back-button {{theme === 'dark' ? 'is-dark' : ''}}" bindtap="handleBack" aria-label="{{label}}">
+  <view class="rx-back-chevron"></view>
+</button>

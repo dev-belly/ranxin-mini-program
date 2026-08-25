@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "合成大染缸",
+  "navigationStyle": "custom",
+  "backgroundColor": "#f7f9ff",
+  "backgroundTextStyle": "dark",
+  "disableScroll": false,
+  "usingComponents": {
+    "rx-back": "/components/rx-back/rx-back"
+  }
+}

@@ -14,9 +14,18 @@ Component({
   methods: {
     switchTab(e) {
       const idx = Number(e.currentTarget.dataset.index);
-      const url = this.data.list[idx].pagePath;
+      const item = this.data.list[idx];
+      if (!item) return;
+      const url = item.pagePath;
       this.setData({ selected: idx });
-      wx.switchTab({ url });
+      wx.showLoading({ title: '正在切换页面', mask: true });
+      wx.switchTab({
+        url,
+        fail: () => {
+          wx.hideLoading();
+          wx.showToast({ title: '页面加载失败，请重试', icon: 'none' });
+        }
+      });
     }
   }
 });

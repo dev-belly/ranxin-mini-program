@@ -1,9 +1,15 @@
 <view class="rx-bg"></view>
 <view class="rx-page rank-page">
   <view class="rank-head">
-    <view class="back" bindtap="goBack">‹</view>
-    <view class="rank-title">解压排行榜</view>
-    <view class="rank-spark">✦</view>
+    <view class="rank-back-slot">
+      <rx-back bind:back="goBack" />
+    </view>
+    <view class="rank-heading">
+      <text class="rank-spark">✦</text>
+      <text class="rank-title">解压排行榜</text>
+      <text class="rank-spark">✦</text>
+    </view>
+    <view class="rank-menu-space" aria-hidden="true"></view>
   </view>
 
   <view class="top-tabs">
@@ -37,7 +43,7 @@
   </view>
 
   <view class="my-rank">
-    <text class="my-tag">✦ 我的排名</text>
+    <text class="my-tag">✦ {{topTab==='city' ? '我的城市排名' : '我的排名'}}</text>
     <view class="my-row">
       <image class="my-avatar" src="{{myRank.avatar}}" mode="aspectFill"/>
       <view class="my-name">{{myRank.name}}</view>

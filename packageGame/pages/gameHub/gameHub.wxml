@@ -1,0 +1,120 @@
+<view class="hub-scene">
+  <view class="paper-grid"></view>
+  <view class="aurora aurora-top"></view>
+  <view class="aurora aurora-bottom"></view>
+
+  <view class="hub-page">
+    <view class="hub-back-shell"><rx-back bind:back="goBack" /></view>
+
+    <view class="hub-hero">
+      <view class="hero-thread thread-a"></view>
+      <view class="hero-thread thread-b"></view>
+      <view class="hero-copy">
+        <view class="hero-brand"><text class="hero-brand-star">✦</text> 染心 · 纹样游戏坊</view>
+        <view class="hero-kicker">染纹成章，玩出你的蓝</view>
+        <view class="hero-title">合成大染缸</view>
+        <view class="hero-desc">两种玩法，两种节奏。让白族纹样在指尖相遇、生长。</view>
+        <view class="hero-status">
+          <view class="status-dot"></view>
+          <text>{{propsHint}}</text>
+        </view>
+      </view>
+
+      <view class="hero-art">
+        <view class="orbit orbit-outer"></view>
+        <view class="orbit orbit-inner"></view>
+        <view class="hero-motif">
+          <image class="motif-image" src="/packageGame/assets/patterns/cang.jpg" mode="aspectFill" />
+        </view>
+        <view class="hero-satellite satellite-a"><image class="motif-image" src="/packageGame/assets/patterns/ling.jpg" mode="aspectFill" /></view>
+        <view class="hero-satellite satellite-b"><image class="motif-image" src="/packageGame/assets/patterns/he.jpg" mode="aspectFill" /></view>
+        <text class="hero-star star-a">✦</text>
+        <text class="hero-star star-b">✦</text>
+      </view>
+    </view>
+
+    <view class="section-head">
+      <view>
+        <view class="section-eyebrow">CHOOSE YOUR PLAY</view>
+        <view class="section-title">选择你的染纹方式</view>
+      </view>
+      <view class="game-count"><text class="game-count-num">02</text><view class="game-count-label">款游戏</view></view>
+    </view>
+
+    <view class="game-list">
+      <view class="game-card classic" bindtap="goClassic" hover-class="game-card-active">
+        <view class="card-glow"></view>
+        <view class="card-index">01</view>
+        <view class="card-content">
+          <view class="card-copy">
+            <view class="card-label"><text class="card-label-line"></text>经典策略</view>
+            <view class="card-name">纹样三消</view>
+            <view class="card-desc">在深蓝棋盘续起同纹针脚，交换、连锁，用有限步数绣成高分花章。</view>
+          </view>
+
+          <view class="match-preview">
+            <view class="preview-halo"></view>
+            <view class="mini-board">
+              <image class="mini-tile" src="/packageGame/assets/patterns/ling.jpg" mode="aspectFill" />
+              <image class="mini-tile" src="/packageGame/assets/patterns/he.jpg" mode="aspectFill" />
+              <image class="mini-tile" src="/packageGame/assets/patterns/shui.jpg" mode="aspectFill" />
+              <image class="mini-tile" src="/packageGame/assets/patterns/ling.jpg" mode="aspectFill" />
+              <image class="mini-tile" src="/packageGame/assets/patterns/cang.jpg" mode="aspectFill" />
+              <image class="mini-tile matched" src="/packageGame/assets/patterns/ling.jpg" mode="aspectFill" />
+              <image class="mini-tile matched" src="/packageGame/assets/patterns/ling.jpg" mode="aspectFill" />
+              <image class="mini-tile matched" src="/packageGame/assets/patterns/ling.jpg" mode="aspectFill" />
+              <image class="mini-tile" src="/packageGame/assets/patterns/he.jpg" mode="aspectFill" />
+              <image class="mini-tile" src="/packageGame/assets/patterns/shui.jpg" mode="aspectFill" />
+              <image class="mini-tile" src="/packageGame/assets/patterns/cang.jpg" mode="aspectFill" />
+              <image class="mini-tile" src="/packageGame/assets/patterns/he.jpg" mode="aspectFill" />
+            </view>
+            <view class="combo-badge">3 COMBO</view>
+          </view>
+        </view>
+
+        <view class="card-footer">
+          <view class="card-tags"><text class="card-tag">6×7 棋盘</text><text class="card-tag">25 步</text><text class="card-tag">目标 2400</text></view>
+          <view class="enter-btn"><text class="enter-label">开始三消</text><view class="enter-arrow">›</view></view>
+        </view>
+      </view>
+
+      <view class="game-card merge" bindtap="goMerge" hover-class="game-card-active">
+        <view class="card-glow"></view>
+        <view class="card-index">02</view>
+        <view class="card-content">
+          <view class="card-copy">
+            <view class="card-label"><text class="card-label-line"></text>治愈合成</view>
+            <view class="card-name">纹样合成</view>
+            <view class="card-desc">让蓝染绣球自然落入染缸，同级纹样碰撞升级，合出终极纹样。</view>
+          </view>
+
+          <view class="merge-preview">
+            <view class="merge-ring ring-one"></view>
+            <view class="merge-ring ring-two"></view>
+            <view class="merge-line"></view>
+            <view class="merge-orb orb-a"><image class="merge-orb-img" src="/packageGame/assets/patterns/he.jpg" mode="aspectFill" /></view>
+            <view class="merge-orb orb-b"><image class="merge-orb-img" src="/packageGame/assets/patterns/shui.jpg" mode="aspectFill" /></view>
+            <view class="merge-plus">＋</view>
+            <view class="merge-orb orb-result"><image class="merge-orb-img" src="/packageGame/assets/patterns/cang.jpg" mode="aspectFill" /></view>
+            <text class="merge-spark">✦</text>
+          </view>
+        </view>
+
+        <view class="card-footer">
+          <view class="card-tags"><text class="card-tag">物理掉落</text><text class="card-tag">6 级纹样</text><text class="card-tag">连续合成</text></view>
+          <view class="enter-btn"><text class="enter-label">开始合成</text><view class="enter-arrow">›</view></view>
+        </view>
+      </view>
+    </view>
+
+    <view class="progress-panel">
+      <view class="progress-icon">染</view>
+      <view class="progress-copy">
+        <view class="progress-kicker">你的染纹进度</view>
+        <view class="progress-title">{{gameCount > 0 ? '已完成 ' + gameCount + ' 次通关' : '从第一枚纹样开始'}}</view>
+      </view>
+      <view class="progress-rule"></view>
+      <view class="progress-note"><text>双玩法共享</text><text>纹样与道具</text></view>
+    </view>
+  </view>
+</view>

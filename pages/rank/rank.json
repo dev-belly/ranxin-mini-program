@@ -1,5 +1,7 @@
 {
   "navigationBarTitleText": "解压排行榜",
   "navigationStyle": "custom",
-  "usingComponents": {}
+  "usingComponents": {
+    "rx-back": "/components/rx-back/rx-back"
+  }
 }

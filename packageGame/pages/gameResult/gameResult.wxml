@@ -1,0 +1,74 @@
+<view class="result-page">
+  <view class="result-bg"></view>
+  <view class="ink-cloud ink-cloud-left"></view>
+  <view class="ink-cloud ink-cloud-right"></view>
+
+  <view class="result-nav">
+    <rx-back label="返回游戏坊" bind:back="goGameHub" />
+    <button class="share-button" open-type="share"><text class="share-icon">↗</text> 分享战绩</button>
+  </view>
+
+  <view class="result-content">
+    <view class="result-eyebrow">{{eyebrow}}</view>
+    <view class="hero-title">{{title}}</view>
+    <view class="hero-subtitle">{{subtitle}} <text class="spark">✦</text></view>
+
+    <view class="reward-card glass-card">
+      <view class="reward-copy">
+        <view class="reward-label">{{rewardLabel}} <text class="spark">✦</text></view>
+        <view class="reward-name">{{rewardName}}</view>
+        <view class="reward-state">已加入你的纹样库 <text class="reward-check">✓</text></view>
+      </view>
+      <view class="reward-art-stage">
+        <view class="reward-orbit"></view>
+        <image class="reward-art" src="{{rewardThumb}}" mode="aspectFill" />
+        <text class="reward-star star-a">✦</text>
+        <text class="reward-star star-b">✦</text>
+      </view>
+    </view>
+
+    <view class="score-card glass-card">
+      <view class="score-kicker">这一局，你收获了</view>
+      <view class="score-line"><text class="score-spark">✦</text><text class="score-number">{{scoreDisplay}}</text><text class="score-unit">分</text></view>
+      <view class="score-rule"></view>
+      <view class="score-stats">
+        <view class="score-stat {{index ? 'with-divider' : ''}}" wx:for="{{stats}}" wx:key="label">
+          <view class="stat-value">{{item.value}}</view>
+          <view class="stat-label">{{item.label}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="mindful-row">
+      <view class="mindful-star">✦</view>
+      <view class="mindful-copy">
+        <view>{{message}}</view>
+        <view class="reward-story">{{rewardStory}}</view>
+      </view>
+    </view>
+
+    <button class="diy-button" bindtap="goDiy">收下纹样，开始 DIY <text>✦</text></button>
+    <view class="secondary-actions">
+      <button class="secondary-button" bindtap="replay"><text class="secondary-icon">↻</text> 再玩一局</button>
+      <button class="secondary-button secondary-button-last" bindtap="goRank"><text class="secondary-icon">♛</text> 查看排行榜</button>
+    </view>
+
+    <view class="library-card glass-card" wx:if="{{library.length}}">
+      <view class="library-head">
+        <view class="library-title">我的纹样库 <text class="spark">✦</text></view>
+        <view class="library-count">已收集 {{libraryTotal}} 枚纹样</view>
+      </view>
+      <view class="library-list">
+        <view class="library-item {{index ? 'library-item-spaced' : ''}}" wx:for="{{library}}" wx:key="id">
+          <view class="library-art-wrap">
+            <image class="library-art" src="{{item.thumb}}" mode="aspectFill" />
+            <view class="new-badge" wx:if="{{item.id === rewardId}}">NEW</view>
+          </view>
+          <view class="library-name">{{item.name}}</view>
+        </view>
+      </view>
+    </view>
+
+    <button class="hub-link" bindtap="goGameHub">返回游戏坊</button>
+  </view>
+</view>

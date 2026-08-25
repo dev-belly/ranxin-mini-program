@@ -1,20 +1,25 @@
 <view class="rx-bg"></view>
+<view class="nav-bar">
+  <rx-back bind:back="goBack" />
+  <view class="nav-title">把它做成真的</view>
+  <view class="nav-right" aria-hidden="true"></view>
+</view>
+
 <view class="rx-page product-page">
-  <view class="nav-bar">
-    <view class="back" bindtap="goBack">‹</view>
-    <view class="nav-title">把它做成真的</view>
-    <view class="nav-right"></view>
-  </view>
 
   <view class="preview-card rx-card">
-    <image class="preview-img" src="{{previewImage}}" mode="aspectFill" lazy-load></image>
-    <view class="pattern-tag rx-tag">纹样：{{patternName}}</view>
+    <image class="preview-img" src="{{previewImage}}" mode="aspectFill"></image>
+    <view wx:if="{{hasCustomArtwork}}" class="artwork-proof">
+      <image src="{{artworkImage}}" mode="aspectFill"></image>
+      <view><text>本次作品纹样</text><text>已带入定制方案</text></view>
+    </view>
+    <view class="pattern-tag rx-tag"><text class="tag-flower">✤</text>纹样：{{patternName}}</view>
   </view>
 
   <view class="options-block">
     <view class="opt-group" wx:for="{{optionGroups}}" wx:key="key" wx:for-item="grp">
       <view class="opt-label">{{grp.label}}</view>
-      <view class="opt-chips">
+      <view class="opt-chips opt-chips-{{grp.key}}">
         <view wx:for="{{grp.choices}}" wx:key="id"
               class="rx-chip {{selected[grp.key] === item.id ? 'active' : ''}}"
               data-group="{{grp.key}}" data-id="{{item.id}}"
@@ -26,7 +31,7 @@
   </view>
 
   <view class="workshop-card rx-card">
-    <view class="ws-label">制作方式</view>
+    <view class="ws-label"><text class="ws-icon">◌</text> 制作方式</view>
     <view class="ws-title">云南大理合作工坊手工制作</view>
     <view class="ws-meta">预计 {{makingDays}} 完成</view>
     <view class="ws-desc">你的数字作品将发送至合作工坊进行制作</view>
@@ -42,7 +47,28 @@
     <text class="price-note">含手工制作与基础包装</text>
   </view>
   <view class="actions">
-    <view class="rx-btn-secondary confirm-btn" bindtap="confirmOrder">确认定制</view>
-    <view class="rx-btn-primary bargain-btn" bindtap="inviteBargain">邀请好友砍价</view>
+    <view class="rx-btn-primary confirm-btn" bindtap="confirmOrder">确认定制</view>
+    <view class="rx-btn-secondary bargain-btn" bindtap="inviteBargain">
+      <view class="people-icon" aria-hidden="true">
+        <view class="people-head-one"></view>
+        <view class="people-head-two"></view>
+        <view class="people-shoulders"></view>
+      </view>
+      <text>邀请好友砍价</text>
+    </view>
+  </view>
+</view>
+
+<view wx:if="{{showDuplicateDialog}}" class="duplicate-mask" bindtap="closeDuplicateDialog" catchtouchmove="noop">
+  <view class="duplicate-dialog" catchtap="noop">
+    <view class="duplicate-mark">◇</view>
+    <view class="duplicate-title">这件作品正在砍价</view>
+    <view class="duplicate-copy">
+      “{{duplicateBargain.patternName}} · {{duplicateBargain.type}}”已有进行中的砍价链接。你可以继续原来的进度，也可以主动再创建一个。
+    </view>
+    <view class="duplicate-actions">
+      <button class="duplicate-btn duplicate-continue" bindtap="continueExistingBargain">继续原砍价</button>
+      <button class="duplicate-btn duplicate-create" bindtap="createAnotherBargain">再创建一个</button>
+    </view>
   </view>
 </view>

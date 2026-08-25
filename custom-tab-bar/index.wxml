@@ -1,14 +1,16 @@
-<cover-view class="tabbar">
-  <cover-view class="tab {{selected===0?'on':''}}" data-index="0" bindtap="switchTab">
-    <cover-view class="ic">🎨</cover-view>
-    <cover-view class="t">情绪染坊</cover-view>
-  </cover-view>
-  <cover-view class="tab {{selected===1?'on':''}}" data-index="1" bindtap="switchTab">
-    <cover-view class="ic">🪢</cover-view>
-    <cover-view class="t">正念DIY</cover-view>
-  </cover-view>
-  <cover-view class="tab {{selected===2?'on':''}}" data-index="2" bindtap="switchTab">
-    <cover-view class="ic">🖼</cover-view>
-    <cover-view class="t">我的作品</cover-view>
-  </cover-view>
-</cover-view>
+<!-- 自定义玻璃 tabBar：仿苹果 App Store 液态玻璃胶囊
+   三个 tab 与 app.json tabBar.list 对应 -->
+<view class="tabbar">
+  <view class="tab {{selected===0?'on':''}}" data-index="0" bindtap="switchTab">
+    <view class="ic icon-dye"><view class="icon-core">✦</view></view>
+    <view class="t" data-index="0" catchtap="switchTab">情绪染坊</view>
+  </view>
+  <view class="tab {{selected===1?'on':''}}" data-index="1" bindtap="switchTab">
+    <view class="ic icon-vessel"><view class="vessel-neck"></view><view class="vessel-star">✦</view></view>
+    <view class="t" data-index="1" catchtap="switchTab">正念DIY</view>
+  </view>
+  <view class="tab {{selected===2?'on':''}}" data-index="2" bindtap="switchTab">
+    <view class="ic icon-frame"><view class="frame-sun"></view><view class="frame-mountain"></view></view>
+    <view class="t" data-index="2" catchtap="switchTab">我的作品</view>
+  </view>
+</view>

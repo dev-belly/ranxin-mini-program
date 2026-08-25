@@ -1,3 +1,5 @@
+.kn-root { position: relative; min-height: 100vh; overflow-x: hidden; }
+.kn-root .kn-page { position: relative; z-index: 1; }
 .kn-page { padding-top: 40rpx; }
 .kn-hero {
   position: relative;
