@@ -1,0 +1,9 @@
+{
+  "name": "cleanupOld",
+  "version": "1.0.0",
+  "description": "一次性清理无 _openid 的旧测试数据",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}
