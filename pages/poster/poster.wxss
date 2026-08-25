@@ -16,12 +16,17 @@
 
 .nav-bar {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 120rpx;
-  padding-top: env(safe-area-inset-top);
+  height: 64rpx;
+  padding-top: 20px;
   box-sizing: content-box;
+}
+.back-slot {
+  position: absolute;
+  z-index: 4;
+  left: -8rpx;
+  width: 56rpx;
+  height: 56rpx;
+  transform: translateY(-50%);
 }
 .back {
   width: 67rpx;
@@ -39,55 +44,74 @@
 }
 .back:active { transform: scale(.95); }
 .nav-title {
+  position: absolute;
+  z-index: 2;
+  left: 72rpx;
+  margin-left: 0;
   font-size: 35rpx;
   font-weight: 700;
   letter-spacing: 7rpx;
   color: #183b5d;
-}
-.nav-right {
-  width: 67rpx;
-  height: 67rpx;
+  white-space: nowrap;
+  transform: translateY(-50%);
 }
 .share-btn {
+  position: absolute;
+  z-index: 3;
+  top: 36px;
+  width: 56rpx;
+  min-width: 56rpx;
+  max-width: 56rpx;
+  height: 56rpx;
+  min-height: 56rpx;
+  flex: 0 0 56rpx;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
   border-radius: 50%;
   background: rgba(255, 255, 255, .92);
+  border: 1.5rpx solid rgba(29,72,121,.12);
   box-shadow: 0 8rpx 22rpx rgba(46, 69, 101, .14);
   display: flex;
   align-items: center;
   justify-content: center;
+  line-height: 1;
+  transform: translateY(-50%);
 }
 .share-btn::after { border: 0; }
-.share-btn:active { transform: scale(.95); }
+.share-btn:active { transform: translateY(-50%) scale(.95); }
 .share-icon {
-  width: 30rpx;
-  height: 30rpx;
-  border: 4rpx solid #173e62;
-  border-radius: 6rpx;
   position: relative;
+  width: 27rpx;
+  height: 24rpx;
+  margin-top: 7rpx;
+  border: 3rpx solid #173e62;
+  border-top: 0;
+  border-radius: 0 0 5rpx 5rpx;
+  box-sizing: border-box;
 }
 .share-icon:before {
   content: "";
   position: absolute;
-  left: -14rpx;
-  top: -10rpx;
-  width: 26rpx;
-  height: 4rpx;
+  left: 50%;
+  top: -14rpx;
+  width: 3rpx;
+  height: 19rpx;
   background: #173e62;
-  border-radius: 4rpx;
-  transform: rotate(-38deg);
+  border-radius: 3rpx;
+  transform: translateX(-50%);
 }
 .share-icon:after {
   content: "";
   position: absolute;
-  left: 16rpx;
-  top: -20rpx;
-  width: 18rpx;
-  height: 18rpx;
-  border: 4rpx solid #173e62;
-  border-radius: 50%;
-  background: #fff;
+  left: 50%;
+  top: -14rpx;
+  width: 11rpx;
+  height: 11rpx;
+  border-left: 3rpx solid #173e62;
+  border-top: 3rpx solid #173e62;
+  box-sizing: border-box;
+  transform: translateX(-50%) rotate(45deg);
 }
 
 /* 海报主体 */

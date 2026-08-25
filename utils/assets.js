@@ -1,8 +1,24 @@
 // 归属：B｜核心交互 Owner
 // 资源加载辅助：真实图片优先，程序化渲染兜底。
 // 用法：在页面 onLoad 时 resolvePatternAssets(catalog)，得到 { id: { file, hasImage } }。
-// 图片放入 assets/patterns/ 且文件名与 manifest.json 一致即可自动启用，无需改代码。
-const manifest = require('../assets/patterns/manifest.json');
+// 小程序运行时不能稳定 require 任意 JSON（会被解析成不存在的 .json.js 模块），
+// 因此把这份很小的打包清单保留为 JS 常量；manifest.json 继续作为资源说明文件。
+const manifest = {
+  patterns: {
+    hudie: 'hudie.jpg',
+    tuan: 'tuan.jpg',
+    shui: 'shui.jpg',
+    cang: 'cang.jpg',
+    ling: 'ling.jpg',
+    he: 'he.jpg',
+    heling: 'heling.jpg'
+  },
+  products: {
+    scarf: 'scarf.png',
+    bag: 'bag.png',
+    pillow: 'pillow.png'
+  }
+};
 
 function assetPath(file) {
   if (!file) return '';

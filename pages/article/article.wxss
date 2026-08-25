@@ -1,3 +1,5 @@
+.art-root { position: relative; min-height: 100vh; overflow-x: hidden; }
+.art-root .art-page { position: relative; z-index: 1; }
 .art-page { padding-top: 40rpx; }
 .art-hero { margin-bottom: 28rpx; }
 .art-spark { font-size: 44rpx; font-weight: 700; color: #173d79; font-family: "Songti SC","STSong",serif; }

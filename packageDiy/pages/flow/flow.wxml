@@ -41,16 +41,21 @@
       </view>
     </view>
     <button class="primary-button" bindtap="goFabricNext">下一步 · 选择纹样 <text>›</text></button>
+    <view class="stage-bottom-safe" aria-hidden="true"></view>
   </scroll-view>
 
-  <!-- A 2.2：两页，每页 2×3，共 12 枚 -->
+  <!-- A 2.2：分类筛选，每页最多 2×3 六枚 -->
   <scroll-view wx:if="{{stage==='pattern'}}" scroll-y enhanced show-scrollbar="{{false}}" class="pattern-stage">
     <view class="stage-subtitle">选择你今天想染下的形状</view>
     <view class="pattern-tabs">
       <view wx:for="{{patternCategories}}" wx:key="*this" class="pattern-tab {{activeCategory===item?'active':''}}" data-category="{{item}}" bindtap="setPatternCategory" aria-role="button" aria-label="{{item}}"><text class="pattern-tab-label">{{item}}</text></view>
     </view>
-    <view class="page-count">{{patternPage + 1}} / 2</view>
+    <view class="page-count">{{patternPageNumber}} / {{patternPageCount}}</view>
     <view class="pattern-viewport" bindtouchstart="onPatternTouchStart" bindtouchend="onPatternTouchEnd">
+      <view wx:if="{{patternCategoryEmpty}}" class="pattern-empty">
+        <text>这一类还没有可展示的纹样</text>
+        <text>稍后解锁新纹样后再来看看</text>
+      </view>
       <view class="pattern-grid">
         <block wx:for="{{currentPatterns}}" wx:key="id">
           <view class="pattern-card {{selectedPatternId===item.id?'selected':''}} {{item.unlocked?'':'locked'}}" data-id="{{item.id}}" bindtap="choosePattern">
@@ -65,11 +70,11 @@
       </view>
     </view>
     <view class="pattern-pager">
-      <view class="pager-hit {{patternPage===0?'disabled':''}}" bindtap="prevPatternPage" aria-role="button" aria-label="上一页"><text>‹</text></view>
-      <view class="page-dots"><view class="page-dot {{patternPage===0?'active':''}}"></view><view class="page-dot {{patternPage===1?'active':''}}"></view></view>
-      <view class="pager-hit {{patternPage===1?'disabled':''}}" bindtap="nextPatternPage" aria-role="button" aria-label="下一页"><text>›</text></view>
+      <view class="pager-hit {{!canPatternPrev?'disabled':''}}" bindtap="prevPatternPage" aria-role="button" aria-label="上一页"><text>‹</text></view>
+      <view class="page-dots"><view wx:for="{{patternPageDots}}" wx:key="index" class="page-dot {{item.active?'active':''}}"></view></view>
+      <view class="pager-hit {{!canPatternNext?'disabled':''}}" bindtap="nextPatternPage" aria-role="button" aria-label="下一页"><text>›</text></view>
     </view>
-    <view class="story-card" bindtap="openPatternStory">
+    <view wx:if="{{!patternCategoryEmpty}}" class="story-card" bindtap="openPatternStory">
       <view class="story-title"><text>✦</text> 纹样故事 · {{selectedPattern.name}}</view>
       <view class="story-body">{{selectedPattern.story}}</view>
       <view class="story-actions">
@@ -77,26 +82,22 @@
         <view class="story-cta" catchtap="beginCraft" aria-role="button">用这枚纹样开始扎结 <text>›</text></view>
       </view>
     </view>
+    <view class="stage-bottom-safe" aria-hidden="true"></view>
   </scroll-view>
 
-  <!-- A 2.3：可拖节点、撤销/重做、四项参数同时可见 -->
-  <scroll-view wx:if="{{stage==='craft'}}" scroll-y class="stage-scroll craft-stage" enhanced show-scrollbar="{{false}}">
+  <!-- A 2.3：可拖节点、撤销/整体复原、四项参数同时可见 -->
+  <scroll-view wx:if="{{stage==='craft'}}" scroll-y="{{!craftInteracting}}" class="stage-scroll craft-stage" enhanced show-scrollbar="{{false}}" bindscroll="onCraftScroll">
     <view class="craft-subtitle">拖动、旋转与扎结，做出你的专属纹样</view>
     <view class="craft-art-card">
       <image class="craft-base-image" src="/packageDiy/assets/craft-base.jpg" mode="aspectFill" />
       <!-- Canvas 2D 在 iOS 真机同样属于原生层。确认弹窗打开时必须卸载，
            否则它会盖住普通 view 弹窗的标题与正文。 -->
-      <canvas wx:if="{{!showCraftConfirm}}" type="2d" id="craft-canvas" class="craft-canvas" aria-label="实时生成的扎染纹样"></canvas>
-      <!-- Canvas 2D 是原生绘图层；操作控件必须用 cover-view 才不会被画布遮住。 -->
-      <cover-view wx:if="{{!showCraftConfirm}}" id="node-layer" class="node-layer" catchtouchmove="onNodeTouchMove" bindtouchstart="onCanvasTouchStart" bindtouchend="onNodeTouchEnd" bindtouchcancel="onNodeTouchEnd">
-        <cover-view wx:for="{{guideLines}}" wx:key="index" class="guide-line" style="{{item.style}}"></cover-view>
-        <cover-view class="center-node">＋</cover-view>
-        <cover-view wx:for="{{nodePoints}}" wx:key="index" class="drag-node" style="{{item.style}}" data-index="{{item.index}}" catchtouchstart="onNodeTouchStart">✦</cover-view>
-      </cover-view>
-      <cover-view wx:if="{{!showCraftConfirm}}" class="art-tool undo {{!canUndo?'disabled':''}}" bindtap="undo">↶ 撤销</cover-view>
-      <cover-view wx:if="{{!showCraftConfirm}}" class="art-tool redo {{!canRedo?'disabled':''}}" bindtap="redo">重做 ↷</cover-view>
-      <cover-view wx:if="{{!showCraftConfirm}}" class="live-note">纹样实时生成中</cover-view>
-      <cover-view wx:if="{{!showCraftConfirm}}" class="gesture-hint">☝ 拖动节点调整位置　◌ 双指旋转全局角度</cover-view>
+      <!-- 控制点、工具与提示只在 Canvas 内绘制。不要再叠 cover-view：
+           iOS 真机滚动 enhanced scroll-view 时，原生覆盖层会脱离卡片并留下残影。 -->
+      <canvas wx:if="{{!showCraftConfirm}}" type="2d" id="craft-canvas" class="craft-canvas"
+              catchtouchstart="onCanvasTouchStart" catchtouchmove="onNodeTouchMove"
+              catchtouchend="onNodeTouchEnd" catchtouchcancel="onNodeTouchEnd"
+              aria-label="实时生成的扎染纹样，可拖动节点并双指旋转"></canvas>
     </view>
 
     <view class="parameter-card">
@@ -132,6 +133,7 @@
     </view>
     <view class="craft-tip"><text>✦</text><text class="strong">小提示：</text>扎得更紧，染色边界会更清晰。</view>
     <view class="dual-actions"><button class="secondary-button" bindtap="resetCraft">↻ 重置纹样</button><button class="primary-button compact" bindtap="openCraftConfirm">下一步 · 开始入染 ›</button></view>
+    <view class="stage-bottom-safe" aria-hidden="true"></view>
   </scroll-view>
 
   <!-- A 2.4：颜色/浓度/方式三者实时改变效果 -->
@@ -158,12 +160,13 @@
     </view>
     <view class="glass-card methods-card">
       <view class="section-title">入染方式</view>
-      <button wx:for="{{dyeMethods}}" wx:key="id" class="dye-method {{dyeMethod===item.id?'selected':''}}" data-id="{{item.id}}" bindtap="chooseDyeMethod">
+      <view wx:for="{{dyeMethods}}" wx:key="id" class="dye-method {{dyeMethod===item.id?'selected':''}}" data-id="{{item.id}}" bindtap="chooseDyeMethod" role="button" aria-label="{{item.name}}：{{item.desc}}">
         <image src="/packageDiy/assets/dye-{{item.id}}.jpg" mode="aspectFit" /><view><view class="method-name">{{item.name}} <text wx:if="{{item.id==='local'}}">推荐</text></view><text>{{item.desc}}</text></view><view class="choice-ring">{{dyeMethod===item.id?'✓':''}}</view>
-      </button>
+      </view>
     </view>
-    <button class="primary-button" bindtap="openDyeConfirm">开始入染</button>
-    <button class="secondary-button full" bindtap="openDyeVideo">▷ 查看入染视频</button>
+    <button class="primary-button stage-cta" bindtap="openDyeConfirm">开始入染</button>
+    <button class="secondary-button full stage-cta" bindtap="openDyeVideo">▷ 查看入染视频</button>
+    <view class="stage-bottom-safe" aria-hidden="true"></view>
   </scroll-view>
 
   <!-- A 2.5：1–5 分钟可调、双图预览、进度与演示视频同步 -->
@@ -194,10 +197,11 @@
       <view><text class="tip-heading">◉ 小贴士</text><text>靛蓝是一种天然染料，遇空气中的氧气会发生氧化反应，颜色会由浅变深，花纹也会更加清晰立体。保持布料湿润并通风，有助于获得更均匀的蓝色效果。</text></view>
       <image src="/packageDiy/assets/oxidation-tip.jpg" mode="aspectFit" />
     </view>
-    <button wx:if="{{!oxidationDone}}" class="primary-button" bindtap="openOxidation">开始氧化 ✣</button>
-    <button wx:else class="primary-button" bindtap="continueToUnfold">氧化完成 · 开始拆结 ›</button>
-    <button class="secondary-button full" bindtap="goBack">不满意，返回上一步</button>
+    <button wx:if="{{!oxidationDone}}" class="primary-button stage-cta" bindtap="openOxidation">开始氧化 ✣</button>
+    <button wx:else class="primary-button stage-cta" bindtap="continueToUnfold">氧化完成 · 开始拆结 ›</button>
+    <button class="secondary-button full stage-cta" bindtap="goBack">不满意，返回上一步</button>
     <view class="button-note">可返回重新调整入染颜色与浓度</view>
+    <view class="stage-bottom-safe" aria-hidden="true"></view>
   </scroll-view>
 
   <!-- A 2.6：无错误的“展开到80%”门禁，主出口直达实物 -->
@@ -222,9 +226,13 @@
       <view class="section-title"><view class="bulb-badge">✦</view> 拆结小贴士 <text class="title-spark">✦</text></view>
       <view><text>⌁</text>沿打结方向轻轻松开</view><view><text>✂</text>局部过紧可用剪刀辅助</view><view><text>♧</text>拆结后及时清洗定色</view>
     </view>
-    <view class="dual-actions"><button class="secondary-button" bindtap="goBack">返回上一步</button><button class="primary-button compact" bindtap="makePhysical" loading="{{savingPhysical}}">把作品变成实物 ✦</button></view>
+    <view class="unfold-actions" role="group" aria-label="拆结完成操作">
+      <button class="unfold-action-button unfold-action-back" bindtap="goBack">返回上一步</button>
+      <button class="unfold-action-button unfold-action-physical" bindtap="makePhysical" loading="{{savingPhysical}}"><text>把作品变成实物</text><text class="unfold-action-spark">✦</text></button>
+    </view>
     <button class="works-link" bindtap="goToPoster" loading="{{savingPhysical}}">保存并生成作品海报 →</button>
     <button class="works-link" bindtap="saveAndViewWorks" loading="{{savingPhysical}}">先保存并查看我的作品 →</button>
+    <view class="stage-bottom-safe" aria-hidden="true"></view>
   </scroll-view>
 
   <!-- 纹样故事 -->

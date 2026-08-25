@@ -3,7 +3,7 @@
 // 规则引擎：game-physics.js（纯函数，7×6 棋盘 / 6 纹样 / 目标 2400 / 25 步）
 // 奖励体系：通关计 ranxin_game_clears → 阶梯解锁纹样；ranxin_game_props 道具永久累积
 const engine = require('./game-physics.js');
-const api = require('../../../utils/api.js');
+const api = require('../../utils/api.js');
 
 const TILE_IMG = {
   blue: '/packageGame/assets/game/tile-blue.png',
@@ -19,8 +19,18 @@ const REWARDS = [
   { key: 'shui', name: '水波纹', thumb: '/packageGame/assets/patterns/shui.jpg', story: '水波不兴，心绪随之沉静。' },
   { key: 'cang', name: '山水纹', thumb: '/packageGame/assets/patterns/cang.jpg', story: '远山近水，胸中自有丘壑。' },
   { key: 'ling', name: '菱形纹', thumb: '/packageGame/assets/patterns/ling.jpg', story: '菱花层叠，秩序而生美感。' },
-  { key: 'he',   name: '卷草纹', thumb: '/packageGame/assets/patterns/he.jpg',   story: '卷草缠绕，生生不息。' }
+  { key: 'heling', name: '鹤翎纹', thumb: '/packageGame/assets/patterns/heling.jpg', story: '鹤羽舒展，把轻盈与自由留在布上。' }
 ];
+
+function rememberLocalPattern(patternId) {
+  if (!patternId) return;
+  try {
+    const saved = wx.getStorageSync('ranxin_unlocked_patterns');
+    const unlocked = Array.isArray(saved) ? saved.slice() : [];
+    if (unlocked.indexOf(patternId) < 0) unlocked.push(patternId);
+    wx.setStorageSync('ranxin_unlocked_patterns', unlocked);
+  } catch (e) {}
+}
 
 Page({
   data: {
@@ -37,7 +47,12 @@ Page({
     toastVisible: false,
     toastText: '',
     ghosts: [],
+    navigationGuardVisible: true,
     winVisible: false,
+    resultPassed: true,
+    resultEyebrow: '通关结算',
+    resultTitle: '染力达成 ✦',
+    resultMessage: '',
     winScore: '0',
     winStars: 0,
     winDuration: '0',
@@ -45,6 +60,8 @@ Page({
     rewardName: '',
     rewardThumb: '',
     rewardStory: '',
+    rewardLabel: '',
+    diyPatternId: 'shui',
     winProps: '',
     collectProgress: '',
     nextRewardName: '',
@@ -74,6 +91,18 @@ Page({
     this._newGame();
   },
 
+  onShow() {
+    if (!this._allowGuardClose && !this.data.navigationGuardVisible) {
+      this.setData({ navigationGuardVisible: true });
+    }
+  },
+
+  onUnload() {
+    if (this._toastTimer) clearTimeout(this._toastTimer);
+    if (this._guardTimer) clearTimeout(this._guardTimer);
+    this._allowGuardClose = true;
+  },
+
   _loadRewardPreview() {
     try {
       const clears = Number(wx.getStorageSync('ranxin_game_clears')) || 0;
@@ -93,11 +122,18 @@ Page({
     this._combo = 0;
     this._busy = false;
     this._clearMode = false;
+    this._selected = null;
+    this._moveCell = null;
+    this._resultOpening = false;
+    const propsBase = this._propsBase || { swap: 0, clear: 0, shuffle: 0 };
     this.setData({
       tiles: this._renderTiles(board),
       scoreDisplay: '0',
       moves: engine.INITIAL_MOVES,
       progressStyle: 'width:0%',
+      swapLeft: 1 + (Number(propsBase.swap) || 0),
+      clearLeft: 1 + (Number(propsBase.clear) || 0),
+      shuffleLeft: 1 + (Number(propsBase.shuffle) || 0),
       winVisible: false,
       ghosts: [],
       clearMode: false,
@@ -179,9 +215,8 @@ Page({
   // 手指按下：记录起点格
   onTileTouchStart(e) {
     if (this._busy) return;
-    // 消除道具模式：点哪格消哪格
+    // 消除道具用完整 tap 确认，避免 touchstart 刚触屏或轻微滑动时误消。
     if (this._clearMode || this.data.clearMode) {
-      this._doClearTile(this._cellFromEvent(e));
       return;
     }
     // 先刷新棋盘 rect（滑动终点换算依赖它）
@@ -238,6 +273,11 @@ Page({
     this._selected = null;
     this._moveCell = null;
     this._markSelected(null);
+  },
+
+  onTileTap(e) {
+    if (this._busy || !(this._clearMode || this.data.clearMode)) return;
+    this._doClearTile(this._cellFromEvent(e));
   },
 
   // 高亮预览目标格（不改变选中状态）
@@ -349,6 +389,8 @@ Page({
   // ---------- 道具 ----------
   useSwapTool() {
     if (this._busy || this.data.swapLeft <= 0) return;
+    this._clearMode = false;
+    this.setData({ clearMode: false });
     // 换一换：寻找第一对可产生消除的相邻格子并交换
     const board = this._board;
     let found = null;
@@ -374,33 +416,52 @@ Page({
   beginClearTool() {
     if (this._busy) return;
     if (this.data.clearLeft <= 0) return this._toast('消除道具已用完');
-    this.setData({ clearMode: !this.data.clearMode });
-    if (this.data.clearMode) this._toast('点击任意格子消除');
+    const nextMode = !this.data.clearMode;
+    this._clearMode = nextMode;
+    this._selected = null;
+    this._moveCell = null;
+    const tiles = this.data.tiles.map(tile => Object.assign({}, tile, { selected: false }));
+    this.setData({ clearMode: nextMode, tiles });
+    this._toast(nextMode ? '请选择一个要消除的纹样' : '已取消消除道具');
   },
 
   _doClearTile(cell) {
-    if (this.data.clearLeft <= 0) return;
-    // 消除：将该格替换为新的随机纹样
-    const board = engine.cloneBoard(this._board);
-    const type = engine.randomType();
-    board[cell.row][cell.col] = type;
-    this._board = board;
-    this.setData({ clearLeft: this.data.clearLeft - 1, clearMode: false, tiles: this._renderTiles(board) });
-    // 消除后可能出现新消除，直接结算
-    const nextMatches = engine.findMatches(board);
-    if (nextMatches.size > 0) {
-      this._combo = 0;
-      this._resolveChain(nextMatches);
-    } else {
-      this._toast('已消除一格');
-    }
+    if (!cell || this.data.clearLeft <= 0 || this._busy) return;
+    if (cell.row < 0 || cell.row >= engine.ROWS || cell.col < 0 || cell.col >= engine.COLS) return;
+
+    // 真正移除所选格，再让本列下落补齐；旧实现只是随机换色，所以看起来经常“没有生效”。
+    const removed = new Set([engine.indexOfCell(cell.row, cell.col)]);
+    const tiles = this.data.tiles.map(tile => Object.assign({}, tile, {
+      selected: false,
+      clearing: removed.has(tile.index)
+    }));
+    this._busy = true;
+    this._clearMode = false;
+    this._combo = 0;
+    this.setData({
+      clearLeft: this.data.clearLeft - 1,
+      clearMode: false,
+      tiles
+    });
+    this._toast('已消除一个纹样');
+
+    setTimeout(() => {
+      const collapsed = engine.collapseMatches(this._board, removed);
+      this._board = collapsed.board;
+      this._animateCollapse(removed, collapsed.spawned, () => {
+        const nextMatches = engine.findMatches(this._board);
+        if (nextMatches.size > 0) this._resolveChain(nextMatches);
+        else this._finishMove();
+      });
+    }, 180);
   },
 
   useShuffleTool() {
     if (this._busy) return;
     if (this.data.shuffleLeft <= 0) return this._toast('打乱道具已用完');
+    this._clearMode = false;
     this._board = engine.shuffleBoard(this._board);
-    this.setData({ shuffleLeft: this.data.shuffleLeft - 1, tiles: this._renderTiles(this._board) });
+    this.setData({ clearMode: false, shuffleLeft: this.data.shuffleLeft - 1, tiles: this._renderTiles(this._board) });
     this._toast('已打乱棋盘');
   },
 
@@ -408,6 +469,8 @@ Page({
     this.setData({ musicOn: !this.data.musicOn });
     this._toast(this.data.musicOn ? '音乐开启' : '音乐已关');
   },
+
+  blockPageSwipe() {},
 
   // ---------- 结算 ----------
   _win() {
@@ -419,8 +482,31 @@ Page({
 
   _lose() {
     this._busy = true;
-    this._toast('步数用完了，再试一次吧');
-    setTimeout(() => this._newGame(), 900);
+    const duration = Math.max(1, Math.round((Date.now() - this._startTime) / 1000));
+    let clears = 0;
+    try { clears = Number(wx.getStorageSync('ranxin_game_clears')) || 0; } catch (e) {}
+    const inspiration = REWARDS[Math.max(0, Math.min(REWARDS.length - 1, clears))] || REWARDS[0];
+    const gap = Math.max(0, engine.TARGET_SCORE - this._score);
+    this.setData({
+      winVisible: true,
+      resultPassed: false,
+      resultEyebrow: '本局结算',
+      resultTitle: '染缸暂歇',
+      resultMessage: '距离通关还差 ' + gap.toLocaleString() + ' 分，保留这份纹样灵感再试一次吧。',
+      winScore: this._score.toLocaleString(),
+      winStars: 0,
+      winDuration: String(duration),
+      winMoves: '0',
+      rewardLabel: '本局纹样灵感',
+      rewardName: inspiration.name,
+      rewardThumb: inspiration.thumb,
+      rewardStory: inspiration.story,
+      diyPatternId: inspiration.key,
+      winProps: '',
+      collectProgress: clears >= REWARDS.length
+        ? '限定纹样 4/4 已集齐'
+        : '再通关 ' + (REWARDS.length - clears) + ' 次可集齐限定纹样'
+    });
   },
 
   _submitWin(stars, duration) {
@@ -438,18 +524,44 @@ Page({
     try { wx.setStorageSync('ranxin_game_props', props); } catch (e) {}
     this._propsBase = props;
 
-    // 纹样解锁（后端失败不阻断，console.error 可见）
-    let reward = { name: '', thumb: '', story: '' };
-    if (newClears <= REWARDS.length) {
-      reward = REWARDS[newClears - 1];
-    }
-    api.unlockPattern && api.unlockPattern(reward.key, 'game').catch((err) => { console.error('unlockPattern 失败', err); });
+    // 每局都展示真实纹样素材；前四局为新解锁，集齐后循环获得创作灵感。
+    const reward = REWARDS[(newClears - 1) % REWARDS.length];
+    const isNewReward = newClears <= REWARDS.length;
+    // 先同步写本地，再异步上报；用户结算后立刻进 DIY 时也能读到刚获得的纹样。
+    rememberLocalPattern(reward.key);
+    api.unlockPattern && api.unlockPattern(reward.key, {
+      sourceType: 'game',
+      sourceId: 'match3_' + newClears
+    }).catch((err) => { console.error('unlockPattern 失败', err); });
     api.submitGame && api.submitGame({ score: this._score, duration, clears: newClears }).catch((err) => { console.error('submitGame 失败', err); });
 
-    const collect = newClears >= REWARDS.length ? '限定纹样 4/4 已集齐' : '限定纹样 ' + newClears + '/4 已收集';
+    const collectedCount = Math.min(newClears, REWARDS.length);
+    const collect = collectedCount >= REWARDS.length ? '限定纹样 4/4 已集齐' : '限定纹样 ' + collectedCount + '/4 已收集';
+
+    const resultPayload = {
+      source: 'match3',
+      gameName: '经典三消',
+      eyebrow: '游戏通关',
+      title: '奖励收获',
+      subtitle: '三消挑战完成，新的扎染纹样已经收入你的纹样库',
+      score: this._score,
+      stats: [
+        { value: String(this._moves) + ' 步', label: '剩余步数' },
+        { value: String(duration) + ' 秒', label: '用时' },
+        { value: String(newClears) + ' 次', label: '累计通关' }
+      ],
+      rewardLabel: isNewReward ? '恭喜你获得' : '本局获得纹样灵感',
+      rewardId: reward.key,
+      reward: { id: reward.key, name: reward.name, thumb: reward.thumb, story: reward.story },
+      message: '每一次交换与消除，都是一次专注而清晰的选择。'
+    };
 
     this.setData({
       winVisible: true,
+      resultPassed: true,
+      resultEyebrow: '通关结算',
+      resultTitle: '染力达成 ✦',
+      resultMessage: '这局已经完成结算，纹样与道具奖励均已记入你的染心记录。',
       winScore: this._score.toLocaleString(),
       winStars: stars,
       winDuration: String(duration),
@@ -457,10 +569,27 @@ Page({
       rewardName: reward.name,
       rewardThumb: reward.thumb,
       rewardStory: reward.story,
+      rewardLabel: isNewReward ? '本局解锁纹样' : '本局获得纹样灵感',
+      diyPatternId: reward.key,
       winProps: '本局奖励：' + propDesc.join('、'),
       collectProgress: collect,
       nextRewardName: newClears < REWARDS.length ? REWARDS[newClears].name : '',
       nextRewardThumb: newClears < REWARDS.length ? REWARDS[newClears].thumb : ''
+    }, () => this._openResultPage(resultPayload));
+  },
+
+  _openResultPage(payload) {
+    if (this._resultOpening) return;
+    this._resultOpening = true;
+    try { wx.setStorageSync('ranxin_game_result', payload); } catch (e) {}
+    this._leaveGame(() => {
+      wx.redirectTo({
+        url: '/packageGame/pages/gameResult/gameResult',
+        fail: () => {
+          this._resultOpening = false;
+          this._restoreNavigationGuard('结算页打开失败，可直接从当前页面进入 DIY');
+        }
+      });
     });
   },
 
@@ -469,7 +598,85 @@ Page({
     this._newGame();
   },
 
+  goDiyWithReward() {
+    const patternId = this.data.diyPatternId || 'shui';
+    // 失败结算展示的是“本局纹样灵感”，点击创作时同样要保证该纹样可被 DIY 接收。
+    rememberLocalPattern(patternId);
+    try { wx.setStorageSync('ranxin_diy_prefill', patternId); } catch (e) {}
+    this._leaveGame(() => {
+      wx.redirectTo({
+        url: '/packageDiy/pages/flow/flow?stage=pattern&pattern=' + encodeURIComponent(patternId),
+        fail: () => this._restoreNavigationGuard('正念 DIY 打开失败，请重试')
+      });
+    });
+  },
+
+  goGameHub() {
+    this._leaveGame(() => {
+      const stack = typeof getCurrentPages === 'function' ? getCurrentPages() : [];
+      const previous = stack.length > 1 ? stack[stack.length - 2] : null;
+      if (previous && previous.route === 'packageGame/pages/gameHub/gameHub') {
+        wx.navigateBack({
+          delta: 1,
+          fail: () => wx.redirectTo({ url: '/packageGame/pages/gameHub/gameHub' })
+        });
+        return;
+      }
+      wx.redirectTo({
+        url: '/packageGame/pages/gameHub/gameHub',
+        fail: () => this._restoreNavigationGuard('游戏坊打开失败，请重试')
+      });
+    });
+  },
+
+  onNavigationGuardBeforeLeave() {
+    if (this._allowGuardClose) return;
+    // page-container 会先接住系统右滑返回；保持容器打开，避免一次误滑直接退出游戏。
+    this.setData({ navigationGuardVisible: true });
+    this._toast('请使用左上角返回键退出游戏');
+  },
+
+  onNavigationGuardAfterLeave() {
+    if (!this._allowGuardClose) this.setData({ navigationGuardVisible: true });
+  },
+
+  _leaveGame(navigate) {
+    this._allowGuardClose = true;
+    this._pendingNavigation = navigate;
+    const run = () => {
+      const action = this._pendingNavigation;
+      this._pendingNavigation = null;
+      if (typeof action === 'function') action();
+    };
+    if (!this.data.navigationGuardVisible) {
+      run();
+      return;
+    }
+    this.setData({ navigationGuardVisible: false }, () => {
+      this._guardTimer = setTimeout(run, 30);
+    });
+  },
+
+  _restoreNavigationGuard(message) {
+    this._allowGuardClose = false;
+    this.setData({ navigationGuardVisible: true });
+    if (message) this._toast(message);
+  },
+
   goBack() {
-    wx.navigateBack();
+    this._leaveGame(() => {
+      const stack = typeof getCurrentPages === 'function' ? getCurrentPages() : [];
+      if (stack.length > 1) {
+        wx.navigateBack({
+          delta: 1,
+          fail: () => wx.redirectTo({ url: '/packageGame/pages/gameHub/gameHub' })
+        });
+        return;
+      }
+      wx.redirectTo({
+        url: '/packageGame/pages/gameHub/gameHub',
+        fail: () => this._restoreNavigationGuard('暂时无法退出，请重试')
+      });
+    });
   }
 });

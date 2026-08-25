@@ -3,6 +3,16 @@ const EMOTION_KEY = 'ranxin_current_emotion';
 const WORKS_KEY = 'ranxin_works';
 const FLOW_URL = '/packageDiy/pages/flow/flow';
 
+const WORK_IMAGE_FALLBACKS = {
+  hudie: '/assets/patterns/hudie.jpg',
+  tuan: '/assets/patterns/tuan.jpg',
+  shui: '/assets/patterns/shui.jpg',
+  cang: '/assets/patterns/cang.jpg',
+  ling: '/assets/patterns/ling.jpg',
+  heling: '/assets/patterns/heling.jpg',
+  he: '/assets/patterns/he.jpg'
+};
+
 const STAGE_LABELS = {
   fabric: '选择布料',
   pattern: '选择纹样',
@@ -30,6 +40,11 @@ function readStorage(key, fallback) {
   }
 }
 
+function workImageFallback(work) {
+  const id = work && (work.patternId || work.pattern || work.patternKey);
+  return WORK_IMAGE_FALLBACKS[id] || '/assets/diy/entry-tuan.jpg';
+}
+
 Page({
   data: {
     moods: MOODS,
@@ -39,7 +54,8 @@ Page({
     hasDraft: false,
     draftStageLabel: '',
     latestWork: null,
-    latestWorkImage: '/assets/diy/entry-tuan.jpg'
+    latestWorkImage: '/assets/diy/entry-tuan.jpg',
+    latestWorkImageFallback: '/assets/diy/entry-tuan.jpg'
   },
 
   onShow() {
@@ -50,6 +66,7 @@ Page({
     const draft = readStorage(DRAFT_KEY, {});
     const works = readStorage(WORKS_KEY, []);
     const latestWork = Array.isArray(works) && works.length ? works[0] : null;
+    const latestWorkImageFallback = workImageFallback(latestWork);
     const hasDraft = Boolean(draft && draft.sessionId && STAGE_LABELS[draft.stage] && !draft.savedWorkId);
     this.setData({
       hasDraft,
@@ -57,8 +74,14 @@ Page({
       latestWork,
       latestWorkImage: latestWork && (latestWork.thumb || latestWork.finalImage)
         ? (latestWork.thumb || latestWork.finalImage)
-        : '/assets/diy/entry-tuan.jpg'
+        : latestWorkImageFallback,
+      latestWorkImageFallback
     });
+  },
+
+  onLatestImageError() {
+    const fallback = this.data.latestWorkImageFallback || '/assets/diy/entry-tuan.jpg';
+    if (this.data.latestWorkImage !== fallback) this.setData({ latestWorkImage: fallback });
   },
 
   chooseMood(event) {

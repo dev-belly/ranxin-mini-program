@@ -1,7 +1,15 @@
 {
   "description": "染心 微信小程序",
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      { "type": "suffix", "value": ".bak" },
+      { "type": "suffix", "value": ".md" },
+      { "type": "folder", "value": ".git" },
+      { "type": "folder", "value": ".workbuddy" },
+      { "type": "folder", "value": "docs" },
+      { "type": "folder", "value": "assets/game" },
+      { "type": "file", "value": "CODEOWNERS" }
+    ],
     "include": []
   },
   "setting": {
@@ -37,6 +45,5 @@
   "projectname": "ranxin-mini-program",
   "condition": {},
   "simulatorPluginLibVersion": {},
-  "editorSetting": {},
-  "cloudfunctionTemplateRoot": "cloudfunctionTemplate/"
+  "editorSetting": {}
 }

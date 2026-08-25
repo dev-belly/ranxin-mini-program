@@ -18,7 +18,7 @@ const TYPE_TABLE = {
   ESTJ: { name: '可靠安排者', pattern: 'ling', color: '蓝', story: '把一切安排妥当的人。' },
   ESFJ: { name: '温暖纽带', pattern: 'tuan', color: '暖彩', story: '人际里的温度，团花向心。' },
   ISTP: { name: '冷静手艺人', pattern: 'shui', color: '青蓝', story: '动手即静心，水波纹自在流动。' },
-  ISFP: { name: '安静艺术家', pattern: 'he', color: '柔彩', story: '用感受作画，卷草纹温柔生长。' },
+  ISFP: { name: '安静艺术家', pattern: 'hudie', color: '柔彩', story: '用感受作画，蝴蝶纹轻盈舒展。' },
   ESTP: { name: '行动派', pattern: 'shui', color: '鲜蓝', story: '先做再说，水波灵动。' },
   ESFP: { name: '现场快乐源', pattern: 'hudie', color: '亮彩', story: '把快乐带到现场，蝴蝶般轻盈。' }
 };
@@ -252,7 +252,7 @@ Page({
 
   goBack() {
     if (this.data.result) {
-      this.setData({ result: null, started: true, step: this.data.total - 1, selectedOption: -1 });
+      this.exitTest();
       return;
     }
     if (this.data.started && this.data.step > 0) {
@@ -265,6 +265,11 @@ Page({
       return;
     }
     wx.navigateBack({ delta: 1 });
+  },
+
+  exitTest() {
+    // 结果页直接回到情绪染坊，避免重新落回最后一道题。
+    wx.switchTab({ url: '/pages/index/index' });
   },
 
   choose(e) {
@@ -306,7 +311,7 @@ Page({
       patternName: p ? p.name : t.pattern,
       color: t.color,
       story: t.story,
-      thumb: '/assets/patterns/' + t.pattern + '.png',
+      thumb: '/assets/patterns/' + t.pattern + '.jpg',
       tags: [
         type[0] === 'I' ? '安静内省' : '热烈联结',
         type[1] === 'N' ? '自由想象' : '细腻踏实',

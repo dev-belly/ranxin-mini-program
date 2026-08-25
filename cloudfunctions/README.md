@@ -24,7 +24,7 @@
 ## 部署
 
 每个子目录是一个独立云函数，在微信开发者工具中右键「上传并部署」即可。
-共享数据见 `shared/patterns.js`（与 `utils/api.js` 的 `MOCK_PATTERNS` 保持一致）。
+> 注意：云函数按子目录独立打包，`getPatterns` / `submitGame` / `unlockPattern` 各自目录内都**自带一份** `shared/patterns.js` 与 `shared/utils.js` 拷贝（内容与 `utils/api.js` 的 `MOCK_PATTERNS` 保持一致）。改造纹样数据时需**三处同步**，否则真后端下发数据与前端不符。根目录无 `shared/`。
 
 ## 数据库 Schema
 

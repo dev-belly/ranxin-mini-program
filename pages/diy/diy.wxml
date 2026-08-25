@@ -1,5 +1,4 @@
 <view class="rx-bg"></view>
-<view class="diy-back-shell"><rx-back bind:back="goBack" /></view>
 <scroll-view scroll-y class="diy-entry" enhanced show-scrollbar="{{false}}">
   <view class="diy-entry-content">
   <view class="entry-head">
@@ -59,6 +58,7 @@
   <view class="start-button" bindtap="startNew" hover-class="start-button-active" role="button" aria-label="开始创作，第一步选择布料">
     <view class="start-emblem"><text>染</text></view>
     <view class="start-copy">
+      <view class="start-kicker">MINDFUL WORKSHOP</view>
       <view class="start-title">开始创作</view>
       <view class="start-sub">第一步 · 选择布料</view>
     </view>
@@ -67,7 +67,7 @@
   </view>
 
   <view wx:if="{{latestWork}}" class="latest-card">
-    <image src="{{latestWorkImage}}" mode="aspectFill" />
+    <image src="{{latestWorkImage}}" mode="aspectFill" binderror="onLatestImageError" aria-label="最近完成的{{latestWork.patternName || '扎染'}}作品" />
     <view class="latest-copy">
       <view class="latest-kicker">最近完成</view>
       <view class="latest-title">{{latestWork.patternName || latestWork.name || '我的扎染作品'}}</view>

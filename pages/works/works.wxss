@@ -9,10 +9,12 @@
 .works-ink { position: fixed; z-index: 1; pointer-events: none; border-radius: 50%; filter: blur(12rpx); }
 .works-ink-top { width: 470rpx; height: 330rpx; left: -210rpx; top: -90rpx; background: radial-gradient(ellipse, rgba(63,134,225,.26), rgba(123,102,224,.08) 55%, transparent 75%); }
 .works-ink-right { width: 450rpx; height: 650rpx; right: -280rpx; top: 150rpx; background: radial-gradient(ellipse, rgba(117,95,211,.20), rgba(69,131,222,.08) 58%, transparent 76%); }
-.works-head { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; }
+.works-head { position: relative; z-index: 2; display: flex; align-items: center; justify-content: flex-start; }
 .works-title { font-family: "Songti SC", "STSong", serif; font-size: 55rpx; font-weight: 700; letter-spacing: 4rpx; color: #113e79; }
 .works-title-spark { margin-left: 8rpx; color: #6972dc; font-size: 27rpx; vertical-align: top; }
-.head-create { width: 72rpx; height: 72rpx; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,.55); border: 1.5rpx solid rgba(255,255,255,.88); color: #244f8f; font-size: 45rpx; font-weight: 300; box-shadow: 0 10rpx 26rpx rgba(34,61,111,.13), inset 0 1rpx 0 rgba(255,255,255,.95); }
+.head-create { width: 76rpx; min-width: 76rpx; height: 76rpx; flex: 0 0 76rpx; margin: 0 0 0 22rpx; padding: 0; box-sizing: border-box; display: flex; align-items: center; justify-content: center; line-height: 1; border-radius: 50%; background: linear-gradient(145deg, rgba(255,255,255,.92), rgba(238,242,255,.66)); border: 1.5rpx solid rgba(255,255,255,.96); color: #244f8f; box-shadow: 0 10rpx 26rpx rgba(34,61,111,.13), inset 0 1rpx 0 rgba(255,255,255,.98); }
+.head-create-icon { display: block; height: 48rpx; font: 300 42rpx/46rpx Arial, sans-serif; transform: translateY(-1rpx); }
+.head-create:active { transform: scale(.96); }
 .head-create::after, .work-action::after, .state-btn::after, .create-first::after, .mall-btn::after { border: none; }
 .profile-row { position: relative; z-index: 2; display: flex; align-items: center; margin: 34rpx 0 30rpx; }
 .profile-avatar { width: 102rpx; height: 102rpx; flex: 0 0 auto; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: "Songti SC", "STSong", serif; font-size: 46rpx; color: #17447f; background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.92), rgba(107,159,228,.24) 55%, rgba(118,91,215,.18)); border: 2rpx solid rgba(255,255,255,.85); box-shadow: 0 10rpx 25rpx rgba(53,74,122,.13); }
@@ -25,15 +27,18 @@
 .filter-chip.active { color: #fff; background: linear-gradient(90deg, #244fa9, #4657c7 55%, #7259d1); border-color: transparent; box-shadow: 0 8rpx 20rpx rgba(61,76,184,.24), inset 0 1rpx 0 rgba(255,255,255,.45); }
 .liquid-glass-card { background: rgba(255,255,255,.48); border: 1.5rpx solid rgba(255,255,255,.88); box-shadow: 0 17rpx 45rpx rgba(39,57,102,.13), inset 0 1.5rpx 0 rgba(255,255,255,.96), inset 0 -1.5rpx 2rpx rgba(31,49,90,.07); -webkit-backdrop-filter: blur(18px) saturate(170%); backdrop-filter: blur(18px) saturate(170%); }
 .state-card, .empty-card { position: relative; z-index: 2; margin-top: 30rpx; padding: 70rpx 45rpx; border-radius: 34rpx; text-align: center; }
+.empty-card { width: 100%; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
 .state-icon { font-family: Georgia, serif; font-size: 68rpx; color: #5361c5; }
 .state-title { margin-top: 13rpx; font-family: "Songti SC", "STSong", serif; font-size: 31rpx; font-weight: 700; color: #173f79; }
 .state-desc { margin: 15rpx auto 0; max-width: 530rpx; font-size: 23rpx; line-height: 1.6; color: #75819a; }
+.empty-state-desc { width: 100%; max-width: none; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.empty-state-desc text { display: block; white-space: nowrap; }
 .state-btn { width: 250rpx; height: 70rpx; margin-top: 25rpx; border-radius: 999rpx; background: rgba(75,83,192,.10); border: 1rpx solid rgba(70,78,181,.20); color: #4053ae; font-size: 25rpx; }
 .loading-orb { width: 56rpx; height: 56rpx; margin: 0 auto; border-radius: 50%; border: 5rpx solid rgba(74,85,196,.15); border-top-color: #5361c5; animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .empty-art { position: relative; width: 220rpx; height: 220rpx; margin: -12rpx auto 20rpx; border-radius: 50%; border: 1rpx dotted rgba(62,85,170,.35); }
 .empty-art-image { width: 180rpx; height: 180rpx; margin: 20rpx; border-radius: 50%; opacity: .78; }
-.create-first { width: 360rpx; height: 82rpx; margin-top: 30rpx; border-radius: 999rpx; color: #fff; font-size: 27rpx; background: linear-gradient(90deg, #214ca3, #4654c3 55%, #7259d1); box-shadow: 0 10rpx 25rpx rgba(60,72,172,.25); }
+.create-first { width: 360rpx; height: 82rpx; margin: 30rpx auto 0; padding: 0; border-radius: 999rpx; display: flex; align-items: center; justify-content: center; box-sizing: border-box; color: #fff; font-size: 27rpx; line-height: 1; background: linear-gradient(90deg, #214ca3, #4654c3 55%, #7259d1); box-shadow: 0 10rpx 25rpx rgba(60,72,172,.25); }
 .work-grid { position: relative; z-index: 2; display: flex; flex-wrap: wrap; align-items: flex-start; margin: 0 -9rpx; }
 .work-card { width: calc(50% - 18rpx); margin: 0 9rpx 22rpx; border-radius: 30rpx; overflow: hidden; box-sizing: border-box; }
 .work-img { display: block; width: calc(100% - 18rpx); height: 292rpx; margin: 9rpx; border-radius: 23rpx; background: #eef1f8; }

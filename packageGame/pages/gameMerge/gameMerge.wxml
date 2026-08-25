@@ -1,6 +1,10 @@
 <!-- 合成大染缸 · 落球合成（无限模式，对齐 合成大染缸版本2.html） -->
-<view class="viewport">
-<view class="merge-back-shell"><rx-back bind:back="goBack" /></view>
+<view class="viewport" catchtouchmove="blockPageSwipe">
+<image class="viewportBg" src="/packageGame/assets/game/merge/background.jpg" mode="aspectFill"/>
+<view class="merge-back-shell"><rx-back label="返回游戏坊" bind:back="goBack" /></view>
+<view class="mergeMusicShell" style="top:{{musicButtonTop}}px;" bindtap="onToggleMute" aria-label="{{muteLabel}}">
+  <image class="mergeMusicIcon" src="/packageGame/assets/game/merge/icon_music.png" mode="aspectFit"/>
+</view>
 <view class="page" style="transform: translate({{pageOffsetX}}px, {{pageOffsetY}}px) scale({{pageScale}});">
 
   <image class="pageBg" src="/packageGame/assets/game/merge/background.jpg" mode="scaleToFill"/>
@@ -12,11 +16,6 @@
   <view class="goldStar">✦</view>
   <view class="scoreGoal">不超过堆叠上限即可继续</view>
   <view class="rewardHint">{{rewardHint}}</view>
-
-  <!-- HTML 原稿右上角音乐键；小程序中避开原生胶囊区域 -->
-  <view class="musicBtn" bindtap="onToggleMute" aria-label="音乐">
-    <image class="musicBtnIcon" src="/packageGame/assets/game/merge/icon_music.png" mode="aspectFit"/>
-  </view>
 
   <!-- 标题 -->
   <view class="title">合成大染缸</view>
@@ -35,9 +34,27 @@
     <!-- 结束遮罩 -->
     <view class="gameOver {{overVisible ? 'show' : ''}}">
       <view class="overCard">
+        <view class="overEyebrow">本局结算</view>
         <view class="overTitle">{{overTitle}}</view>
         <view class="overText">{{overText}}</view>
-        <view class="restart" bindtap="onRestart">再来一局</view>
+        <view class="overScore"><text>{{overScore}}</text><text class="overScoreUnit">分</text></view>
+        <view class="overStats">
+          <view><text>{{overMergeCount}}</text><text>合成</text></view>
+          <view><text>{{overDuration}}</text><text>用时</text></view>
+          <view><text>{{overHighest}}</text><text>最高形态</text></view>
+        </view>
+        <view class="overReward">
+          <image src="{{overPatternThumb}}" mode="aspectFill"/>
+          <view class="overRewardCopy">
+            <text>{{overPatternLabel}}</text>
+            <text>{{overPatternName}}</text>
+          </view>
+        </view>
+        <view class="overDiy" data-pattern="{{overPatternId}}" bindtap="openDiyWithPattern">用这枚纹样开始 DIY</view>
+        <view class="overSecondary">
+          <view class="restart" bindtap="onRestart">再来一局</view>
+          <view class="hubButton" bindtap="goGameHub">返回游戏坊</view>
+        </view>
       </view>
     </view>
   </view>
@@ -70,14 +87,15 @@
       <view class="rewardCongrats">恭喜你</view>
       <view class="rewardBundleTitle">{{rewardBundleTitle}}</view>
       <view class="{{rewardGridClass}}">
-        <view class="rewardItem" wx:for="{{rewardItems}}" wx:key="name">
-          <image class="rewardPatternImg" src="/packageGame/assets/game/merge/reward_{{item.pattern}}.png" mode="aspectFit"/>
+        <view class="rewardItem" wx:for="{{rewardItems}}" wx:key="patternId">
+          <image class="rewardPatternImg" src="{{item.thumb}}" mode="aspectFill"/>
           <view class="rewardItemName">{{item.name}}</view>
           <view class="rewardItemSource">{{item.source}}</view>
         </view>
       </view>
       <view class="rewardThreshold">{{rewardThreshold}}</view>
       <view class="rewardCollect" bindtap="onRewardCollect">收下纹样，继续合成</view>
+      <view class="rewardDiy" data-pattern="{{rewardDiyPatternId}}" bindtap="openDiyWithPattern">用「{{rewardDiyName}}」开始 DIY</view>
     </view>
   </view>
 
@@ -96,4 +114,5 @@
         style="left:{{canvasDisplayLeft}}px;top:{{canvasDisplayTop}}px;width:{{canvasDisplayWidth}}px;height:{{canvasDisplayHeight}}px;"
         bindtouchstart="onCanvasTouchStart" bindtouchmove="onCanvasTouchMove"
         bindtouchend="onCanvasTouchEnd" bindtouchcancel="onCanvasTouchCancel"></canvas>
+
 </view>

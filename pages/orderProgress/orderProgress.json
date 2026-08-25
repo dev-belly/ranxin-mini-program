@@ -1,4 +1,7 @@
 {
   "navigationBarTitleText": "制作进度",
-  "usingComponents": {}
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "rx-back": "/components/rx-back/rx-back"
+  }
 }

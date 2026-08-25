@@ -19,6 +19,9 @@ exports.main = async (event) => {
   if (event.unlockedOnly && OPENID) {
     const unlockedIds = await getUnlockedPatternIds(db, OPENID)
     list = list.filter(p => p.unlockedByDefault || unlockedIds.indexOf(p.id) >= 0)
+  } else if (event.unlockedOnly) {
+    // 未登录用户只返回默认解锁纹样，避免泄露全部数据
+    list = list.filter(p => p.unlockedByDefault)
   }
 
   return list

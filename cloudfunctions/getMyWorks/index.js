@@ -5,8 +5,8 @@ const db = cloud.database()
 
 exports.main = async (event) => {
   const { OPENID } = cloud.getWXContext()
-  const page = event.page || 1
-  const pageSize = event.pageSize || 10
+  const page = Math.max(1, Math.floor(Number(event.page) || 1))
+  const pageSize = Math.min(50, Math.max(1, Math.floor(Number(event.pageSize) || 10)))
   const where = OPENID ? { _openid: OPENID } : {}
 
   const totalRes = await db.collection('works').where(where).count()

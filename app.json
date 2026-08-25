@@ -29,7 +29,8 @@
       "pages": [
         "pages/game/game",
         "pages/gameMerge/gameMerge",
-        "pages/gameHub/gameHub"
+        "pages/gameHub/gameHub",
+        "pages/gameResult/gameResult"
       ]
     }
   ],

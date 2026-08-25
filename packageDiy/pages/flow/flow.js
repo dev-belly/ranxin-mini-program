@@ -13,6 +13,7 @@ const MIN_NODE_RADIUS = 118;
 const MAX_NODE_RADIUS = 285;
 const CRAFT_COORD_SIZE = 630;
 const CRAFT_CENTER = CRAFT_COORD_SIZE / 2;
+const CRAFT_NODE_OFFSET_Y = -25;
 const FINAL_THUMB = '/packageDiy/assets/unfold-final.jpg';
 // 主包页面冷启动时不能依赖 DIY 分包已经加载，成品保存前会复制到持久文件目录。
 // 文件名含当前资源摘要前缀；以后替换成品图时不会误复用旧缓存。
@@ -49,12 +50,28 @@ const PATTERN_DEFS = [
   { id: 'dieling', name: '叠岭纹', category: '自然', type: 'mountain', desc: '沉静 · 坚韧', story: '层叠山岭在留白中显现，象征沉静、坚韧和持续生长。' }
 ].map((item, index) => Object.assign({}, item, {
   thumb: '/packageDiy/assets/pattern-' + item.id + '.jpg',
-  defaultUnlocked: index < 8
+  defaultUnlocked: index < 8,
+  // “为你推荐”沿用参考稿首屏的六枚纹样，兼顾自然、几何与白族传统。
+  recommended: index < PATTERNS_PER_PAGE
 }));
 
 const PATTERN_IDS = PATTERN_DEFS.map(item => item.id);
 const DEFAULT_UNLOCKED_IDS = PATTERN_DEFS.slice(0, 8).map(item => item.id);
 const PATTERN_CATEGORIES = ['为你推荐', '自然', '几何', '白族传统'];
+
+function patternsForCategory(patterns, category) {
+  const source = Array.isArray(patterns) ? patterns : [];
+  if (category === '为你推荐') return source.filter(item => item.recommended);
+  return source.filter(item => item.category === category);
+}
+
+function preferredPatternForCategory(patterns, category, preferredId) {
+  const matches = patternsForCategory(patterns, category);
+  return matches.find(item => item.id === preferredId && item.unlocked)
+    || matches.find(item => item.unlocked)
+    || matches[0]
+    || null;
+}
 
 // A 稿的五组精确主色。
 const DYES = [
@@ -179,7 +196,8 @@ function ensureRadii(count, source) {
 function craftNodes(symmetry, radii, rotation) {
   const list = ensureRadii(8, radii);
   const count = list.length;
-  const base = (Number(rotation) || 0) * Math.PI / 180;
+  // pattern-engine 的第 0 瓣从正上方（-90°）开始；控制点必须使用同一索引方向。
+  const base = ((Number(rotation) || 0) - 90) * Math.PI / 180;
   return list.map((radius, index) => {
     const angle = base + index * Math.PI * 2 / count;
     return {
@@ -228,7 +246,10 @@ Page({
     activeCategory: '为你推荐',
     patterns: [],
     patternPage: 0,
-    patternPageCount: 2,
+    patternPageCount: 1,
+    patternPageNumber: 1,
+    patternPageDots: [{ index: 0, active: true }],
+    patternCategoryEmpty: false,
     currentPatterns: [],
     visiblePatterns: [],
     canPatternPrev: false,
@@ -240,23 +261,19 @@ Page({
     unlockedPatternIds: DEFAULT_UNLOCKED_IDS,
 
     symmetryOptions: [4, 6, 8, 10, 12, 16],
-    guideLines: Array.from({ length: 8 }, (_, index) => ({
-      index,
-      style: 'transform:rotate(' + (15 + index * 45) + 'deg);'
-    })),
     symmetry: 8,
     tightness: 80,
     whitespace: 58,
     rotation: 15,
     radii: DEFAULT_RADII,
     craftNodes: craftNodes(8, DEFAULT_RADII, 15),
-    nodePoints: craftNodes(8, DEFAULT_RADII, 15).map(node => Object.assign({}, node, { left: node.x, top: node.y })),
     craftCanvasSize: CRAFT_COORD_SIZE,
     craftCenter: CRAFT_CENTER,
     minNodeRadius: MIN_NODE_RADIUS,
     maxNodeRadius: MAX_NODE_RADIUS,
     canUndo: false,
     canRedo: false,
+    craftInteracting: false,
     showCraftConfirm: false,
 
     dyes: DYES,
@@ -311,13 +328,16 @@ Page({
     savingPhysical: false
   },
 
-  onLoad() {
+  onLoad(query = {}) {
     try { wx.hideLoading(); } catch (error) {}
     this._undoStack = [];
     this._redoStack = [];
     this._sliderStarts = {};
     this._canvas = {};
     this._canvasRect = {};
+    this._pendingCraftGesturePatch = null;
+    this._craftMoveTimer = null;
+    this._craftRectRefreshTimer = null;
     this._savePromise = null;
     this._savedWork = null;
 
@@ -338,16 +358,29 @@ Page({
     let selectedPatternId = normalizePatternId(draft.selectedPatternId || 'shui');
     if (unlockedPatternIds.indexOf(selectedPatternId) < 0) selectedPatternId = 'shui';
 
-    const prefillRaw = safeGet(PREFILL_KEY, '');
+    const prefillRaw = query.pattern || safeGet(PREFILL_KEY, '');
     const prefill = normalizePatternId(typeof prefillRaw === 'string' ? prefillRaw : (prefillRaw && prefillRaw.id));
+    let hasPatternPrefill = false;
     if (PATTERN_IDS.indexOf(prefill) >= 0 && unlockedPatternIds.indexOf(prefill) >= 0) {
       selectedPatternId = prefill;
+      hasPatternPrefill = true;
       safeRemove(PREFILL_KEY);
     }
 
-    let stage = STAGES.some(item => item.id === draft.stage) ? draft.stage : 'fabric';
+    const requestedStage = STAGES.some(item => item.id === query.stage) ? query.stage : '';
+    let stage = requestedStage || (STAGES.some(item => item.id === draft.stage) ? draft.stage : 'fabric');
     if (stage === 'unfold' && !draft.oxidationDone) stage = 'oxidation';
-    const patternIndex = Math.max(0, PATTERN_IDS.indexOf(selectedPatternId));
+    let activeCategory = PATTERN_CATEGORIES.indexOf(draft.activeCategory) >= 0 ? draft.activeCategory : '为你推荐';
+    const selectedPatternDef = patterns.find(item => item.id === selectedPatternId);
+    if (hasPatternPrefill && selectedPatternDef) {
+      // 游戏 / MBTI 带入的奖励纹样直接落到所属分类，确保卡片与故事都可见。
+      activeCategory = selectedPatternDef.category;
+    } else if (!patternsForCategory(patterns, activeCategory).some(item => item.id === selectedPatternId) && selectedPatternDef) {
+      // 老草稿可能记录了不属于当前分类的纹样；优先保留作品选择，并同步分类。
+      activeCategory = selectedPatternDef.category;
+    }
+    const activePatterns = patternsForCategory(patterns, activeCategory);
+    const patternIndex = Math.max(0, activePatterns.findIndex(item => item.id === selectedPatternId));
     const patternPage = Math.floor(patternIndex / PATTERNS_PER_PAGE);
     const symmetry = [4, 6, 8, 10, 12, 16].indexOf(draft.symmetry) >= 0 ? draft.symmetry : 8;
     const radii = ensureRadii(8, draft.radii || DEFAULT_RADII);
@@ -366,7 +399,7 @@ Page({
       selectedFabricId: FABRICS.some(item => item.id === draft.selectedFabricId) ? draft.selectedFabricId : 'scarf',
       selectedPatternId,
       patternPage,
-      activeCategory: PATTERN_CATEGORIES.indexOf(draft.activeCategory) >= 0 ? draft.activeCategory : '为你推荐',
+      activeCategory,
       symmetry,
       tightness: clamp(draft.tightness === undefined ? 80 : draft.tightness, 0, 100),
       whitespace: clamp(draft.whitespace === undefined ? 58 : draft.whitespace, 0, 100),
@@ -407,6 +440,15 @@ Page({
   },
 
   onUnload() {
+    if (this._craftMoveTimer) {
+      clearTimeout(this._craftMoveTimer);
+      this._craftMoveTimer = null;
+    }
+    if (this._craftRectRefreshTimer) {
+      clearTimeout(this._craftRectRefreshTimer);
+      this._craftRectRefreshTimer = null;
+    }
+    this._pendingCraftGesturePatch = null;
     this._clearOxidationFallback();
     this._oxidationDeadline = null;
     this._persistDraft();
@@ -457,9 +499,11 @@ Page({
     const selectedDye = DYES.find(item => item.name === state.dyeName) || DYES[0];
     const selectedDyeMethod = DYE_METHODS.find(item => item.id === state.dyeMethod) || DYE_METHODS[0];
     const selectedUnfold = UNFOLD_METHODS.find(item => item.id === state.unfoldMethod) || UNFOLD_METHODS[0];
-    const page = clamp(state.patternPage || 0, 0, 1);
-    // 分类仅表达当前高亮，不参与卡片过滤；每一页始终稳定展示六枚。
-    const currentPatterns = (state.patterns || []).slice(page * PATTERNS_PER_PAGE, (page + 1) * PATTERNS_PER_PAGE);
+    const activeCategory = PATTERN_CATEGORIES.indexOf(state.activeCategory) >= 0 ? state.activeCategory : '为你推荐';
+    const categoryPatterns = patternsForCategory(state.patterns, activeCategory);
+    const patternPageCount = Math.ceil(categoryPatterns.length / PATTERNS_PER_PAGE);
+    const page = patternPageCount > 0 ? clamp(state.patternPage || 0, 0, patternPageCount - 1) : 0;
+    const currentPatterns = categoryPatterns.slice(page * PATTERNS_PER_PAGE, (page + 1) * PATTERNS_PER_PAGE);
     const nodes = craftNodes(state.symmetry, state.radii, state.rotation);
     return {
       stageIndex,
@@ -470,21 +514,17 @@ Page({
       selectedDye,
       dyeColor: selectedDye.color,
       selectedDyeMethod,
+      activeCategory,
       patternPage: page,
+      patternPageCount,
+      patternPageNumber: patternPageCount > 0 ? page + 1 : 0,
+      patternPageDots: Array.from({ length: patternPageCount }, (_, index) => ({ index, active: index === page })),
+      patternCategoryEmpty: categoryPatterns.length === 0,
       currentPatterns,
       visiblePatterns: currentPatterns,
       canPatternPrev: page > 0,
-      canPatternNext: page < 1,
+      canPatternNext: page < patternPageCount - 1,
       craftNodes: nodes,
-      nodePoints: nodes.map(node => Object.assign({}, node, {
-        left: node.x,
-        top: node.y,
-        style: 'left:' + node.x + 'rpx;top:' + node.y + 'rpx;'
-      })),
-      guideLines: Array.from({ length: 8 }, (_, index) => ({
-        index,
-        style: 'transform:rotate(' + (Number(state.rotation || 0) + index * 45) + 'deg);'
-      })),
       unfoldMethodNote: selectedUnfold.note,
       unfoldVideoSrc: selectedUnfold.video,
       unfoldVideoTitle: selectedUnfold.videoTitle,
@@ -541,8 +581,8 @@ Page({
     const extras = Array.isArray(stored) ? stored.map(normalizePatternId) : [];
     const unlockedPatternIds = Array.from(new Set(DEFAULT_UNLOCKED_IDS.concat(extras.filter(id => PATTERN_IDS.indexOf(id) >= 0))));
     const patterns = PATTERN_DEFS.map(item => Object.assign({}, item, { unlocked: unlockedPatternIds.indexOf(item.id) >= 0 }));
-    let selectedPatternId = this.data.selectedPatternId;
-    if (unlockedPatternIds.indexOf(selectedPatternId) < 0) selectedPatternId = 'shui';
+    const preferred = preferredPatternForCategory(patterns, this.data.activeCategory, this.data.selectedPatternId);
+    const selectedPatternId = preferred && preferred.unlocked ? preferred.id : 'shui';
     this._apply({ patterns, unlockedPatternIds, selectedPatternId }, { persist: false });
   },
 
@@ -601,12 +641,19 @@ Page({
   continueToPattern() { this.enterStage('pattern'); },
   goFabricNext() { this.continueToPattern(); },
 
-  // ---------- 纹样：固定两页，每页六枚 ----------
+  // ---------- 纹样：按分类筛选，每页最多六枚 ----------
   selectPatternCategory(event) {
     const dataset = event && event.currentTarget && event.currentTarget.dataset || {};
     const category = dataset.category || dataset.cat || dataset.id;
     if (PATTERN_CATEGORIES.indexOf(category) < 0) return;
-    this._apply({ activeCategory: category });
+    const preferred = preferredPatternForCategory(this.data.patterns, category, '');
+    this._apply({
+      activeCategory: category,
+      patternPage: 0,
+      selectedPatternId: preferred ? preferred.id : this.data.selectedPatternId,
+      showPatternStory: false,
+      storyPattern: null
+    });
   },
   setPatternCategory(event) { this.selectPatternCategory(event); },
   setCat(event) { this.selectPatternCategory(event); },
@@ -632,7 +679,8 @@ Page({
   closePatternStory() { this.setData({ showPatternStory: false, storyPattern: null }); },
 
   setPatternPage(page) {
-    this._apply({ patternPage: clamp(page, 0, 1) });
+    const maxPage = Math.max(0, Number(this.data.patternPageCount || 0) - 1);
+    this._apply({ patternPage: clamp(page, 0, maxPage) });
   },
   prevPatternPage() { this.setPatternPage(this.data.patternPage - 1); },
   nextPatternPage() { this.setPatternPage(this.data.patternPage + 1); },
@@ -719,14 +767,29 @@ Page({
   },
   resetCraft() {
     const before = this._craftSnapshot();
+    this._sliderStarts = {};
+    this._pendingCraftGesturePatch = null;
+    this._craftInteracting = false;
+    if (this._craftMoveTimer) {
+      clearTimeout(this._craftMoveTimer);
+      this._craftMoveTimer = null;
+    }
     this._apply({
       symmetry: DEFAULT_CRAFT.symmetry,
       tightness: DEFAULT_CRAFT.tightness,
       whitespace: DEFAULT_CRAFT.whitespace,
       rotation: DEFAULT_CRAFT.rotation,
-      radii: DEFAULT_CRAFT.radii.slice()
-    }, { render: 'craft', done: () => this._pushCraftHistory(before) });
+      radii: DEFAULT_CRAFT.radii.slice(),
+      craftInteracting: false
+    }, {
+      render: 'craft',
+      done: () => {
+        this._pushCraftHistory(before);
+        this._toast('已恢复初始纹样');
+      }
+    });
   },
+  restoreInitialCraft() { this.resetCraft(); },
   undo() { this.undoCraft(); },
   redo() { this.redoCraft(); },
   reset() { this.resetCraft(); },
@@ -763,9 +826,14 @@ Page({
   onRotationChange(event) { this._setCraftSlider('rotation', eventValue(event, this.data.rotation), event && event.type === 'changing'); },
 
   _touchPoint(touch) {
+    const clientX = Number(touch && touch.clientX);
+    const clientY = Number(touch && touch.clientY);
+    const pageX = Number(touch && touch.pageX);
+    const pageY = Number(touch && touch.pageY);
     return {
-      x: Number(touch.clientX === undefined ? (touch.pageX === undefined ? touch.x : touch.pageX) : touch.clientX),
-      y: Number(touch.clientY === undefined ? (touch.pageY === undefined ? touch.y : touch.pageY) : touch.clientY)
+      // craftLayer 的 rect 是视口坐标，所以优先使用 clientX/clientY。
+      x: Number.isFinite(clientX) ? clientX : (Number.isFinite(pageX) ? pageX : Number(touch && touch.x) || 0),
+      y: Number.isFinite(clientY) ? clientY : (Number.isFinite(pageY) ? pageY : Number(touch && touch.y) || 0)
     };
   },
   _touchAngle(touches) {
@@ -773,11 +841,18 @@ Page({
     const second = this._touchPoint(touches[1]);
     return Math.atan2(second.y - first.y, second.x - first.x) * 180 / Math.PI;
   },
+  onCraftScroll() {
+    if (this.data.craftInteracting || this._craftRectRefreshTimer) return;
+    this._craftRectRefreshTimer = setTimeout(() => {
+      this._craftRectRefreshTimer = null;
+      if (this.data.stage === 'craft') this._refreshCraftLayerRect();
+    }, 48);
+  },
   _nodeIndexFromEvent(event, point) {
     const dataset = event && event.currentTarget && event.currentTarget.dataset || {};
     let index = Number(dataset.index === undefined ? dataset.nodeIndex : dataset.index);
     if (Number.isInteger(index) && index >= 0 && index < this.data.radii.length) return index;
-    const rect = this._canvasRect.craftLayer || this._canvasRect.craft;
+    const rect = this._canvasRect.craftLayer;
     if (!rect || !point) return -1;
     const scale = CRAFT_COORD_SIZE / rect.width;
     const x = (point.x - rect.left) * scale;
@@ -790,18 +865,92 @@ Page({
     });
     return distance <= 55 ? nearest : -1;
   },
+  _craftToolFromPoint(point) {
+    const rect = this._canvasRect.craft;
+    if (!rect || !rect.width || !point) return '';
+    const scale = CRAFT_COORD_SIZE / rect.width;
+    const x = (point.x - rect.left) * scale;
+    const y = (point.y - rect.top) * scale;
+    if (y < 18 || y > 70) return '';
+    if (x >= 18 && x <= 150) return 'undo';
+    if (x >= 480 && x <= 612) return 'reset';
+    return '';
+  },
   onCraftTouchStart(event) {
     const touches = event && event.touches || [];
     if (!touches.length) return;
-    this._gestureBefore = this._craftSnapshot();
-    this._gestureChanged = false;
+    if (touches.length === 1) {
+      const tool = this._craftToolFromPoint(this._touchPoint(touches[0]));
+      if (tool === 'undo') {
+        this.undoCraft();
+        return;
+      }
+      if (tool === 'reset') {
+        this.restoreInitialCraft();
+        return;
+      }
+    }
+    const startingNewGesture = !this._craftGesture;
+    if (startingNewGesture) {
+      this._gestureBefore = this._craftSnapshot();
+      this._gestureChanged = false;
+    }
     if (touches.length >= 2) {
-      this._craftGesture = { mode: 'rotate', angle: this._touchAngle(touches), rotation: this.data.rotation };
+      const queuedRotation = this._pendingCraftGesturePatch && this._pendingCraftGesturePatch.rotation;
+      const gesture = {
+        mode: 'rotate',
+        angle: this._touchAngle(touches),
+        rotation: queuedRotation === undefined ? this.data.rotation : queuedRotation
+      };
+      this._craftGesture = gesture;
+      if (startingNewGesture) this._refreshCraftLayerRect();
+      if (!this.data.craftInteracting) this.setData({ craftInteracting: true });
       return;
     }
     const point = this._touchPoint(touches[0]);
     const index = this._nodeIndexFromEvent(event, point);
-    if (index >= 0) this._craftGesture = { mode: 'node', index };
+    if (index >= 0) {
+      const gesture = { mode: 'node', index, rect: this._canvasRect.craftLayer || null };
+      this._craftGesture = gesture;
+      // rect 查询是异步的；回调只更新仍在进行的这一手势，避免首帧误用 canvas 的不同坐标系。
+      this._refreshCraftLayerRect(rect => {
+        if (this._craftGesture === gesture && rect) gesture.rect = rect;
+      });
+      if (!this.data.craftInteracting) this.setData({ craftInteracting: true });
+    }
+  },
+  _applyCraftGesturePatch(patch, done) {
+    const state = Object.assign({}, this.data, patch || {});
+    const nodes = craftNodes(state.symmetry, state.radii, state.rotation);
+    const next = Object.assign({}, patch || {}, {
+      craftNodes: nodes,
+    });
+    this.setData(next, () => {
+      this.renderCraftPreview();
+      if (typeof done === 'function') done();
+    });
+  },
+  _queueCraftGesturePatch(patch) {
+    this._pendingCraftGesturePatch = Object.assign({}, this._pendingCraftGesturePatch || {}, patch || {});
+    if (this._craftMoveTimer) return;
+    // 原生 touchmove 频率高于画布可见刷新率；约 40fps 合并更新，避免桥接和重绘堵塞拖动。
+    this._craftMoveTimer = setTimeout(() => {
+      this._craftMoveTimer = null;
+      this._flushCraftGesturePatch();
+    }, 24);
+  },
+  _flushCraftGesturePatch(done) {
+    if (this._craftMoveTimer) {
+      clearTimeout(this._craftMoveTimer);
+      this._craftMoveTimer = null;
+    }
+    const patch = this._pendingCraftGesturePatch;
+    this._pendingCraftGesturePatch = null;
+    if (!patch) {
+      if (typeof done === 'function') done();
+      return;
+    }
+    this._applyCraftGesturePatch(patch, done);
   },
   onCraftTouchMove(event) {
     const touches = event && event.touches || [];
@@ -812,29 +961,39 @@ Page({
       }
       const delta = this._touchAngle(touches) - this._craftGesture.angle;
       this._gestureChanged = true;
-      this._apply({ rotation: normalizeRotation(this._craftGesture.rotation + delta) }, { persist: false, render: 'craft' });
+      this._queueCraftGesturePatch({ rotation: normalizeRotation(this._craftGesture.rotation + delta) });
       return;
     }
     if (this._craftGesture.mode !== 'node') return;
-    const rect = this._canvasRect.craftLayer || this._canvasRect.craft;
+    const rect = this._craftGesture.rect || this._canvasRect.craftLayer;
     if (!rect || !rect.width) return;
     const point = this._touchPoint(touches[0]);
     const scale = CRAFT_COORD_SIZE / rect.width;
     const x = (point.x - rect.left) * scale - CRAFT_CENTER;
     const y = (point.y - rect.top) * scale - CRAFT_CENTER;
-    const radius = Math.round(clamp(Math.hypot(x, y), MIN_NODE_RADIUS, MAX_NODE_RADIUS));
-    const radii = this.data.radii.slice();
+    // 节点设计为沿各自引导线内外移动。使用轴向投影，避免真机上横向划动时
+    // 因 hypot() 丢失方向而出现节点向相反方向跳动。
+    const node = (this.data.craftNodes || [])[this._craftGesture.index];
+    const angle = ((node && node.angle) || 0) * Math.PI / 180;
+    const projectedRadius = x * Math.cos(angle) + y * Math.sin(angle);
+    const radius = Math.round(clamp(projectedRadius, MIN_NODE_RADIUS, MAX_NODE_RADIUS));
+    const queuedRadii = this._pendingCraftGesturePatch && this._pendingCraftGesturePatch.radii;
+    const radii = (queuedRadii || this.data.radii).slice();
     if (radii[this._craftGesture.index] === radius) return;
     radii[this._craftGesture.index] = radius;
     this._gestureChanged = true;
-    this._apply({ radii }, { persist: false, render: 'craft' });
+    this._queueCraftGesturePatch({ radii });
   },
   onCraftTouchEnd() {
-    if (this._gestureChanged) this._pushCraftHistory(this._gestureBefore);
+    const before = this._gestureBefore;
+    const changed = this._gestureChanged;
     this._gestureBefore = null;
     this._gestureChanged = false;
     this._craftGesture = null;
-    this._persistDraft();
+    this._flushCraftGesturePatch(() => {
+      if (changed) this._pushCraftHistory(before);
+      this.setData({ craftInteracting: false }, () => this._persistDraft());
+    });
   },
   onNodeTouchStart(event) { this.onCraftTouchStart(event); },
   onNodeTouchMove(event) { this.onCraftTouchMove(event); },
@@ -844,8 +1003,8 @@ Page({
   openCraftConfirm() {
     if (this.data.showCraftConfirm) return;
     this._craftConfirming = false;
-    // Canvas 2D 与 cover-view 在 iOS 上都是原生层。弹窗出现前丢弃旧引用，
-    // WXML 会同步卸载它们，确保普通 view 弹窗完整位于最上层。
+    // Canvas 2D 在 iOS 上属于原生层。弹窗出现前丢弃旧引用，
+    // WXML 会同步卸载画布，确保普通 view 弹窗完整位于最上层。
     if (this._canvas) this._canvas.craft = null;
     if (this._canvasRect) {
       this._canvasRect.craft = null;
@@ -864,8 +1023,7 @@ Page({
   confirmCraft() {
     if (this._craftConfirming) return;
     this._craftConfirming = true;
-    // 真机上的 cover-view 属于原生层；先完整卸载弹层和原生操作层，再切换阶段，
-    // 可避免同一次触摸被底部节点层截获或重复触发。
+    // 先完整卸载弹层与 Canvas，再切换阶段，避免同一次触摸重复触发。
     this.setData({ showCraftConfirm: false }, () => {
       this.enterStage('dye');
       this._craftConfirming = false;
@@ -1217,21 +1375,31 @@ Page({
       if (kind === 'dye') this.renderDyePreview();
     });
   },
-  _initCraftLayerRect() {
+  _refreshCraftLayerRect(done) {
     if (typeof wx === 'undefined' || !wx.createSelectorQuery) return;
     const query = wx.createSelectorQuery();
     if (query.in) query.in(this);
-    query.select('#node-layer').fields({ rect: true, size: true }).exec(results => {
+    query.select('#craft-canvas').fields({ rect: true, size: true }).exec(results => {
       const result = results && results[0];
       if (!result || !result.width) return;
-      this._canvasRect.craftLayer = {
+      const canvasRect = {
         left: result.left || 0,
         top: result.top || 0,
         width: result.width,
         height: result.height
       };
+      this._canvasRect.craft = canvasRect;
+      const visualOffset = CRAFT_NODE_OFFSET_Y * result.width / CRAFT_COORD_SIZE;
+      this._canvasRect.craftLayer = {
+        left: canvasRect.left,
+        top: canvasRect.top + visualOffset,
+        width: result.width,
+        height: result.width
+      };
+      if (typeof done === 'function') done(this._canvasRect.craftLayer);
     });
   },
+  _initCraftLayerRect() { this._refreshCraftLayerRect(); },
   _pixelRatio() {
     try {
       if (wx.getWindowInfo) return wx.getWindowInfo().pixelRatio || 1;
@@ -1253,6 +1421,98 @@ Page({
       seed: 42
     };
   },
+  _drawCraftControls() {
+    const target = this._canvas.craft;
+    if (!target || !target.context || !target.width) return;
+    const context = target.context;
+    const scale = target.width / CRAFT_COORD_SIZE;
+    // 630×630 的节点坐标系垂直居中在 630×580 的画布里。
+    const offsetY = CRAFT_NODE_OFFSET_Y * scale;
+    const centerX = CRAFT_CENTER * scale;
+    const centerY = CRAFT_CENTER * scale + offsetY;
+    const logicalHeight = target.height / scale;
+    const nodes = this.data.craftNodes || [];
+    const drawHandle = (x, y, radius, fill) => {
+      context.beginPath();
+      context.arc(x, y, radius, 0, Math.PI * 2);
+      context.fillStyle = fill;
+      context.fill();
+      context.lineWidth = Math.max(1.5, 3 * scale);
+      context.strokeStyle = '#f4efff';
+      context.stroke();
+      context.beginPath();
+      context.moveTo(x - 7.5 * scale, y);
+      context.lineTo(x + 7.5 * scale, y);
+      context.moveTo(x, y - 7.5 * scale);
+      context.lineTo(x, y + 7.5 * scale);
+      context.lineWidth = Math.max(1.5, 3 * scale);
+      context.lineCap = 'round';
+      context.strokeStyle = '#ffffff';
+      context.stroke();
+    };
+    const roundedRect = (x, y, width, height, radius) => {
+      const left = x * scale;
+      const top = y * scale;
+      const w = width * scale;
+      const h = height * scale;
+      const r = Math.min(radius * scale, w / 2, h / 2);
+      context.beginPath();
+      context.moveTo(left + r, top);
+      context.lineTo(left + w - r, top);
+      context.quadraticCurveTo(left + w, top, left + w, top + r);
+      context.lineTo(left + w, top + h - r);
+      context.quadraticCurveTo(left + w, top + h, left + w - r, top + h);
+      context.lineTo(left + r, top + h);
+      context.quadraticCurveTo(left, top + h, left, top + h - r);
+      context.lineTo(left, top + r);
+      context.quadraticCurveTo(left, top, left + r, top);
+      context.closePath();
+    };
+    const drawTool = (x, label, disabled) => {
+      context.save();
+      context.globalAlpha = disabled ? 0.46 : 1;
+      roundedRect(x, 18, 132, 52, 26);
+      context.fillStyle = 'rgba(255,255,255,.82)';
+      context.fill();
+      context.lineWidth = Math.max(1, scale);
+      context.strokeStyle = 'rgba(213,220,239,.96)';
+      context.stroke();
+      context.fillStyle = '#35508a';
+      context.font = Math.max(11, 19 * scale) + 'px PingFang SC, sans-serif';
+      context.textAlign = 'center';
+      context.textBaseline = 'middle';
+      context.fillText(label, (x + 66) * scale, 44 * scale);
+      context.restore();
+    };
+    context.save();
+    nodes.forEach(node => {
+      const x = node.x * scale;
+      const y = node.y * scale + offsetY;
+      context.beginPath();
+      context.moveTo(centerX, centerY);
+      context.lineTo(x, y);
+      context.lineWidth = Math.max(1, 2 * scale);
+      context.lineCap = 'round';
+      context.strokeStyle = 'rgba(105,94,218,.34)';
+      context.stroke();
+    });
+    nodes.forEach(node => drawHandle(node.x * scale, node.y * scale + offsetY, 24 * scale, '#9768ee'));
+    drawHandle(centerX, centerY, 24 * scale, '#7064ef');
+    drawTool(18, '↶  撤销', !this.data.canUndo);
+    drawTool(480, '复原  ↻', false);
+    context.fillStyle = '#4d58b8';
+    context.font = Math.max(10, 17 * scale) + 'px PingFang SC, sans-serif';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillText('纹样实时生成中', centerX, (logicalHeight - 58) * scale);
+    roundedRect(100, logicalHeight - 38, 430, 28, 14);
+    context.fillStyle = 'rgba(255,255,255,.82)';
+    context.fill();
+    context.fillStyle = '#5e6f94';
+    context.font = Math.max(9, 14 * scale) + 'px PingFang SC, sans-serif';
+    context.fillText('沿引导线内外拖动节点 · 双指旋转整体纹样', centerX, (logicalHeight - 24) * scale);
+    context.restore();
+  },
   renderCraftPreview() {
     const target = this._canvas.craft;
     if (!target) return;
@@ -1271,6 +1531,8 @@ Page({
           seed: 42
         });
       }
+      // 控制点、工具与提示只绘制在同一个 Canvas 坐标系，滚动时不会产生原生层残影。
+      this._drawCraftControls();
     } catch (error) {
       console.warn('renderDiyPattern failed', error);
     }

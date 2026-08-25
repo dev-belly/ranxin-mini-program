@@ -29,7 +29,7 @@
   </scroll-view>
 
   <view class="card hero" bindtap="goMbti" hover-class="card-pressed">
-    <image class="card-img hero-art" src="/assets/patterns/tuan.png" mode="aspectFill" />
+    <image class="card-img hero-art" src="/assets/patterns/tuan.jpg" mode="aspectFill" />
     <view class="hero-orbit"></view>
     <view class="hero-copy">
       <view class="eyebrow">MBTI 灵魂扎染</view>
@@ -41,30 +41,32 @@
   </view>
 
   <view class="card game-entry" bindtap="goGame" hover-class="card-pressed">
-    <image class="card-img game-art" src="/assets/patterns/shui.png" mode="aspectFill" />
+    <image class="card-img game-art" src="/assets/patterns/shui.jpg" mode="aspectFill" />
     <view class="game-bubbles">
-      <image class="game-bubble game-bubble-a" src="/assets/patterns/tuan.png" mode="aspectFill" />
-      <image class="game-bubble game-bubble-b" src="/assets/patterns/he.png" mode="aspectFill" />
-      <image class="game-bubble game-bubble-c" src="/assets/patterns/ling.png" mode="aspectFill" />
+      <image class="game-bubble game-bubble-a" src="/assets/patterns/tuan.jpg" mode="aspectFill" />
+      <image class="game-bubble game-bubble-b" src="/assets/patterns/he.jpg" mode="aspectFill" />
+      <image class="game-bubble game-bubble-c" src="/assets/patterns/ling.jpg" mode="aspectFill" />
     </view>
     <view class="game-copy">
       <view class="game-h2">合成大染缸</view>
       <view class="game-p">经典三消与落球合成，双玩法任选</view>
       <view class="game-tags"><text class="game-tag">两个游戏</text><text class="game-tag">独立入口</text></view>
       <view class="game-score"><text>今日最高</text><text class="game-score-num">3,280</text></view>
-      <view class="white-btn">选择玩法 <text class="btn-arrow">›</text></view>
+      <view class="glow-btn game-play-button">选择玩法 <text class="btn-arrow">›</text></view>
     </view>
   </view>
 
-  <!-- 第一部分首页 → 第二部分六步 DIY 的明确衔接入口 -->
-  <view class="diy-bridge" bindtap="goDiy" hover-class="card-pressed" aria-label="进入正念DIY六步创作">
-    <image class="diy-bridge-art" src="/assets/diy/entry-tuan.jpg" mode="aspectFill" />
-    <view class="diy-bridge-copy">
-      <view class="diy-bridge-kicker">✦ 正念扎染工坊</view>
-      <view class="diy-bridge-title">把此刻的情绪，染成你的作品</view>
-      <view class="diy-bridge-steps">选布料 · 选纹样 · DIY · 入染 · 氧化 · 拆结</view>
+  <!-- 第一部分首页 → 第二部分六步 DIY 的完整主卡入口 -->
+  <view class="card diy-workshop" bindtap="goDiy" hover-class="card-pressed" aria-label="进入正念DIY六步创作">
+    <image class="card-img diy-workshop-art" src="/assets/diy/entry-tuan.jpg" mode="aspectFill" />
+    <view class="diy-workshop-orbit"></view>
+    <view class="diy-workshop-copy">
+      <view class="diy-workshop-kicker">✦ 正念扎染工坊</view>
+      <view class="diy-workshop-title">把此刻的情绪，</view>
+      <view class="diy-workshop-title diy-workshop-title-last">染成你的作品</view>
+      <view class="diy-workshop-steps">选布料 · 选纹样 · DIY · 入染 · 氧化 · 拆结</view>
+      <view class="glow-btn diy-workshop-button">开始创作 <text class="btn-arrow">›</text></view>
     </view>
-    <view class="diy-bridge-action">开始<text class="diy-bridge-arrow">›</text></view>
   </view>
 
   <view class="home-split">
@@ -100,5 +102,8 @@
     </view>
   </view>
 
-  <view class="heritage-more footer-more" bindtap="goKnowledge">查看更多非遗知识 ›</view>
+  <view class="heritage-more footer-more" bindtap="goKnowledge">
+    <text>查看更多非遗知识</text>
+    <text class="footer-more-arrow">›</text>
+  </view>
 </view>

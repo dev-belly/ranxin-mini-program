@@ -1,9 +1,11 @@
 <view class="rx-bg"></view>
 <view class="poster-page">
-  <view class="nav-bar">
-    <rx-back bind:back="goBack" />
-    <view class="nav-title">作品海报</view>
-    <button class="nav-right share-btn" open-type="share" aria-label="分享作品海报">
+  <view class="nav-bar" style="{{navBarStyle}}">
+    <view class="back-slot" style="{{navControlStyle}}">
+      <rx-back bind:back="goBack" />
+    </view>
+    <view class="nav-title" style="{{navControlStyle}}">作品海报</view>
+    <button class="share-btn" style="{{shareButtonStyle}}" open-type="share" aria-label="分享作品海报">
       <view class="share-icon"></view>
     </button>
   </view>

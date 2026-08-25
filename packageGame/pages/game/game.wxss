@@ -37,46 +37,42 @@
 .game-back-shell {
   position: absolute;
   z-index: 25;
-  left: 34rpx;
-  top: max(calc(env(safe-area-inset-top) + 8rpx), 92rpx);
+  left: 24rpx;
+  top: max(calc(env(safe-area-inset-top) + 12rpx), 72rpx);
+  width: 56rpx;
+  height: 56rpx;
 }
 
-.back-button,
 .music-button {
   position: absolute;
   z-index: 25;
   top: max(calc(env(safe-area-inset-top) + 8rpx), 92rpx);
   width: 60rpx;
   height: 60rpx;
+  min-width: 60rpx;
+  max-width: 60rpx;
+  margin: 0;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
+  line-height: 1;
   border-radius: 50%;
   background: rgba(255, 255, 255, .94);
   border: 1rpx solid rgba(215, 223, 241, .68);
   box-shadow: 0 8rpx 20rpx rgba(27, 46, 90, .10), inset 0 1rpx 0 rgba(255, 255, 255, .98);
 }
 
-.back-button { left: 34rpx; }
 .music-button {
   right: 40rpx;
   /* 微信右上角原生胶囊不可隐藏，音乐键下移一行，避免被系统控件完全盖住。 */
   top: max(calc(env(safe-area-inset-top) + 68rpx), 158rpx);
   box-shadow: 0 0 0 2rpx rgba(126, 118, 242, .10), 0 0 16rpx rgba(112, 104, 237, .18), 0 8rpx 18rpx rgba(40, 67, 124, .09);
 }
-.back-button:active,
 .music-button:active { transform: scale(.93); }
 .music-button.active {
   box-shadow: 0 0 0 3rpx rgba(126, 118, 242, .18), 0 0 25rpx rgba(112, 104, 237, .35), 0 8rpx 18rpx rgba(40, 67, 124, .10);
-}
-
-.back-arrow {
-  margin-top: -6rpx;
-  margin-left: -2rpx;
-  font-family: Arial, sans-serif;
-  font-size: 55rpx;
-  font-weight: 300;
-  color: #1a4386;
 }
 
 .music-note {
@@ -580,8 +576,10 @@
 
 .win-card {
   width: 556rpx;
-  padding: 38rpx;
+  max-height: calc(100vh - 100rpx);
+  padding: 32rpx 34rpx;
   box-sizing: border-box;
+  overflow-y: auto;
   text-align: center;
   border-radius: 30rpx;
   background: rgba(255, 255, 255, .98);
@@ -589,7 +587,16 @@
   box-shadow: 0 24rpx 72rpx rgba(11, 35, 77, .25);
 }
 
+.result-eyebrow {
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  font-size: 18rpx;
+  line-height: 1;
+  letter-spacing: 4rpx;
+  color: #7a86ad;
+}
+
 .win-title {
+  margin-top: 12rpx;
   font-size: 40rpx;
   font-weight: 700;
   letter-spacing: 2rpx;
@@ -649,6 +656,14 @@
   text-align: center;
   align-items: center;
 }
+.reward-label {
+  margin-bottom: 5rpx;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  font-size: 17rpx;
+  line-height: 1.2;
+  color: #7787ab;
+  letter-spacing: 1rpx;
+}
 .reward-name {
   font-size: 24rpx;
   font-weight: 700;
@@ -676,6 +691,53 @@
   box-shadow: 0 8rpx 18rpx rgba(82, 104, 222, .22);
 }
 .continue-button:active { transform: scale(.95); }
+
+.result-primary-button {
+  height: 66rpx;
+  margin-top: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 34rpx;
+  background: linear-gradient(100deg, #4d72ef 0%, #8065eb 100%);
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  font-size: 22rpx;
+  font-weight: 700;
+  letter-spacing: 1rpx;
+  box-shadow: 0 10rpx 24rpx rgba(82, 104, 222, .25);
+}
+
+.result-secondary-actions {
+  margin-top: 14rpx;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12rpx;
+}
+
+.result-secondary-button {
+  height: 58rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 30rpx;
+  border: 1rpx solid rgba(86, 104, 191, .32);
+  background: rgba(247, 249, 255, .95);
+  color: #3454aa;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  font-size: 19rpx;
+  font-weight: 600;
+}
+
+.result-primary-button:active,
+.result-secondary-button:active {
+  transform: scale(.97);
+}
+
+.result-unfinished .win-title,
+.result-unfinished .win-score {
+  color: #365384;
+}
 
 .win-props {
   margin-top: 16rpx;
@@ -730,10 +792,6 @@
 @media (max-height: 720px) {
   .title-wrap {
     top: max(calc(env(safe-area-inset-top) - 3rpx), 66rpx);
-  }
-
-  .back-button {
-    top: max(calc(env(safe-area-inset-top) + 3rpx), 72rpx);
   }
 
   .music-button {

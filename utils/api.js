@@ -16,12 +16,13 @@ const USE_MOCK = false;
 // 纹样 id 与 B 的 assets/patterns/manifest.json 命名保持一致
 // ------------------------------------------------------------
 const MOCK_PATTERNS = [
-  { id: 'hudie', name: '蝴蝶纹', category: '白族传统', thumb: '/assets/patterns/hudie.png', unlockedByDefault: true },
-  { id: 'tuan',  name: '团花纹', category: '白族传统', thumb: '/assets/patterns/tuan.png',  unlockedByDefault: true },
-  { id: 'shui',  name: '水波纹', category: '自然',     thumb: '/assets/patterns/shui.png',  unlockedByDefault: false },
-  { id: 'cang',  name: '山水纹', category: '自然',     thumb: '/assets/patterns/cang.png',  unlockedByDefault: false },
-  { id: 'ling',  name: '菱形纹', category: '几何',     thumb: '/assets/patterns/ling.png',  unlockedByDefault: false },
-  { id: 'he',    name: '卷草纹', category: '白族传统', thumb: '/assets/patterns/he.png',    unlockedByDefault: false }
+  { id: 'hudie', name: '蝴蝶纹', category: '白族传统', thumb: '/assets/patterns/hudie.jpg', unlockedByDefault: true },
+  { id: 'tuan',  name: '团花纹', category: '白族传统', thumb: '/assets/patterns/tuan.jpg',  unlockedByDefault: true },
+  { id: 'shui',  name: '水波纹', category: '自然',     thumb: '/assets/patterns/shui.jpg',  unlockedByDefault: false },
+  { id: 'cang',  name: '山水纹', category: '自然',     thumb: '/assets/patterns/cang.jpg',  unlockedByDefault: false },
+  { id: 'ling',  name: '菱形纹', category: '几何',     thumb: '/assets/patterns/ling.jpg',  unlockedByDefault: false },
+  { id: 'he',     name: '卷草纹', category: '白族传统', thumb: '/assets/patterns/he.jpg',      unlockedByDefault: false },
+  { id: 'heling', name: '鹤翎纹', category: '白族传统', thumb: '/assets/patterns/heling.jpg', unlockedByDefault: false }
 ];
 
 // 模拟网络延迟，让前端体验接近真实请求（200ms）

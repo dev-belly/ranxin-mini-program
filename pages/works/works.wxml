@@ -6,7 +6,7 @@
 
   <view class="works-head">
     <view class="works-title">我的作品<text class="works-title-spark">✦</text></view>
-    <button class="head-create" bindtap="goDiy" aria-label="新建作品">＋</button>
+    <button class="head-create" bindtap="goDiy" aria-label="新建作品"><text class="head-create-icon">＋</text></button>
   </view>
 
   <view class="profile-row">
@@ -47,10 +47,13 @@
 
   <view wx:elif="{{displayList.length === 0}}" class="empty-card liquid-glass-card">
     <view class="empty-art">
-      <image class="empty-art-image" src="/assets/patterns/tuan.png" mode="aspectFill" />
+      <image class="empty-art-image" src="/assets/patterns/tuan.jpg" mode="aspectFill" />
     </view>
     <view class="state-title">第一块布，正等着你染开</view>
-    <view class="state-desc">从情绪出发，完成扎、染、等、拆，作品会真实保存在这里。</view>
+    <view class="state-desc empty-state-desc">
+      <text>从情绪出发，完成扎、染、等、拆，</text>
+      <text>你的作品会真实保存在这里。</text>
+    </view>
     <button class="create-first" bindtap="goDiy">创作第一件作品</button>
   </view>
 

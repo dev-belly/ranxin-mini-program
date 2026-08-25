@@ -5,15 +5,6 @@ page {
   color: #173d79;
 }
 
-.diy-back-shell {
-  position: fixed;
-  z-index: 30;
-  left: 24rpx;
-  top: 24rpx;
-  width: 56rpx;
-  height: 56rpx;
-}
-
 .diy-entry {
   position: relative;
   z-index: 2;
@@ -124,24 +115,26 @@ page {
   align-items: center;
   box-sizing: border-box;
   color: #173f75;
-  background-color: #fffdf7;
-  background-image: repeating-linear-gradient(0deg,rgba(43,71,113,.022) 0 1rpx,transparent 1rpx 7rpx),repeating-linear-gradient(90deg,rgba(116,82,42,.018) 0 1rpx,transparent 1rpx 9rpx);
-  border: 2rpx solid rgba(35,77,128,.18);
-  box-shadow: 0 12rpx 27rpx rgba(45,67,108,.12), inset 0 1rpx 0 rgba(255,255,255,.95);
+  background:
+    radial-gradient(circle at 88% 8%, rgba(146,113,255,.20), transparent 34%),
+    linear-gradient(115deg,rgba(255,255,255,.96),rgba(237,243,255,.92) 54%,rgba(244,238,255,.94));
+  border: 2rpx solid rgba(112,110,224,.28);
+  box-shadow: 0 14rpx 32rpx rgba(73,78,166,.16), inset 0 2rpx 2rpx rgba(255,255,255,.96);
   transition: transform .16s ease, box-shadow .16s ease;
 }
 .start-button-active { transform: scale(.985); box-shadow: 0 6rpx 16rpx rgba(45,67,108,.10); }
-.start-seam { position: absolute; inset: 8rpx; border-radius: 21rpx; border: 1.5rpx dashed rgba(30,77,129,.28); pointer-events: none; }
-.start-emblem { position: relative; z-index: 2; width: 66rpx; height: 66rpx; flex: 0 0 66rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fffdf6; background: #174b83; border: 5rpx double #d9c7a6; box-sizing: border-box; box-shadow: 0 5rpx 12rpx rgba(22,66,113,.19); }
+.start-seam { position: absolute; inset: 8rpx; border-radius: 21rpx; border: 1rpx solid rgba(255,255,255,.76); pointer-events: none; }
+.start-emblem { position: relative; z-index: 2; width: 68rpx; height: 68rpx; flex: 0 0 68rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; background: linear-gradient(135deg,#4779ee,#7a68f4 58%,#a764eb); border: 3rpx solid rgba(255,255,255,.82); box-sizing: border-box; box-shadow: 0 7rpx 18rpx rgba(80,72,211,.28), inset 0 2rpx 3rpx rgba(255,255,255,.45); }
 .start-emblem text { margin: 0; font: 700 28rpx/1 "Songti SC","STSong",serif; }
 .start-copy { position: relative; z-index: 2; flex: 1; min-width: 0; margin-left: 20rpx; white-space: nowrap; }
-.start-title { font: 700 28rpx/1.15 "Songti SC","STSong","PingFang SC",serif; letter-spacing: 3rpx; }
-.start-sub { margin-top: 8rpx; color: #78839b; font: 19rpx/1.1 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif; letter-spacing: 1rpx; }
-.start-arrow { position: relative; z-index: 2; width: 50rpx; height: 50rpx; flex: 0 0 50rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0 0 4rpx 3rpx; box-sizing: border-box; color: #fff; background: #315f98; border: 1rpx solid rgba(255,255,255,.6); font: 34rpx/1 sans-serif; box-shadow: 0 4rpx 10rpx rgba(36,74,124,.17); }
+.start-kicker { margin-bottom: 3rpx; color: #7a72db; font-size: 15rpx; line-height: 1; letter-spacing: 2rpx; }
+.start-title { font: 700 29rpx/1.15 "Songti SC","STSong","PingFang SC",serif; letter-spacing: 3rpx; }
+.start-sub { margin-top: 7rpx; color: #7887a6; font: 20rpx/1.1 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif; letter-spacing: 1rpx; }
+.start-arrow { position: relative; z-index: 2; width: 52rpx; height: 52rpx; flex: 0 0 52rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0 0 4rpx 3rpx; box-sizing: border-box; color: #fff; background: linear-gradient(135deg,#5276ed,#8a66ee); border: 2rpx solid rgba(255,255,255,.72); font: 34rpx/1 sans-serif; box-shadow: 0 6rpx 15rpx rgba(74,65,202,.24); }
 .latest-actions button::after { border: 0; }
 
 .latest-card { display: flex; padding: 18rpx; }
-.latest-card > image { width: 190rpx; height: 190rpx; border-radius: 24rpx; background: #edf1fb; }
+.latest-card > image { width: 190rpx; height: 190rpx; flex: 0 0 190rpx; border-radius: 24rpx; background: linear-gradient(145deg,#edf2ff,#f7f3ff); }
 .latest-copy { flex: 1; min-width: 0; padding: 10rpx 6rpx 4rpx 24rpx; }
 .latest-kicker { color: #7b70ee; font-size: 20rpx; letter-spacing: 2rpx; }
 .latest-title { margin-top: 8rpx; font-size: 30rpx; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

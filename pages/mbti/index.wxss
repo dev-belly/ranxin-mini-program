@@ -32,7 +32,29 @@
   box-shadow: 0 10rpx 26rpx rgba(34, 61, 111, .13), inset 0 1rpx 0 rgba(255,255,255,.95);
 }
 .nav-title { flex: 1; text-align: center; font-family: "Songti SC", "STSong", serif; font-size: 30rpx; color: #123e7b; letter-spacing: 3rpx; }
-.nav-space { width: 68rpx; }
+.nav-space {
+  width: 68rpx;
+  height: 68rpx;
+  flex: 0 0 68rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nav-exit {
+  width: 68rpx;
+  height: 56rpx;
+  flex: 0 0 68rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border-radius: 999rpx;
+  color: #31528c;
+  font-size: 23rpx;
+  background: rgba(255,255,255,.56);
+  border: 1rpx solid rgba(63,87,145,.16);
+  box-shadow: 0 7rpx 18rpx rgba(34,61,111,.09), inset 0 1rpx 0 rgba(255,255,255,.95);
+}
 .mbti-ink {
   position: fixed;
   z-index: 1;
@@ -91,19 +113,28 @@
 .start-btn {
   position: relative;
   z-index: 2;
-  height: 102rpx;
-  margin-top: 30rpx;
+  width: 400rpx;
+  max-width: 100%;
+  height: 92rpx;
+  margin: 30rpx auto 0;
+  padding: 0 32rpx;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: 2rpx solid rgba(255,255,255,.72);
   border-radius: 999rpx;
   background: linear-gradient(90deg, #1749a2, #2f55c9 52%, #7659de);
   color: #fff;
   font-family: "Songti SC", "STSong", serif;
-  font-size: 38rpx;
-  letter-spacing: 5rpx;
+  font-size: 36rpx;
+  line-height: 1;
+  letter-spacing: 4rpx;
+  white-space: nowrap;
   box-shadow: 0 0 0 5rpx rgba(83,96,226,.12), 0 12rpx 30rpx rgba(55,71,185,.34), inset 0 1.5rpx 0 rgba(255,255,255,.55);
 }
-.start-btn::after, .result-btn::after, .diy-btn::after, .restart-btn::after { border: none; }
-.start-spark { margin: 0 17rpx; color: #d8ddff; }
+.start-btn::after, .result-btn::after, .diy-btn::after, .restart-btn::after, .exit-btn::after { border: none; }
+.start-spark { margin-right: 14rpx; color: #d8ddff; }
 .disclaimer { position: relative; z-index: 2; margin-top: 25rpx; text-align: center; font-size: 20rpx; color: #9098ad; }
 
 /* 题目页 */
@@ -143,8 +174,18 @@
 .result-poster::before { content: ""; position: absolute; width: 430rpx; height: 430rpx; right: -200rpx; top: -130rpx; border-radius: 50%; background: radial-gradient(circle, rgba(80,137,224,.28), rgba(113,95,222,.08) 58%, transparent 74%); }
 .poster-brand { position: relative; z-index: 2; text-align: left; font-family: "Songti SC", "STSong", serif; font-size: 54rpx; font-weight: 700; letter-spacing: 7rpx; color: #123e7b; }
 .poster-brand-sub { position: relative; z-index: 2; text-align: left; margin-top: 4rpx; font-size: 22rpx; letter-spacing: 3rpx; color: #516486; }
-.poster-orbit { position: absolute; z-index: 1; left: 78rpx; top: 128rpx; width: 500rpx; height: 500rpx; border: 1rpx dotted rgba(70,88,178,.34); border-radius: 50%; }
-.result-pattern { position: relative; z-index: 2; display: block; width: 450rpx; height: 450rpx; margin: 15rpx auto 2rpx; border-radius: 50%; mix-blend-mode: multiply; }
+.result-pattern-stage {
+  position: relative;
+  z-index: 2;
+  width: 500rpx;
+  height: 500rpx;
+  margin: 15rpx auto 2rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.poster-orbit { position: absolute; z-index: 1; inset: 0; border: 1rpx dotted rgba(70,88,178,.34); border-radius: 50%; box-sizing: border-box; }
+.result-pattern { position: relative; z-index: 2; display: block; width: 450rpx; height: 450rpx; margin: 0; border-radius: 50%; box-sizing: border-box; mix-blend-mode: multiply; }
 .result-eyebrow { position: relative; z-index: 2; font-size: 24rpx; color: #234d89; letter-spacing: 2rpx; }
 .result-type { position: relative; z-index: 2; margin-top: 14rpx; font-family: "Songti SC", "STSong", serif; font-size: 43rpx; font-weight: 700; letter-spacing: 3rpx; color: #113e79; }
 .result-color { position: relative; z-index: 2; margin-top: 20rpx; font-size: 25rpx; color: #4c5f7d; }
@@ -162,4 +203,5 @@
 .result-btn-secondary { color: #173f79; background: rgba(255,255,255,.60); border: 1.5rpx solid rgba(41,70,129,.32); }
 .diy-btn { position: relative; z-index: 2; height: 84rpx; margin-top: 20rpx; border-radius: 999rpx; background: rgba(85,91,208,.10); border: 1rpx solid rgba(77,82,193,.22); color: #344ba5; font-size: 27rpx; }
 .restart-btn { position: relative; z-index: 2; margin-top: 8rpx; background: transparent; color: #7d88a0; font-size: 23rpx; }
+.exit-btn { position: relative; z-index: 2; width: 360rpx; height: 68rpx; margin: 0 auto; padding: 0; display: flex; align-items: center; justify-content: center; background: transparent; color: #596b8a; font-size: 23rpx; text-decoration: underline; }
 .share-canvas { position: fixed; left: -9999rpx; top: -9999rpx; width: 300px; height: 400px; }

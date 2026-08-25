@@ -45,10 +45,15 @@ const ARTICLES = {
 };
 
 Page({
-  data: { article: null },
-  onLoad(query) {
-    const a = ARTICLES[query.type] || ARTICLES.oxidation;
-    wx.setNavigationBarTitle({ title: a.title });
-    this.setData({ article: a });
+  // 默认数据保证低端真机在页面参数尚未就绪时也不会出现纯白空页。
+  data: { article: ARTICLES.oxidation },
+  onLoad(query = {}) {
+    const article = ARTICLES[query.type] || ARTICLES.oxidation;
+    this.setData({ article });
+  },
+  goBack() {
+    wx.navigateBack({
+      fail: () => wx.switchTab({ url: '/pages/index/index' })
+    });
   }
 });

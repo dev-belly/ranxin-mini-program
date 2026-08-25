@@ -5,9 +5,11 @@
   <view class="status-spacer"></view>
 
   <view class="custom-nav">
-    <rx-back bind:back="goBack" />
+    <view wx:if="{{!result}}" class="nav-space"><rx-back bind:back="goBack" /></view>
+    <view wx:else class="nav-space"></view>
     <view class="nav-title">{{result ? '测试结果' : (started ? '灵魂扎染测试' : '')}}</view>
-    <view class="nav-space"></view>
+    <view wx:if="{{result}}" class="nav-exit" bindtap="exitTest">退出</view>
+    <view wx:else class="nav-space"></view>
   </view>
 
   <!-- A 稿：测试说明页 -->
@@ -15,7 +17,7 @@
     <view class="intro-art-wrap">
       <view class="intro-orbit orbit-a"></view>
       <view class="intro-orbit orbit-b"></view>
-      <image class="intro-art" src="/assets/patterns/tuan.png" mode="aspectFill" />
+      <image class="intro-art" src="/assets/patterns/tuan.jpg" mode="aspectFill" />
       <text class="intro-spark spark-a">✦</text>
       <text class="intro-spark spark-b">✦</text>
     </view>
@@ -32,7 +34,7 @@
       <view class="intro-stat"><text class="intro-number">1</text><view class="intro-label">张专属纹样</view></view>
     </view>
     <view class="sample-card liquid-glass-card">
-      <image class="sample-img" src="/assets/patterns/cang.png" mode="aspectFill" />
+      <image class="sample-img" src="/assets/patterns/cang.jpg" mode="aspectFill" />
       <view class="sample-copy">
         <view class="sample-hint">你可能会得到 <text class="sample-spark">✦</text></view>
         <view class="sample-name">INFP · 苍山暮雪</view>
@@ -41,7 +43,7 @@
         <view class="sample-tags"><text class="type-tag">安静</text><text class="type-tag">松弛</text><text class="type-tag">内向生长</text></view>
       </view>
     </view>
-    <button class="start-btn" bindtap="startTest"><text class="start-spark">✦</text> 开始测试 <text class="start-spark">✦</text></button>
+    <button class="start-btn" bindtap="startTest"><text class="start-spark">✦</text><text>开始测试</text></button>
     <view class="disclaimer">测试结果仅用于趣味体验与内容诠释，不作为专业心理评估依据。</view>
   </block>
 
@@ -61,7 +63,7 @@
             data-q="{{step}}" data-o="{{oi}}" bindtap="choose" hover-class="q-opt-hover">
             <text class="q-letter">{{letters[oi]}}</text>
             <text class="q-label">{{opt.label}}</text>
-            <image wx:if="{{selectedOption === oi}}" class="option-flower" src="/assets/patterns/tuan.png" mode="aspectFill" />
+            <image wx:if="{{selectedOption === oi}}" class="option-flower" src="/assets/patterns/tuan.jpg" mode="aspectFill" />
           </view>
         </view>
       </view>
@@ -74,8 +76,10 @@
     <view class="result-poster liquid-glass-card">
       <view class="poster-brand">染心</view>
       <view class="poster-brand-sub">灵魂扎染测试</view>
-      <view class="poster-orbit"></view>
-      <image class="result-pattern" src="{{result.thumb}}" mode="aspectFill" />
+      <view class="result-pattern-stage">
+        <view class="poster-orbit"></view>
+        <image class="result-pattern" src="{{result.thumb}}" mode="aspectFill" />
+      </view>
       <view class="result-eyebrow">✦ 我的灵魂扎染纹样 ✦</view>
       <view class="result-type">{{result.type}} · {{result.name}}</view>
       <view class="result-color">对应扎染纹样：<text class="result-pattern-name">{{result.patternName}}</text></view>
@@ -92,6 +96,7 @@
     </view>
     <button class="diy-btn" bindtap="goDiy">用这张纹样开始创作</button>
     <button class="restart-btn" bindtap="restart">换一组随机题再测</button>
+    <button class="exit-btn" bindtap="exitTest">退出测试 · 返回情绪染坊</button>
   </block>
 
   <canvas type="2d" id="share-canvas" class="share-canvas"></canvas>

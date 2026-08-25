@@ -4,6 +4,7 @@
   "backgroundColor": "#fffefa",
   "backgroundTextStyle": "dark",
   "disableScroll": true,
+  "disableSwipeBack": true,
   "usingComponents": {
     "rx-back": "/components/rx-back/rx-back"
   }

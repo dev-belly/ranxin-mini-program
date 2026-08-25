@@ -19,6 +19,9 @@ Page({
     date: '',
     saving: false,
     showRealModal: false,
+    navBarStyle: 'padding-top:20px;height:32px;',
+    navControlStyle: 'top:36px;',
+    shareButtonStyle: 'right:0;top:36px;',
     products: [
       { id: 'scarf',  label: '方巾',   image: '/assets/patterns/scarf.png' },
       { id: 'pillow', label: '抱枕',   image: '/assets/patterns/pillow.png' },
@@ -30,6 +33,7 @@ Page({
 
   onLoad(opts) {
     opts = opts || {};
+    const navigationLayout = this._buildNavigationLayout();
     let work = null;
     try {
       const list = wx.getStorageSync('ranxin_works') || [];
@@ -63,6 +67,9 @@ Page({
       story,
       code,
       date,
+      navBarStyle: navigationLayout.navBarStyle,
+      navControlStyle: navigationLayout.navControlStyle,
+      shareButtonStyle: navigationLayout.shareButtonStyle,
       selectedProduct: opts.type || (work.carrierId || 'scarf')
     });
     // 若指定了载体，直接预填
@@ -75,8 +82,49 @@ Page({
     this._posterRetryTimer = setTimeout(() => this._renderPoster(0), 80);
   },
 
+  onResize() {
+    this.setData(this._buildNavigationLayout());
+  },
+
   onUnload() {
     if (this._posterRetryTimer) clearTimeout(this._posterRetryTimer);
+  },
+
+  _buildNavigationLayout() {
+    let windowInfo = { windowWidth: 375 };
+    try {
+      windowInfo = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
+    } catch (e) {}
+    const windowWidth = Number(windowInfo.windowWidth) || 375;
+    const rpx = windowWidth / 750;
+    const pageGutter = 32 * rpx;
+    const buttonWidth = 56 * rpx;
+    const capsuleGap = 16 * rpx;
+    const maxLeft = Math.max(0, windowWidth - pageGutter * 2 - buttonWidth);
+    let left = maxLeft;
+    let controlTop = Number(windowInfo.statusBarHeight) || 20;
+    let controlHeight = 64 * rpx;
+    try {
+      const capsule = wx.getMenuButtonBoundingClientRect && wx.getMenuButtonBoundingClientRect();
+      if (capsule && Number.isFinite(Number(capsule.left)) && Number(capsule.left) > 0) {
+        // 胶囊坐标相对视口；按钮 left 相对去掉 32rpx 页面边距后的 nav-bar。
+        left = Number(capsule.left) - capsuleGap - buttonWidth - pageGutter;
+      }
+      if (capsule && Number.isFinite(Number(capsule.top)) && Number(capsule.top) >= 0) {
+        controlTop = Number(capsule.top);
+      }
+      if (capsule && Number.isFinite(Number(capsule.height)) && Number(capsule.height) > 0) {
+        controlHeight = Number(capsule.height);
+      }
+    } catch (e) {}
+    left = Math.max(0, Math.min(maxLeft, left));
+    const round = (value) => Math.round(value * 10) / 10;
+    const centerY = controlTop + controlHeight / 2;
+    return {
+      navBarStyle: 'padding-top:' + round(controlTop) + 'px;height:' + round(controlHeight) + 'px;',
+      navControlStyle: 'top:' + round(centerY) + 'px;',
+      shareButtonStyle: 'left:' + round(left) + 'px;top:' + round(centerY) + 'px;'
+    };
   },
 
   _formatDate(t) {
@@ -172,10 +220,41 @@ Page({
     ctx.closePath();
   },
 
+  _ellipsizeText(ctx, value, maxWidth) {
+    const source = String(value || '');
+    if (!ctx.measureText || ctx.measureText(source).width <= maxWidth) return source;
+    let result = source;
+    while (result && ctx.measureText(result + '…').width > maxWidth) result = result.slice(0, -1);
+    return result + '…';
+  },
+
+  _wrapText(ctx, value, maxWidth, maxLines) {
+    const source = String(value || '').replace(/\s+/g, ' ').trim();
+    if (!source) return [];
+    const lines = [];
+    let current = '';
+    for (let i = 0; i < source.length; i++) {
+      const next = current + source[i];
+      if (current && ctx.measureText && ctx.measureText(next).width > maxWidth) {
+        lines.push(current);
+        current = source[i];
+        if (lines.length === maxLines) break;
+      } else {
+        current = next;
+      }
+    }
+    if (lines.length < maxLines && current) lines.push(current);
+    const consumed = lines.join('').length;
+    if (consumed < source.length && lines.length) {
+      lines[lines.length - 1] = this._ellipsizeText(ctx, lines[lines.length - 1] + source.slice(consumed), maxWidth);
+    }
+    return lines.slice(0, maxLines);
+  },
+
   _paintPoster(ctx, canvas, done) {
     const w = this._work || {};
     const d = this.data;
-    // 纸感底 + 蓝紫水彩晕染（对齐 2.7 清透蓝紫风格）
+    // 纸感底 + 受控的蓝紫角落晕染。所有装饰固定在安全区，避免文字与背景相互覆盖。
     const bg = ctx.createLinearGradient(0, 0, PW, PH);
     bg.addColorStop(0, '#fdfdff');
     bg.addColorStop(0.55, '#fbfcff');
@@ -193,65 +272,75 @@ Page({
       ctx.arc(x, y, r, 0, Math.PI * 2);
       ctx.fill();
     };
-    glow(PW - 20, 18, 70, 'rgba(140,171,244,.30)');
-    glow(18, PH * 0.55, 80, 'rgba(173,191,232,.16)');
-    glow(PW - 30, PH * 0.9, 90, 'rgba(146,168,240,.20)');
+    glow(PW - 18, 22, 62, 'rgba(140,171,244,.24)');
+    glow(12, PH * 0.56, 64, 'rgba(173,191,232,.12)');
+    glow(PW - 22, PH - 18, 68, 'rgba(146,168,240,.14)');
+
+    ctx.save();
+    this._roundedRect(ctx, 12, 12, PW - 24, PH - 24, 20);
+    ctx.strokeStyle = 'rgba(121,139,203,.13)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.restore();
 
     // 顶部装饰
     ctx.textAlign = 'center';
     ctx.fillStyle = '#b8a7f5';
-    ctx.font = '16px sans-serif';
-    ctx.fillText('✦', PW / 2, 30);
+    ctx.font = '13px sans-serif';
+    ctx.fillText('✦', PW / 2, 25);
     ctx.fillStyle = '#4a63b8';
-    ctx.font = 'bold 22px "Songti SC","STSong","SimSun",serif';
-    ctx.fillText('染 心 · 作 品 海 报', PW / 2, 64);
+    ctx.font = 'bold 18px "Songti SC","STSong","SimSun",serif';
+    ctx.fillText('染 心 · 作 品 海 报', PW / 2, 51);
 
     // 纹样主图（居中，圆角窗）
     this._drawArtwork(ctx, canvas, (boxX, boxY, boxW, boxH) => {
-      ctx.strokeStyle = 'rgba(120,140,210,.35)';
-      ctx.lineWidth = 1.5;
-      ctx.strokeRect(boxX - 4, boxY - 4, boxW + 8, boxH + 8);
+      ctx.save();
+      this._roundedRect(ctx, boxX - 4, boxY - 4, boxW + 8, boxH + 8, 18);
+      ctx.strokeStyle = 'rgba(120,140,210,.28)';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+      ctx.restore();
 
       // 作品名
       ctx.fillStyle = '#17396e';
-      ctx.font = 'bold 24px "Songti SC","STSong","SimSun",serif';
-      ctx.fillText(d.patternName || '我的扎染作品', PW / 2, boxY - 22);
+      ctx.font = 'bold 22px "Songti SC","STSong","SimSun",serif';
+      ctx.fillText(this._ellipsizeText(ctx, d.patternName || '我的扎染作品', 260), PW / 2, 86);
 
       // 染料信息
       ctx.fillStyle = '#6476a0';
       ctx.font = '14px sans-serif';
-      ctx.fillText(d.meta, PW / 2, boxY + boxH + 24);
+      ctx.fillText(this._ellipsizeText(ctx, d.meta, 274), PW / 2, boxY + boxH + 26);
 
-      // 文化寓意
+      // 文化寓意按海报安全宽度折行，最多两行，不再伸出画布。
       ctx.fillStyle = '#4f5f8c';
       ctx.font = '13px sans-serif';
-      const story = d.story.slice(0, 30);
-      ctx.fillText('“' + story + '”', PW / 2, boxY + boxH + 50);
+      const storyLines = this._wrapText(ctx, '“' + d.story + '”', 276, 2);
+      storyLines.forEach((line, index) => ctx.fillText(line, PW / 2, boxY + boxH + 53 + index * 20));
 
       // 分隔线
       ctx.strokeStyle = 'rgba(120,140,210,.30)';
       ctx.beginPath();
-      ctx.moveTo(PW / 2 - 60, boxY + boxH + 66);
-      ctx.lineTo(PW / 2 + 60, boxY + boxH + 66);
+      ctx.moveTo(PW / 2 - 60, boxY + boxH + 101);
+      ctx.lineTo(PW / 2 + 60, boxY + boxH + 101);
       ctx.stroke();
 
       // 日期 + 编码
       ctx.fillStyle = '#8a94b0';
       ctx.font = '12px sans-serif';
-      ctx.fillText(d.date + ' · ' + d.code, PW / 2, boxY + boxH + 92);
+      ctx.fillText(this._ellipsizeText(ctx, d.date + ' · ' + d.code, 274), PW / 2, boxY + boxH + 127);
 
       // 底部小星
       ctx.fillStyle = '#b8a7f5';
       ctx.font = '14px sans-serif';
-      ctx.fillText('✦  ✦  ✦', PW / 2, PH - 22);
+      ctx.fillText('✦  ✦  ✦', PW / 2, PH - 25);
       done();
     });
   },
 
   // 绘制纹样主图：优先作品缩略图，失败回退到 pattern-engine 程序化绘制
   _drawArtwork(ctx, canvas, after) {
-    const boxW = 250, boxH = 340;
-    const boxX = (PW - boxW) / 2, boxY = 108;
+    const boxW = 250, boxH = 320;
+    const boxX = (PW - boxW) / 2, boxY = 116;
     const w = this._work || {};
     const drawFallback = () => {
       const pattern = engine.getPatternById(w.patternId);
@@ -363,10 +452,14 @@ Page({
       wx.setStorageSync('ranxin_last_pattern_name', w.patternName || this.data.patternName || '海潮花影');
       if (w.thumb || w.finalImage) wx.setStorageSync('ranxin_last_pattern_image', w.thumb || w.finalImage);
       wx.setStorageSync('ranxin_product_prefill', {
+        workId: w.workId || w._id || '',
+        workIdentity: w.workIdentity || (w.workId || w._id ? 'work:' + String(w.workId || w._id) : ''),
+        patternId: w.patternId || '',
         patternName: w.patternName || this.data.patternName,
         previewImage: w.thumb || w.finalImage,
         thumb: w.thumb || w.finalImage,
         finalImage: w.finalImage || w.thumb,
+        createdAt: w.createdAt || '',
         type: this.data.selectedProduct
       });
     } catch (e) {}

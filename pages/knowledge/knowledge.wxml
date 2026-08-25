@@ -1,5 +1,6 @@
-<view class="rx-page kn-page">
+<view class="kn-root">
   <view class="rx-bg"></view>
+  <view class="rx-page kn-page">
   <view class="kn-hero">
     <view class="kn-hero-copy">
       <view class="kn-hero-pill">非遗小知识</view>
@@ -14,15 +15,16 @@
     <view class="kn-sub">一分钟，认识扎染里的自然与科学</view>
   </view>
 
-  <view class="kn-list">
-    <view wx:for="{{articles}}" wx:key="type" class="rx-card kn-card" data-type="{{item.type}}" bindtap="goArticle">
-      <view class="kn-icon">{{item.icon}}</view>
-      <view class="kn-body">
-        <view class="kn-tag">{{item.tag}}</view>
-        <view class="kn-title">{{item.title}}</view>
-        <view class="kn-desc">{{item.desc}}</view>
+    <view class="kn-list">
+      <view wx:for="{{articles}}" wx:key="type" class="rx-card kn-card" data-type="{{item.type}}" bindtap="goArticle">
+        <view class="kn-icon">{{item.icon}}</view>
+        <view class="kn-body">
+          <view class="kn-tag">{{item.tag}}</view>
+          <view class="kn-title">{{item.title}}</view>
+          <view class="kn-desc">{{item.desc}}</view>
+        </view>
+        <view class="kn-arrow">›</view>
       </view>
-      <view class="kn-arrow">›</view>
     </view>
   </view>
 </view>

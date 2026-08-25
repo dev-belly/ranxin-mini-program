@@ -1,5 +1,6 @@
-<view class="rx-page art-page" wx:if="{{article}}">
+<view class="art-root">
   <view class="rx-bg"></view>
+  <view class="rx-page art-page" wx:if="{{article}}">
 
   <view class="art-hero">
     <view class="art-spark"><text class="rx-spark">✦</text> {{article.title}}</view>
@@ -30,5 +31,6 @@
     </view>
   </view>
 
-  <view class="art-foot">每一次等待，都是色彩的成长。</view>
+    <view class="art-foot">每一次等待，都是色彩的成长。</view>
+  </view>
 </view>

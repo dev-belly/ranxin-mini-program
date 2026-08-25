@@ -1,22 +1,19 @@
-/* 全局主题：染心 · 液态玻璃 v3（参考 iOS 26 + GitHub 开源 liquid-glass 技术）
-   真做法核心（来自开源复刻）：
-   ① 边缘折射 —— 玻璃是凸面，背后内容在边缘被透镜弯折；
-   ② 对称镜面高光 —— 光从两侧进入/射出，玻璃上下边形成一圈亮环；
-   ③ 薄磨砂体 + 鲜艳底层 —— 玻璃要薄，底下必须是鲜艳内容，玻璃才透得起来。
-   真机 backdrop-filter / SVG 滤镜支持差，故用最强 CSS 还原：脆边 + 上下 rim 光 + 凸面顶部高光 + 鲜艳晕染底层。 */
+/* 全局主题：染心 · A 稿水彩纸感 + 薄液态玻璃。
+   A 的 HTML 重点是暖白纸底、角落蓝紫水彩、薄透玻璃和清晰深蓝层级；
+   不再使用高饱和、大幅旋转的“极光秀”，避免视觉压过扎染内容。 */
 page {
   background: #fbfaf8;
   font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   color: #173d79;
   -webkit-font-smoothing: antialiased;
-  --glass-bg: rgba(255, 255, 255, 0.28);
-  --glass-bg-strong: rgba(255, 255, 255, 0.36);
-  --glass-bg-tint: rgba(255, 255, 255, 0.32);
-  --glass-border: rgba(255, 255, 255, 0.55);
-  --glass-border-bright: rgba(255, 255, 255, 0.70);
+  --glass-bg: rgba(255, 255, 255, 0.18);
+  --glass-bg-strong: rgba(255, 255, 255, 0.28);
+  --glass-bg-tint: rgba(255, 255, 255, 0.22);
+  --glass-border: rgba(255, 255, 255, 0.58);
+  --glass-border-bright: rgba(255, 255, 255, 0.76);
   /* 景深 + 玻璃厚度（顶亮底暗，模拟凸面玻璃体） */
-  --glass-shadow: 0 18rpx 50rpx rgba(18, 28, 64, 0.24);
-  --glass-thickness: inset 0 2rpx 2rpx rgba(255, 255, 255, 0.9), inset 0 -2rpx 3rpx rgba(18, 28, 64, 0.12);
+  --glass-shadow: 0 16rpx 42rpx rgba(26, 43, 77, 0.14);
+  --glass-thickness: inset 0 2rpx 2rpx rgba(255, 255, 255, 0.92), inset 0 -2rpx 2rpx rgba(18, 28, 64, 0.08);
   /* 斜向 specular：光从左上掠过玻璃顶部（凸面高光带） */
   --glass-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.08) 34%, rgba(255, 255, 255, 0) 56%);
   /* 边缘折射亮环（仿苹果凸面）：脆边 + 软内圈 + 顶部光 + 底部厚度暗 */
@@ -35,8 +32,11 @@ page {
   z-index: -1;
   overflow: hidden;
   background:
-    radial-gradient(circle at 2rpx 2rpx, rgba(45, 82, 136, .10) 0 .7rpx, transparent .9rpx) 0 0 / 21rpx 21rpx,
-    linear-gradient(180deg, #fbfaf8 0%, #faf9f6 76%, #f7f5f2 100%);
+    radial-gradient(circle at 2rpx 2rpx, rgba(45, 82, 136, .07) 0 .7rpx, transparent .9rpx) 0 0 / 22rpx 22rpx,
+    radial-gradient(560rpx 520rpx at 104% 2%, rgba(115, 154, 245, .25), transparent 65%),
+    radial-gradient(460rpx 420rpx at 96% 32%, rgba(155, 128, 238, .18), transparent 66%),
+    radial-gradient(500rpx 460rpx at -8% 88%, rgba(77, 132, 228, .16), transparent 68%),
+    linear-gradient(180deg, #fbfaf8 0%, #f8f8fb 66%, #f5f6fb 100%);
 }
 
 /* 自然极光：两个鲜艳大光团，互质慢周期（25s / 40s）+ 不规则路径，但位移/旋转/明暗呼吸幅度拉大
@@ -45,44 +45,31 @@ page {
 .rx-bg::after {
   content: "";
   position: absolute;
-  left: -45%; top: -45%;
-  width: 190%; height: 190%;
+  width: 520rpx; height: 520rpx;
+  border-radius: 48% 52% 62% 38%;
+  filter: blur(18rpx);
   pointer-events: none;
   will-change: transform, opacity;
   backface-visibility: hidden;
 }
 .rx-bg::before {
-  background:
-    radial-gradient(46% 44% at 26% 30%, rgba(70, 130, 255, .85), transparent 60%),
-    radial-gradient(42% 40% at 68% 20%, rgba(160, 80, 255, .78), transparent 60%),
-    radial-gradient(36% 36% at 84% 58%, rgba(0, 210, 255, .70), transparent 60%),
-    radial-gradient(40% 38% at 16% 74%, rgba(90, 170, 255, .74), transparent 60%);
-  animation: rx-aurora-a 25s ease-in-out infinite;
+  right: -230rpx; top: -180rpx;
+  background: radial-gradient(circle at 45% 45%, rgba(101, 140, 238, .24), rgba(151, 113, 235, .10) 48%, transparent 72%);
+  animation: rx-watercolor-a 32s ease-in-out infinite;
 }
 .rx-bg::after {
-  background:
-    radial-gradient(44% 42% at 74% 72%, rgba(255, 90, 200, .65), transparent 60%),
-    radial-gradient(38% 36% at 12% 28%, rgba(255, 190, 60, .58), transparent 60%),
-    radial-gradient(42% 40% at 88% 86%, rgba(140, 90, 255, .68), transparent 60%),
-    radial-gradient(38% 36% at 48% 8%, rgba(0, 200, 255, .55), transparent 60%);
-  animation: rx-aurora-b 40s ease-in-out infinite;
+  left: -260rpx; bottom: -230rpx;
+  background: radial-gradient(circle at 55% 45%, rgba(75, 135, 230, .19), rgba(121, 171, 238, .08) 48%, transparent 72%);
+  animation: rx-watercolor-b 42s ease-in-out infinite;
 }
 
-@keyframes rx-aurora-a {
-  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1);       opacity: .62; }
-  20%  { transform: translate3d(-14%, 9%, 0) rotate(8deg) scale(1.16); opacity: 1; }
-  40%  { transform: translate3d(-6%, 18%, 0) rotate(15deg) scale(1.28); opacity: .75; }
-  60%  { transform: translate3d(10%, 9%, 0) rotate(4deg) scale(1.10);   opacity: .98; }
-  80%  { transform: translate3d(15%, -7%, 0) rotate(-10deg) scale(1.22); opacity: .70; }
-  100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1);       opacity: .62; }
+@keyframes rx-watercolor-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); opacity: .92; }
+  50% { transform: translate3d(-28rpx, 24rpx, 0) scale(1.06); opacity: .72; }
 }
-@keyframes rx-aurora-b {
-  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1.06);     opacity: .58; }
-  22%  { transform: translate3d(16%, -12%, 0) rotate(-12deg) scale(1.20); opacity: .95; }
-  45%  { transform: translate3d(7%, 11%, 0) rotate(6deg) scale(1.32);   opacity: .70; }
-  68%  { transform: translate3d(-12%, 15%, 0) rotate(16deg) scale(1.14); opacity: 1; }
-  84%  { transform: translate3d(-4%, -5%, 0) rotate(-3deg) scale(1.24);  opacity: .78; }
-  100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1.06);     opacity: .58; }
+@keyframes rx-watercolor-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.02); opacity: .82; }
+  50% { transform: translate3d(32rpx, -20rpx, 0) scale(1.08); opacity: .62; }
 }
 
 /* 通用容器 */
@@ -92,8 +79,8 @@ page {
 .rx-card {
   position: relative;
   background: var(--glass-sheen), var(--glass-bg);
-  -webkit-backdrop-filter: blur(30px) saturate(200%) brightness(108%);
-  backdrop-filter: blur(30px) saturate(200%) brightness(108%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%) brightness(106%);
+  backdrop-filter: blur(24px) saturate(180%) brightness(106%);
   border-radius: 32rpx;
   border: 1rpx solid var(--glass-border);
   box-shadow: var(--glass-shadow), var(--glass-thickness);

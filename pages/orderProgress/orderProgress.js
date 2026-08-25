@@ -21,24 +21,25 @@ Page({
     const order = wx.getStorageSync('ranxin_last_order') || {
       patternName: '雨落苍山',
       type: '方巾',
-      previewImage: '/assets/patterns/cang.png',
+      previewImage: '/assets/patterns/cang.jpg',
       material: '棉麻',
       makingDays: '7-12 天'
     };
-    // 模拟当前进度：前三个节点已完成，第4个进行中
-    const activeIndex = 2;
+    // A 稿演示默认处于“正在扎结”；真实后端接入后直接使用订单的 statusIndex。
+    const activeIndex = Number.isFinite(Number(order.statusIndex)) ? Math.max(0, Math.min(STEPS.length - 1, Number(order.statusIndex))) : 2;
     const steps = STEPS.map((s, i) => ({
       ...s,
       done: i <= activeIndex,
       active: i === activeIndex,
-      date: i <= activeIndex ? this.mockDate(i) : '等待中'
+      date: i <= activeIndex ? this.mockDate(i, order.createdAt) : '等待中'
     }));
     this.setData({ order, steps });
   },
 
-  mockDate(offset) {
-    const d = new Date();
-    d.setDate(d.getDate() - (2 - offset));
+  mockDate(offset, createdAt) {
+    const base = createdAt ? new Date(createdAt) : new Date();
+    const d = Number.isNaN(base.getTime()) ? new Date() : base;
+    d.setDate(d.getDate() + offset);
     return (d.getMonth() + 1).toString().padStart(2, '0') + '.' + d.getDate().toString().padStart(2, '0');
   },
 

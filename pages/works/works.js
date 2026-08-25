@@ -3,6 +3,23 @@
 const api = require('../../utils/api.js');
 const engine = require('../../utils/pattern-engine.js');
 
+function stableWorkIdentity(work) {
+  const explicitId = work.workId || work._id;
+  if (explicitId) return 'work:' + String(explicitId);
+  const source = [
+    work.patternId || '',
+    work.createdAt || work.date || '',
+    work.thumb || work.finalImage || '',
+    work.title || work.patternName || ''
+  ].join('|');
+  let hash = 2166136261;
+  for (let i = 0; i < source.length; i++) {
+    hash ^= source.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return 'work:legacy-' + (hash >>> 0).toString(36);
+}
+
 Page({
   data: {
     loading: true,
@@ -44,10 +61,11 @@ Page({
         if (w.patternId && !seen[w.patternId]) {
           seen[w.patternId] = true;
         }
-        const fallbackThumb = w.patternId ? '/assets/patterns/' + w.patternId + '.png' : '/assets/patterns/tuan.png';
+        const fallbackThumb = w.patternId ? '/assets/patterns/' + w.patternId + '.jpg' : '/assets/patterns/tuan.jpg';
         const dyeName = w.dyeName || '板蓝根';
         return {
           workId: w.workId || w._id || ('local_work_' + index),
+          workIdentity: stableWorkIdentity(w),
           title: w.title || (p ? p.name + ' 作品' : '未命名作品'),
           patternId: w.patternId,
           patternName: w.patternName || (p ? p.name : (w.patternId || '')),
@@ -59,6 +77,8 @@ Page({
           dyeName,
           filterId: 'dye:' + dyeName,
           thumb: w.thumb || '',
+          finalImage: w.finalImage || '',
+          createdAt: w.createdAt || w.date || '',
           fallbackThumb,
           displayThumb: w.thumb || fallbackThumb,
           orderStatus: w.orderStatus || '',
@@ -208,6 +228,16 @@ Page({
     if (w) {
       wx.setStorageSync('ranxin_last_pattern_name', w.patternName || w.title || '雨落苍山');
       if (w.displayThumb) wx.setStorageSync('ranxin_last_pattern_image', w.displayThumb);
+      wx.setStorageSync('ranxin_product_prefill', {
+        workId: w.workId,
+        workIdentity: w.workIdentity,
+        patternId: w.patternId || '',
+        patternName: w.patternName || w.title || '雨落苍山',
+        previewImage: w.displayThumb || '',
+        thumb: w.thumb || w.displayThumb || '',
+        finalImage: w.finalImage || w.thumb || w.displayThumb || '',
+        createdAt: w.createdAt || ''
+      });
     }
     wx.navigateTo({ url: '/pages/product/product' });
   },

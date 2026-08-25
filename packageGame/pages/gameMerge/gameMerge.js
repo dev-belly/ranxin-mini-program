@@ -27,39 +27,55 @@ const SPRITE_SRC = {
   pattern: '/packageGame/assets/game/merge/pattern.png', cloth: '/packageGame/assets/game/merge/cloth.png', vat: '/packageGame/assets/game/merge/vat.png'
 };
 
-// 分数里程碑奖励（纹样）
-const REWARDS = [
-  { score: 1000, name: '水波初绽' },
-  { score: 2000, name: '云涡回旋' },
-  { score: 3000, name: '苍山花影' },
-  { score: 4000, name: '靛蓝星芒' },
-  { score: 5000, name: '海潮团花' },
-  { score: 6000, name: '大理盛放' }
+// 奖励只使用项目里已有的真实扎染纹样图；全部随游戏分包打包，
+// 避免真机按需加载分包时跨包资源出现空图。
+const PATTERN_REWARDS = [
+  { patternId: 'shui', name: '水波纹', thumb: '/packageGame/assets/patterns/shui.jpg', story: '水波流转，让心绪慢慢松开。' },
+  { patternId: 'cang', name: '苍山纹', thumb: '/packageGame/assets/patterns/cang.jpg', story: '山水层叠，在留白中保持坚定。' },
+  { patternId: 'ling', name: '菱形纹', thumb: '/packageGame/assets/patterns/ling.jpg', story: '菱花对称，从秩序里生出安定。' },
+  { patternId: 'heling', name: '鹤翎纹', thumb: '/packageGame/assets/patterns/heling.jpg', story: '鹤羽舒展，把轻盈与自由留在布上。' },
+  { patternId: 'tuan', name: '团花纹', thumb: '/packageGame/assets/patterns/tuan.jpg', story: '团花向心聚拢，象征圆满与相遇。' },
+  { patternId: 'hudie', name: '蝴蝶纹', thumb: '/packageGame/assets/patterns/hudie.jpg', story: '双翼展开，把轻盈与新生留在布上。' }
 ];
-const VAT_REWARD_NAMES = ['染缸花印', '蓝釉回澜', '缸影团花', '苍洱染心', '靛波盛放', '大理蓝韵', '云水缸纹', '花漾染痕'];
 
-// 染心纹样解锁阶梯（里程碑 0~3 映射到此，保持 染心 画廊进度）
-const UNLOCK_LADDER = ['shui', 'cang', 'ling', 'he'];
+// 分数里程碑与真实纹样一一对应。
+const REWARDS = [1000, 2000, 3000, 4000, 5000, 6000].map((score, index) =>
+  Object.assign({ score }, PATTERN_REWARDS[index])
+);
+
+function rememberLocalPattern(patternId) {
+  if (!patternId) return;
+  try {
+    const saved = wx.getStorageSync('ranxin_unlocked_patterns');
+    const unlocked = Array.isArray(saved) ? saved.slice() : [];
+    if (unlocked.indexOf(patternId) < 0) unlocked.push(patternId);
+    wx.setStorageSync('ranxin_unlocked_patterns', unlocked);
+  } catch (e) {}
+}
 
 // ---------------- 物理常量（与 HTML 完全一致）----------------
 const GRAVITY = 1750, WALL_BOUNCE = .43, PIECE_BOUNCE = .36, FLOOR_BOUNCE = .23, FRICTION = .34, SUBSTEPS = 5;
 const LEFT = 33, RIGHT = 824, FLOOR = 946, SPAWN_Y = 118, DANGER_Y = 195;
 const LIMIT_WARNING_DISTANCE = 120;
 
-const api = require('../../../utils/api.js');
+const api = require('../../utils/api.js');
 
 Page({
   data: {
-    pageScale: 1, pageOffsetX: 0, pageOffsetY: 0,
+    pageScale: 1, pageOffsetX: 0, pageOffsetY: 0, musicButtonTop: 92,
     canvasDisplayLeft: CANVAS_DESIGN_LEFT, canvasDisplayTop: CANVAS_DESIGN_TOP,
     canvasDisplayWidth: CW, canvasDisplayHeight: CH,
     scoreDisplay: '0', nextImg: '/packageGame/assets/game/merge/leaf.png',
     rerollsText: '×3', removalsText: '×3', muteLabel: '静音',
     rewardHint: '下一纹样：1,000 分',
     toastVisible: false, toastText: '',
-    overVisible: false, overTitle: '超过堆叠上限', overText: '',
+    overVisible: false, overTitle: '本局染纹收束', overText: '',
+    overScore: '0', overDuration: '0 秒', overMergeCount: '0 次', overHighest: '板蓝根叶',
+    overPatternLabel: '推荐创作纹样', overPatternName: '水波纹',
+    overPatternThumb: '/packageGame/assets/patterns/shui.jpg', overPatternId: 'shui',
     rewardModalVisible: false, rewardBundleTitle: '', rewardThreshold: '', rewardGridClass: '',
-    rewardItems: []
+    rewardItems: [], rewardDiyName: '水波纹', rewardDiyPatternId: 'shui',
+    navigationGuardVisible: true
   },
 
   onLoad() {
@@ -69,23 +85,34 @@ Page({
     this.resetRuntimeState();
   },
   onReady() { this.initCanvas(); },
+  onShow() {
+    if (!this._allowGuardClose && !this.data.navigationGuardVisible) {
+      this.setData({ navigationGuardVisible: true });
+    }
+  },
   onUnload() {
     this.running = false;
     this._canvasDisposed = true;
+    this._allowGuardClose = true;
+    if (this._guardTimer) clearTimeout(this._guardTimer);
     if (this._spriteRetryTimer) clearTimeout(this._spriteRetryTimer);
     if (this.canvas && this._raf && this.canvas.cancelAnimationFrame) this.canvas.cancelAnimationFrame(this._raf);
     if (wx.offWindowResize && this._resizeHandler) wx.offWindowResize(this._resizeHandler);
   },
 
   goBack() {
-    try {
-      const pages = getCurrentPages();
-      if (pages && pages.length > 1) {
-        wx.navigateBack();
-        return;
-      }
-    } catch (e) {}
-    wx.reLaunch({ url: '/pages/index/index' });
+    this._leaveGame(() => {
+      try {
+        const pages = getCurrentPages();
+        if (pages && pages.length > 1) {
+          wx.navigateBack({
+            fail: () => wx.redirectTo({ url: '/packageGame/pages/gameHub/gameHub' })
+          });
+          return;
+        }
+      } catch (e) {}
+      wx.reLaunch({ url: '/pages/index/index' });
+    });
   },
 
   fitPage() {
@@ -93,6 +120,12 @@ Page({
     try { info = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync(); } catch (e) { info = { windowWidth: 375, windowHeight: 812 }; }
     const vw = Number(info.windowWidth) || 375, vh = Number(info.windowHeight) || 812;
     const s = Math.min(vw / DESIGN_W, vh / DESIGN_H);
+    let menuBottom = 0;
+    try {
+      const menu = wx.getMenuButtonBoundingClientRect && wx.getMenuButtonBoundingClientRect();
+      menuBottom = menu && Number(menu.bottom) ? Number(menu.bottom) : 0;
+    } catch (e) {}
+    const safeTop = info.safeArea && Number(info.safeArea.top) ? Number(info.safeArea.top) : 0;
     this.setData({
       pageScale: s,
       pageOffsetX: (vw - DESIGN_W * s) / 2,
@@ -100,7 +133,9 @@ Page({
       canvasDisplayLeft: (vw - DESIGN_W * s) / 2 + CANVAS_DESIGN_LEFT * s,
       canvasDisplayTop: (vh - DESIGN_H * s) / 2 + CANVAS_DESIGN_TOP * s,
       canvasDisplayWidth: CW * s,
-      canvasDisplayHeight: CH * s
+      canvasDisplayHeight: CH * s,
+      // 音乐键在未缩放的视口层中，永远贴在微信胶囊下方。
+      musicButtonTop: Math.max(menuBottom + 8, safeTop + 54)
     });
   },
 
@@ -110,10 +145,15 @@ Page({
     this.pointerHeld = false; this.limitWarning = false; this.activeId = null;
     this.stableFrames = 0; this.activeAge = 0; this.lastTime = Date.now(); this.uid = 1;
     this.unlockedRewards = []; this.vatRewardCount = 0; this.rewardPaused = false;
+    this.sessionRewards = []; this.latestReward = null; this.mergeCount = 0;
     this._startTime = Date.now();
+    this._resultOpening = false;
     this.setData({
       scoreDisplay: '0', rerollsText: '×3', removalsText: '×3', muteLabel: '静音',
-      overVisible: false, rewardModalVisible: false, rewardItems: [], toastVisible: false
+      overVisible: false, rewardModalVisible: false, rewardItems: [], toastVisible: false,
+      overScore: '0', overDuration: '0 秒', overMergeCount: '0 次', overHighest: '板蓝根叶',
+      overPatternLabel: '推荐创作纹样', overPatternName: PATTERN_REWARDS[0].name,
+      overPatternThumb: PATTERN_REWARDS[0].thumb, overPatternId: PATTERN_REWARDS[0].patternId
     });
     this.updateRewardHint();
   },
@@ -212,11 +252,9 @@ Page({
     REWARDS.forEach((r, index) => {
       if (this.score >= r.score && !this.unlockedRewards.includes(index)) {
         this.unlockedRewards.push(index);
-        gained.push({ name: r.name, pattern: index, source: '达到 ' + r.score.toLocaleString() + ' 分' });
-        // 染心桥接：里程碑 0~3 解锁 染心 纹样
-        if (index < UNLOCK_LADDER.length) {
-          try { api.unlockPattern(UNLOCK_LADDER[index], { sourceType: 'game', sourceId: 'gameMerge' }).catch(() => {}); } catch (e) {}
-        }
+        gained.push(Object.assign({}, r, { source: '达到 ' + r.score.toLocaleString() + ' 分' }));
+        rememberLocalPattern(r.patternId);
+        try { api.unlockPattern(r.patternId, { sourceType: 'game', sourceId: 'gameMerge' }).catch(() => {}); } catch (e) {}
       }
     });
     this.updateRewardHint();
@@ -225,21 +263,35 @@ Page({
 
   collectVatReward() {
     const index = this.vatRewardCount++;
-    return {
-      name: VAT_REWARD_NAMES[index % VAT_REWARD_NAMES.length],
-      pattern: (index + 2) % 6,
-      source: '成功合成大染缸'
-    };
+    const pattern = PATTERN_REWARDS[(index + 2) % PATTERN_REWARDS.length];
+    rememberLocalPattern(pattern.patternId);
+    try { api.unlockPattern(pattern.patternId, { sourceType: 'game', sourceId: 'gameMergeVat' }).catch(() => {}); } catch (e) {}
+    return Object.assign({}, pattern, { source: '成功合成大染缸' });
   },
 
   showRewardBundle(items) {
     if (!items || !items.length) return;
+    const uniqueItems = [];
+    items.forEach(item => {
+      const saved = uniqueItems.find(existing => existing.patternId === item.patternId);
+      if (saved) {
+        if (item.source && saved.source.indexOf(item.source) < 0) saved.source += ' · ' + item.source;
+        return;
+      }
+      uniqueItems.push(Object.assign({}, item));
+    });
+    uniqueItems.forEach(item => {
+      if (!this.sessionRewards.some(saved => saved.patternId === item.patternId)) this.sessionRewards.push(item);
+    });
+    this.latestReward = uniqueItems[uniqueItems.length - 1];
     this.rewardPaused = true;
     this.setData({
-      rewardItems: items,
-      rewardBundleTitle: '你获得了 ' + items.length + ' 个纹样',
-      rewardGridClass: 'rewardGrid' + (items.length === 1 ? ' single' : (items.length >= 3 ? ' many' : '')),
-      rewardModalVisible: true
+      rewardItems: uniqueItems,
+      rewardBundleTitle: '你获得了 ' + uniqueItems.length + ' 个纹样',
+      rewardGridClass: 'rewardGrid' + (uniqueItems.length === 1 ? ' single' : (uniqueItems.length >= 3 ? ' many' : '')),
+      rewardModalVisible: true,
+      rewardDiyName: this.latestReward.name,
+      rewardDiyPatternId: this.latestReward.patternId
     });
     const hasVat = items.some(x => x.source === '成功合成大染缸');
     const scoreCount = items.filter(x => x.source.indexOf('达到 ') === 0).length;
@@ -248,7 +300,7 @@ Page({
     else if (hasVat) threshold = '合成出大染缸，立即奖励 1 个纹样';
     else threshold = '分数里程碑奖励';
     this.setData({ rewardThreshold: threshold });
-    this.tone(650 + Math.min(items.length, 4) * 35, .18);
+    this.tone(650 + Math.min(uniqueItems.length, 4) * 35, .18);
   },
 
   checkRewards() {
@@ -329,6 +381,7 @@ Page({
         vx: (a.vx * ma + b.vx * mb) / mt * .55, vy: Math.min(-55, (a.vy * ma + b.vy * mb) / mt - 80), active: wasActive
       };
       this.pieces.splice(j, 1); this.pieces.splice(i, 1); this.pieces.push(merged);
+      this.mergeCount++;
       if (wasActive) { this.activeId = merged.id; this.stableFrames = 0; }
       this.score += nd.score; this.setData({ scoreDisplay: this.score.toLocaleString() });
 
@@ -477,21 +530,137 @@ Page({
     } catch (e) { }
   },
 
+  blockPageSwipe() {},
+
   // ---------------- 结算 ----------------
   endGame() {
     if (this.ended) return;
     this.ended = true; this.current = null; this.activeId = null;
-    this.setData({ overVisible: true, overTitle: '超过堆叠上限', overText: '堆叠高度超过警戒线，游戏结束 · 本次得分 ' + this.score.toLocaleString() });
+    const duration = Math.max(1, Math.round((Date.now() - this._startTime) / 1000));
+    const highestLevel = this.pieces.reduce((highest, piece) => Math.max(highest, Number(piece.level) || 0), 0);
+    const pattern = this.latestReward || PATTERN_REWARDS[0];
+    const resultPayload = {
+      source: 'merge',
+      gameName: '落球合成',
+      eyebrow: '游戏结算',
+      title: '奖励收获',
+      subtitle: '这一轮合成旅程已经完成，收下纹样继续创作吧',
+      score: this.score,
+      stats: [
+        { value: String(this.mergeCount) + ' 次', label: '合成' },
+        { value: String(duration) + ' 秒', label: '用时' },
+        { value: LEVEL_DEFS[highestLevel].name, label: '最高形态' }
+      ],
+      rewardLabel: this.latestReward ? '本局收下纹样' : '推荐创作纹样',
+      rewardId: pattern.patternId,
+      reward: { id: pattern.patternId, name: pattern.name, thumb: pattern.thumb, story: pattern.story },
+      message: '每一次落下与合成，都把散落的灵感慢慢聚成完整的形状。'
+    };
+    this.setData({
+      overVisible: true,
+      overTitle: this.score >= 6000 ? '大染缸圆满收官' : '本局染纹收束',
+      overText: '堆叠高度触及警戒线，本轮合成已结算。',
+      overScore: this.score.toLocaleString(),
+      overDuration: duration + ' 秒',
+      overMergeCount: this.mergeCount + ' 次',
+      overHighest: LEVEL_DEFS[highestLevel].name,
+      overPatternLabel: this.latestReward ? '本局收下纹样' : '推荐创作纹样',
+      overPatternName: pattern.name,
+      overPatternThumb: pattern.thumb,
+      overPatternId: pattern.patternId
+    }, () => this._openResultPage(resultPayload));
     this.tone(150, .28); this.vibrate('heavy');
     // 染心桥接：上报成绩（失败仅记录，不阻断）
     try {
-      api.submitGame({ score: this.score, duration: Math.round((Date.now() - this._startTime) / 1000) }).catch(() => { });
+      api.submitGame({ score: this.score, duration }).catch(() => { });
     } catch (e) { }
   },
 
   onRewardCollect() {
     this.rewardPaused = false;
     this.setData({ rewardModalVisible: false });
+  },
+
+  openDiyWithPattern(event) {
+    const dataset = event && event.currentTarget && event.currentTarget.dataset;
+    const patternId = (dataset && dataset.pattern) || this.data.overPatternId || this.data.rewardDiyPatternId || 'shui';
+    rememberLocalPattern(patternId);
+    try { wx.setStorageSync('ranxin_diy_prefill', patternId); } catch (e) {}
+    this._leaveGame(() => {
+      wx.redirectTo({
+        url: '/packageDiy/pages/flow/flow?stage=pattern&pattern=' + encodeURIComponent(patternId),
+        fail: () => {
+          this._restoreNavigationGuard('正念 DIY 打开失败，请重试');
+          wx.switchTab({ url: '/pages/diy/diy' });
+        }
+      });
+    });
+  },
+
+  goGameHub() {
+    this._leaveGame(() => {
+      try {
+        const pages = getCurrentPages();
+        const previous = pages && pages.length > 1 ? pages[pages.length - 2] : null;
+        if (previous && previous.route === 'packageGame/pages/gameHub/gameHub') {
+          wx.navigateBack({ fail: () => wx.redirectTo({ url: '/packageGame/pages/gameHub/gameHub' }) });
+          return;
+        }
+      } catch (e) {}
+      wx.redirectTo({
+        url: '/packageGame/pages/gameHub/gameHub',
+        fail: () => this._restoreNavigationGuard('游戏坊打开失败，请重试')
+      });
+    });
+  },
+
+  _openResultPage(payload) {
+    if (this._resultOpening) return;
+    this._resultOpening = true;
+    try { wx.setStorageSync('ranxin_game_result', payload); } catch (e) {}
+    this._leaveGame(() => {
+      wx.redirectTo({
+        url: '/packageGame/pages/gameResult/gameResult',
+        fail: () => {
+          this._resultOpening = false;
+          this._restoreNavigationGuard('结算页打开失败，可直接从当前页面进入 DIY');
+        }
+      });
+    });
+  },
+
+  onNavigationGuardBeforeLeave() {
+    if (this._allowGuardClose) return;
+    this.setData({ navigationGuardVisible: true });
+    this.showToast('请使用左上角返回键退出游戏');
+  },
+
+  onNavigationGuardAfterLeave() {
+    if (!this._allowGuardClose) this.setData({ navigationGuardVisible: true });
+  },
+
+  _leaveGame(navigate) {
+    this.running = false;
+    this._allowGuardClose = true;
+    this._pendingNavigation = navigate;
+    const run = () => {
+      const action = this._pendingNavigation;
+      this._pendingNavigation = null;
+      if (typeof action === 'function') action();
+    };
+    if (!this.data.navigationGuardVisible) {
+      run();
+      return;
+    }
+    this.setData({ navigationGuardVisible: false }, () => {
+      this._guardTimer = setTimeout(run, 30);
+    });
+  },
+
+  _restoreNavigationGuard(message) {
+    this._allowGuardClose = false;
+    this.setData({ navigationGuardVisible: true });
+    if (message) this.showToast(message);
   },
 
   onRestart() {

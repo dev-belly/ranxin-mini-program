@@ -1,45 +1,43 @@
 /* 合成大染缸 · 落球合成（无限模式）视觉，对齐 合成大染缸版本2.html */
 .viewport {
   position: relative; width: 100vw; height: 100vh; overflow: hidden;
+  background: #e8efff;
+}
+.viewportBg {
+  position: fixed; left: 0; top: 0; right: 0; bottom: 0;
+  width: 100vw; height: 100vh; z-index: 0;
 }
 .merge-back-shell {
   position: fixed;
   z-index: 95;
-  left: 22rpx;
-  top: max(calc(env(safe-area-inset-top) + 12rpx), 74rpx);
+  left: 24rpx;
+  top: max(calc(env(safe-area-inset-top) + 12rpx), 72rpx);
+  width: 56rpx;
+  height: 56rpx;
 }
-.mergeBack {
+.mergeMusicShell {
   position: fixed;
-  z-index: 95;
-  left: 22rpx;
-  top: max(calc(env(safe-area-inset-top) + 12rpx), 74rpx);
-  min-width: 112rpx;
-  height: 64rpx;
-  margin: 0;
-  padding: 0 20rpx 3rpx 13rpx;
-  border-radius: 34rpx;
+  z-index: 96;
+  right: 24rpx;
+  width: 78rpx;
+  height: 78rpx;
+  border-radius: 50%;
+  background: rgba(255,255,255,.94);
+  border: 1rpx solid rgba(180,193,235,.72);
+  box-shadow: 0 9rpx 24rpx rgba(42,60,126,.16), inset 0 2rpx 0 rgba(255,255,255,.98);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4rpx;
-  color: #24488f;
-  font-size: 22rpx;
-  font-weight: 600;
-  line-height: 1;
-  background: rgba(255,255,255,.92);
-  border: 1rpx solid rgba(180,193,235,.72);
-  box-shadow: 0 9rpx 24rpx rgba(42,60,126,.16), inset 0 2rpx 0 rgba(255,255,255,.98);
 }
-.mergeBack::after { border: 0; }
-.mergeBack:active { transform: scale(.95); }
-.mergeBackArrow { margin-top: -5rpx; font: 40rpx/1 Arial,sans-serif; }
-.mergeBackText { white-space: nowrap; }
+.mergeMusicShell:active { transform: scale(.94); }
+.mergeMusicIcon { width: 46rpx; height: 46rpx; }
 .page {
   position: relative;
   width: 947px;
   height: 2048px;
   transform-origin: 0 0;
   overflow: hidden;
+  z-index: 1;
   background: linear-gradient(180deg, #eaf0ff 0%, #dfe7ff 40%, #e9ecff 100%);
 }
 .pageBg {
@@ -77,14 +75,6 @@
   background: rgba(255,255,255,.58); border: 1px solid rgba(113,122,207,.10);
   border-radius: 14px; padding: 4px 10px;
 }
-.musicBtn {
-  position: absolute; right: 240px; top: 111px; width: 72px; height: 72px; z-index: 8;
-  border-radius: 50%; background: rgba(255,255,255,.9);
-  box-shadow: 0 8px 18px rgba(59,75,160,.16), inset 0 0 0 1px rgba(219,225,250,.86);
-  display: flex; align-items: center; justify-content: center;
-}
-.musicBtnIcon { width: 42px; height: 42px; }
-
 /* 标题 */
 .title {
   position: absolute; left: 0; top: 222px; width: 100%; z-index: 3;
@@ -132,22 +122,59 @@
 }
 .gameOver.show { display: flex; }
 .overCard {
-  width: 520px; padding: 38px 42px 34px; border-radius: 34px; text-align: center;
+  width: 650px; padding: 34px 42px 32px; border-radius: 38px; text-align: center;
   background: rgba(255,255,255,.97); border: 1px solid rgba(100,114,210,.14);
   box-shadow: 0 26px 60px rgba(36,55,126,.25);
 }
+.overEyebrow {
+  color: #7c84c5; font-size: 17px; letter-spacing: 4px;
+}
 .overTitle {
-  font-family: "Songti SC","STSong","SimSun",serif; font-size: 34px; font-weight: 700;
+  margin-top: 8px; font-family: "Songti SC","STSong","SimSun",serif; font-size: 34px; font-weight: 700;
   color: #1c3f86; letter-spacing: 2px;
 }
 .overText {
-  margin-top: 14px; font-size: 21px; color: #5a648f; line-height: 1.5;
+  margin-top: 8px; font-size: 18px; color: #76809f; line-height: 1.5;
 }
+.overScore {
+  margin-top: 14px; color: #315bc5; font-family: Georgia,"Times New Roman",serif;
+  line-height: 1; display: flex; align-items: baseline; justify-content: center;
+}
+.overScore > text:first-child { font-size: 62px; font-weight: 700; letter-spacing: 2px; }
+.overScoreUnit { margin-left: 8px; font: 700 20px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+.overStats {
+  margin-top: 17px; padding: 15px 0; border-top: 1px solid rgba(105,119,199,.16); border-bottom: 1px solid rgba(105,119,199,.16);
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.overStats > view { display: flex; flex-direction: column; gap: 5px; color: #24498f; }
+.overStats > view + view { border-left: 1px solid rgba(105,119,199,.16); }
+.overStats text:first-child { font-size: 18px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.overStats text:last-child { font-size: 14px; color: #929ab7; }
+.overReward {
+  margin: 17px auto 0; padding: 10px 14px; border-radius: 22px;
+  display: flex; align-items: center; text-align: left;
+  background: linear-gradient(135deg, rgba(238,244,255,.96), rgba(244,239,255,.96));
+  border: 1px solid rgba(105,119,199,.13);
+}
+.overReward image { width: 72px; height: 72px; flex: 0 0 auto; border-radius: 50%; border: 4px solid #fff; box-shadow: 0 5px 12px rgba(52,74,150,.17); }
+.overRewardCopy { margin-left: 17px; display: flex; flex-direction: column; gap: 5px; }
+.overRewardCopy text:first-child { color: #8d95b4; font-size: 15px; }
+.overRewardCopy text:last-child { color: #284b91; font-size: 23px; font-weight: 700; }
+.overDiy {
+  margin-top: 18px; height: 64px; border-radius: 32px; color: #fff;
+  background: linear-gradient(135deg,#4669eb,#9764ed); box-shadow: 0 10px 22px rgba(74,80,210,.22);
+  font-size: 22px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+}
+.overSecondary { margin-top: 13px; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
 .restart {
-  margin-top: 25px; width: 250px; height: 66px; border-radius: 33px;
-  color: #fff; background: linear-gradient(135deg,#5368e7,#8570ef);
-  font-size: 23px; font-weight: 700; display: flex; align-items: center; justify-content: center;
-  margin-left: auto; margin-right: auto;
+  width: auto; height: 58px; border-radius: 29px;
+  color: #3856a0; background: rgba(245,247,255,.98); border: 1px solid rgba(91,108,193,.22);
+  font-size: 19px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+}
+.hubButton {
+  height: 58px; border-radius: 29px; color: #59668f; background: #fff;
+  border: 1px solid rgba(91,108,193,.22); font-size: 19px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
 }
 
 /* 规则卡 */
@@ -227,6 +254,10 @@
   font-size: 23px; font-weight: 700; letter-spacing: 1px;
   background: linear-gradient(135deg,#5168e7,#8270ef); box-shadow: 0 10px 22px rgba(74,80,210,.22);
   display: flex; align-items: center; justify-content: center;
+}
+.rewardDiy {
+  margin-top: 14px; color: #5067cb; font-size: 19px; font-weight: 700;
+  padding: 10px 18px;
 }
 
 /* 轻提示 */

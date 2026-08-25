@@ -1,9 +1,11 @@
-<view class="game-scene">
+<view class="game-scene" catchtouchmove="blockPageSwipe">
   <view class="play-layer {{winVisible ? 'is-blurred' : ''}}">
     <image class="page-background" src="/packageGame/assets/game/game-bg.jpg" mode="scaleToFill"/>
 
     <view class="game-page">
-      <view class="game-back-shell"><rx-back bind:back="goBack" /></view>
+      <view class="game-back-shell">
+        <rx-back label="返回游戏坊" bind:back="goBack" />
+      </view>
 
       <view class="title-wrap">
         <view class="title-line">
@@ -41,7 +43,7 @@
         </view>
       </view>
 
-      <view class="board-wrap">
+      <view class="board-wrap {{clearMode ? 'clear-mode' : ''}}">
         <image class="board-badge" src="/packageGame/assets/game/board-badge.png" mode="aspectFit"/>
         <view class="board" aria-label="扎染三消棋盘">
           <view
@@ -53,6 +55,7 @@
             bindtouchmove="onTileTouchMove"
             bindtouchend="onTileTouchEnd"
             bindtouchcancel="onTileTouchCancel"
+            catchtap="onTileTap"
           >
             <image class="tile-image" src="{{item.src}}" mode="scaleToFill"/>
           </view>
@@ -138,27 +141,34 @@
   </view>
 
   <view class="win-overlay" wx:if="{{winVisible}}">
-    <view class="win-card">
-      <view class="win-title">染力达成 ✦</view>
+    <view class="win-card {{resultPassed ? 'result-passed' : 'result-unfinished'}}">
+      <view class="result-eyebrow">{{resultEyebrow}}</view>
+      <view class="win-title">{{resultTitle}}</view>
       <view class="win-score">{{winScore}} 分</view>
       <view class="win-stars">
         <text class="{{winStars>=1?'bright':''}}">★</text>
         <text class="{{winStars>=2?'bright':''}}">★</text>
         <text class="{{winStars>=3?'bright':''}}">★</text>
       </view>
-      <view class="win-copy">你在 <text class="win-highlight">{{winDuration}}</text> 秒、剩余 <text class="win-highlight">{{winMoves}}</text> 步内完成了这缸蓝。</view>
+      <view class="win-copy" wx:if="{{resultPassed}}">你在 <text class="win-highlight">{{winDuration}}</text> 秒、剩余 <text class="win-highlight">{{winMoves}}</text> 步内完成了这缸蓝。</view>
+      <view class="win-copy" wx:else>{{resultMessage}}</view>
       <view class="win-reward" wx:if="{{rewardName}}">
         <image wx:if="{{rewardThumb}}" class="reward-thumb" src="{{rewardThumb}}" mode="aspectFit"/>
         <view class="reward-info {{rewardThumb ? '' : 'reward-info-no-thumb'}}">
+          <view class="reward-label">{{rewardLabel}}</view>
           <view class="reward-name">✦ {{rewardName}}</view>
           <view wx:if="{{rewardStory}}" class="reward-story">{{rewardStory}}</view>
         </view>
       </view>
       <view class="win-props" wx:if="{{winProps}}">{{winProps}}</view>
       <view class="win-progress" wx:if="{{collectProgress}}">{{collectProgress}}</view>
-      <view class="continue-button" bindtap="continuePlay">继续玩</view>
+      <view class="result-primary-button" bindtap="goDiyWithReward">用这枚纹样开始 DIY</view>
+      <view class="result-secondary-actions">
+        <view class="result-secondary-button" bindtap="continuePlay">再来一局</view>
+        <view class="result-secondary-button" bindtap="goGameHub">返回游戏坊</view>
+      </view>
     </view>
-    <view class="confetti-layer" wx:if="{{winVisible}}">
+    <view class="confetti-layer" wx:if="{{winVisible && resultPassed}}">
       <text class="confetti" style="left:12%;color:#f5a623;animation-delay:0s;">✦</text>
       <text class="confetti" style="left:26%;color:#7a69ee;animation-delay:.3s;">★</text>
       <text class="confetti" style="left:42%;color:#f5a623;animation-delay:.15s;">✦</text>
@@ -167,4 +177,5 @@
       <text class="confetti" style="left:88%;color:#f5a623;animation-delay:.4s;">✦</text>
     </view>
   </view>
+
 </view>

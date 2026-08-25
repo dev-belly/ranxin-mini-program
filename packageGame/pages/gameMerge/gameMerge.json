@@ -1,6 +1,7 @@
 {
   "navigationStyle": "custom",
   "disableScroll": true,
+  "disableSwipeBack": true,
   "usingComponents": {
     "rx-back": "/components/rx-back/rx-back"
   }

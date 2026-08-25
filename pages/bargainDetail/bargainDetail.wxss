@@ -104,9 +104,10 @@
   z-index: 50;
 }
 .invite-btn, .buy-btn {
-  width: 100%; box-sizing: border-box; min-height: 88rpx;
+  width: 360rpx; max-width: 100%; box-sizing: border-box; min-height: 88rpx;
   display: flex; align-items: center; justify-content: flex-start;
-  padding: 14rpx 28rpx; text-align: left;
+  margin-left: auto; margin-right: auto;
+  padding: 14rpx 24rpx; text-align: left;
 }
 .invite-btn { margin-bottom: 16rpx; }
 .share-button { line-height: 1.2; }
