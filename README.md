@@ -10,6 +10,8 @@
 2. 导入本目录为小程序项目（如用测试号，`project.config.json` 中 `appid` 设为 `touristappid`；正式开发替换为你们的 AppID）。
 3. 工具内编译预览。
 
+目前 `utils/api.js` 默认使用本地 Mock，无需云函数即可体验演示流程。纹样库优先显示已打包图片；图片访问失败时走 Canvas 渲染兜底。用 Node.js 22 运行 `node --test tests/*.test.cjs` 可检查清单加载与兜底行为；GitHub Actions 还检查已提交 JavaScript 的语法。云函数接入、真实数据库和微信开发者工具内的交互仍需单独验收。
+
 ## 团队 Owners（责任域，请勿越界）
 | 角色 | 负责模块 | 验收标准 |
 |---|---|---|
