@@ -16,6 +16,7 @@ const QUOTES = [
 
 // 玩得越高级，解锁越多纹样
 const UNLOCK_BY_LEVEL = { 2: 'hudie', 3: 'tuan', 4: 'shui', 5: 'cang', 6: 'ling', 7: 'he' };
+const DEFAULT_UNLOCKED = ['hudie', 'tuan'];
 
 Page({
   data: {
@@ -262,36 +263,33 @@ Page({
         if (this.unlockPattern(id)) unlockedNow.push(id);
       }
     }
-    const unlockedPatterns = (wx.getStorageSync('ranxin_unlocked_patterns') || [])
+    const catalogIds = engine.PATTERN_CATALOG.map(p => p.id);
+    const storedUnlocks = wx.getStorageSync('ranxin_unlocked_patterns');
+    const unlockedIds = Array.from(new Set([
+      ...DEFAULT_UNLOCKED,
+      ...(Array.isArray(storedUnlocks) ? storedUnlocks : [])
+    ])).filter(id => catalogIds.includes(id));
+    const unlockedPatterns = unlockedIds
       .slice(-3).reverse()
       .map(id => {
         const p = engine.PATTERN_CATALOG.find(x => x.id === id);
         return p ? { id, name: p.name, thumb: '/assets/patterns/' + id + '.png' } : null;
       })
       .filter(Boolean);
-    const defaults = engine.PATTERN_CATALOG.slice(0, 3).map(p => ({ id: p.id, name: p.name, thumb: '/assets/patterns/' + p.id + '.png' }));
-    while (unlockedPatterns.length < 3 && defaults.length) {
-      const d = defaults.shift();
-      if (!unlockedPatterns.find(u => u.id === d.id)) unlockedPatterns.push(d);
-    }
-    const seconds = Math.floor((Date.now() - this._startTime) / 1000);
-    const minutes = Math.max(1, Math.floor(seconds / 60));
-    const percent = Math.min(99, 30 + Math.floor(score / 60));
-    const win = w.maxLevel >= MAX_LEVEL;
     this._startTime = this._startTime || Date.now();
-    const createdCount = Math.max(1, Math.floor(score / 60) + 5);
-    const eliminatedCount = Math.max(1, Math.floor(score / 30) + 8);
-    const topId = UNLOCK_BY_LEVEL[w.maxLevel] || (unlockedPatterns[0] && unlockedPatterns[0].id);
+    const seconds = Math.max(0, Math.floor((Date.now() - this._startTime) / 1000));
+    const win = w.maxLevel >= MAX_LEVEL;
+    const topId = unlockedNow[unlockedNow.length - 1];
     const topP = engine.PATTERN_CATALOG.find(x => x.id === topId);
     const topPattern = topP ? { id: topP.id, name: topP.name, thumb: '/assets/patterns/' + topP.id + '.png', story: topP.story } : null;
     this.setData({
       gameOver: true,
       best,
       result: {
-        score, time: seconds, timeMinutes: minutes, percent,
+        score, time: seconds,
         topLevel: w.maxLevel, topName: LEVELS[w.maxLevel].name,
-        topPattern, unlockedNow, unlockedPatterns, win,
-        createdCount, eliminatedCount,
+        topPattern, unlockedNow, unlockedPatterns, unlockedCount: unlockedIds.length, win,
+        mergeCount: w.mergeCount || 0, dropCount: w.dropCount || 0,
         quote: QUOTES[Math.floor(Math.random() * QUOTES.length)]
       }
     });
@@ -302,7 +300,9 @@ Page({
   },
 
   unlockPattern(id) {
-    const list = wx.getStorageSync('ranxin_unlocked_patterns') || [];
+    if (DEFAULT_UNLOCKED.includes(id)) return false;
+    const stored = wx.getStorageSync('ranxin_unlocked_patterns');
+    const list = Array.isArray(stored) ? stored : [];
     if (list.indexOf(id) >= 0) return false;
     list.push(id);
     wx.setStorageSync('ranxin_unlocked_patterns', list);

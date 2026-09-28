@@ -34,6 +34,8 @@ class PhysicsWorld {
     this.effects = [];        // 合成扩散环特效
     this.events = [];         // 合成飘分/连击事件（供 UI 消费）
     this.score = 0;
+    this.dropCount = 0;
+    this.mergeCount = 0;
     this.maxLevel = 0;
     this.combo = 0;
     this.comboTimer = 0;
@@ -60,6 +62,7 @@ class PhysicsWorld {
     const r = LEVELS[lv].r;
     const cx = Math.max(r + 2, Math.min(this.W - r - 2, x));
     this.balls.push({ id: this._id++, x: cx, y: r + 2, vx: 0, vy: 0, level: lv, merging: false, born: this.time });
+    this.dropCount += 1;
     this.spawnLevel = this.nextLevel;
     this.nextLevel = this._pickSpawn();
   }
@@ -154,6 +157,7 @@ class PhysicsWorld {
       this.balls.splice(hi, 1);
       this.balls.splice(lo, 1);
       this.balls.push({ id: this._id++, x: nx, y: ny, vx: 0, vy: 0, level: nl, merging: false, born: this.time });
+      this.mergeCount += 1;
       // 连击
       if (this.comboTimer > 0) this.combo += 1; else this.combo = 1;
       this.comboTimer = COMBO_WINDOW;

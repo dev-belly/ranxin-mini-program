@@ -46,7 +46,7 @@
         <text class="result-subtitle">你的灵魂扎染之旅又多了一份美好印记 ✦</text>
       </view>
 
-      <view class="reward-card">
+      <view class="reward-card" wx:if="{{result.topPattern}}">
         <view class="reward-left">
           <view class="reward-label">恭喜你获得</view>
           <view class="reward-name">{{result.topPattern.name}}</view>
@@ -54,31 +54,37 @@
         </view>
         <image class="reward-img" src="{{result.topPattern.thumb}}" mode="aspectFill"/>
       </view>
+      <view class="reward-card" wx:else>
+        <view class="reward-left">
+          <view class="reward-label">本局暂未解锁新纹样</view>
+          <view class="reward-name">再试一次，收集更多纹样</view>
+        </view>
+      </view>
 
       <view class="score-card">
         <view class="score-label">这一局，你收获了</view>
         <view class="score-main"><text class="score-icon">✦</text>{{result.score}}<text class="score-unit">分</text></view>
-        <view class="score-percent">超过了 {{result.percent}}% 的玩家</view>
+        <view class="score-percent">本局最高合成等级：{{result.topName}}</view>
         <view class="score-stats">
           <view class="score-stat">
             <view class="score-stat-icon">✿</view>
             <view>
-              <view class="score-stat-num">{{result.createdCount}}</view>
+              <view class="score-stat-num">{{result.mergeCount}}</view>
               <view class="score-stat-label">本局合成</view>
             </view>
           </view>
           <view class="score-stat">
             <view class="score-stat-icon">◷</view>
             <view>
-              <view class="score-stat-num">{{result.timeMinutes}}</view>
-              <view class="score-stat-label">分钟沉浸</view>
+              <view class="score-stat-num">{{result.time}}</view>
+              <view class="score-stat-label">游戏秒数</view>
             </view>
           </view>
           <view class="score-stat">
             <view class="score-stat-icon">✦</view>
             <view>
-              <view class="score-stat-num">{{result.eliminatedCount}}</view>
-              <view class="score-stat-label">消除纹样球</view>
+              <view class="score-stat-num">{{result.dropCount}}</view>
+              <view class="score-stat-label">本局投放</view>
             </view>
           </view>
         </view>
@@ -89,7 +95,7 @@
         <view class="quote-text">{{result.quote}}</view>
       </view>
 
-      <button class="rx-btn-primary result-btn" bindtap="viewCollection">收下纹样 ✦</button>
+      <button class="rx-btn-primary result-btn" bindtap="viewCollection">查看纹样库 ✦</button>
       <view class="result-actions">
         <view class="result-action" bindtap="replay">↻ 再玩一局</view>
         <view class="result-action" bindtap="viewRank">♕ 查看排行榜</view>
@@ -97,7 +103,7 @@
 
       <view class="library-head">
         <text>我的纹样库</text>
-        <text class="library-more" bindtap="viewCollection">已收集 {{result.unlockedPatterns.length}} 个纹样 ›</text>
+        <text class="library-more" bindtap="viewCollection">已收集 {{result.unlockedCount}} 个纹样 ›</text>
       </view>
       <view class="library-row">
         <view wx:for="{{result.unlockedPatterns}}" wx:key="id" class="library-item">

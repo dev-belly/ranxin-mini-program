@@ -43,18 +43,20 @@ Page({
   },
 
   loadUnlocked() {
-    const local = wx.getStorageSync('ranxin_unlocked_patterns') || [];
+    const requestId = (this._unlockRequestId || 0) + 1;
+    this._unlockRequestId = requestId;
     const toViewList = (ids) => engine.PATTERN_CATALOG.map(p => ({ ...p, unlocked: ids.indexOf(p.id) >= 0 }));
-    api.getPatterns({ unlockedOnly: true }).then(list => {
-      const remoteIds = list.map(p => p.id);
+    const apply = (remoteIds) => {
+      if (requestId !== this._unlockRequestId) return;
+      const stored = wx.getStorageSync('ranxin_unlocked_patterns');
+      const local = Array.isArray(stored) ? stored : [];
       const merged = Array.from(new Set([...DEFAULT_UNLOCKED, ...local, ...remoteIds]));
       const view = toViewList(merged);
       this.setData({ unlocked: merged, viewList: view, unlockedCount: view.filter(v => v.unlocked).length }, () => this.renderThumbs());
-    }).catch(() => {
-      const fallback = Array.from(new Set([...DEFAULT_UNLOCKED, ...local]));
-      const view = toViewList(fallback);
-      this.setData({ unlocked: fallback, viewList: view, unlockedCount: view.filter(v => v.unlocked).length }, () => this.renderThumbs());
-    });
+    };
+    api.getPatterns({ unlockedOnly: true }).then(list => {
+      apply(list.map(p => p.id));
+    }).catch(() => apply([]));
   },
 
   goGame() {
