@@ -16,8 +16,8 @@ exports.main = async (event) => {
     list = list.filter(p => p.category === event.category)
   }
 
-  if (event.unlockedOnly && OPENID) {
-    const unlockedIds = await getUnlockedPatternIds(db, OPENID)
+  if (event.unlockedOnly) {
+    const unlockedIds = OPENID ? await getUnlockedPatternIds(db, OPENID) : []
     list = list.filter(p => p.unlockedByDefault || unlockedIds.indexOf(p.id) >= 0)
   }
 

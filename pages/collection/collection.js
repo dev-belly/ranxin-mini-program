@@ -3,6 +3,7 @@
 const engine = require('../../utils/pattern-engine.js');
 const api = require('../../utils/api.js');
 const assets = require('../../utils/assets.js');
+const DEFAULT_UNLOCKED = ['hudie', 'tuan'];
 
 const STORIES = {
   shui: '连续折叠与扎结会形成自然流线，象征流动、松弛与不过度控制。',
@@ -42,17 +43,20 @@ Page({
   },
 
   loadUnlocked() {
-    const local = wx.getStorageSync('ranxin_unlocked_patterns') || [];
+    const requestId = (this._unlockRequestId || 0) + 1;
+    this._unlockRequestId = requestId;
     const toViewList = (ids) => engine.PATTERN_CATALOG.map(p => ({ ...p, unlocked: ids.indexOf(p.id) >= 0 }));
-    api.getPatterns().then(list => {
-      const remoteIds = list.map(p => p.id);
-      const merged = Array.from(new Set([...local, ...remoteIds]));
+    const apply = (remoteIds) => {
+      if (requestId !== this._unlockRequestId) return;
+      const stored = wx.getStorageSync('ranxin_unlocked_patterns');
+      const local = Array.isArray(stored) ? stored : [];
+      const merged = Array.from(new Set([...DEFAULT_UNLOCKED, ...local, ...remoteIds]));
       const view = toViewList(merged);
       this.setData({ unlocked: merged, viewList: view, unlockedCount: view.filter(v => v.unlocked).length }, () => this.renderThumbs());
-    }).catch(() => {
-      const view = toViewList(local);
-      this.setData({ unlocked: local, viewList: view, unlockedCount: view.filter(v => v.unlocked).length }, () => this.renderThumbs());
-    });
+    };
+    api.getPatterns({ unlockedOnly: true }).then(list => {
+      apply(list.map(p => p.id));
+    }).catch(() => apply([]));
   },
 
   goGame() {
