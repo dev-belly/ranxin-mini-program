@@ -4,8 +4,11 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
 
 exports.main = async (event) => {
+  const { OPENID } = cloud.getWXContext()
+  if (!OPENID) throw new Error('需要微信用户身份')
   const payload = event.payload || {}
   const data = {
+    _openid: OPENID,
     carrier: payload.carrier || '',
     patternId: payload.patternId || '',
     diyParams: payload.diyParams || {},

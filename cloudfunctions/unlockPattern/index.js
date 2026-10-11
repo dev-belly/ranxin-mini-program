@@ -13,6 +13,7 @@ exports.main = async (event) => {
   }
 
   const pattern = await getPattern(db, patternId)
+  if (!pattern) return { isNew: false, pattern: null }
   const exist = await db.collection('user_patterns')
     .where({ _openid: OPENID, patternId })
     .limit(1)
@@ -24,6 +25,7 @@ exports.main = async (event) => {
 
   await db.collection('user_patterns').add({
     data: {
+      _openid: OPENID,
       patternId,
       source: event.source || {},
       createdAt: Date.now()

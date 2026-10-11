@@ -19,7 +19,7 @@ exports.main = async () => {
   }
 
   const now = Date.now()
-  const newUser = { nickname: '扎染旅人', createdAt: now }
+  const newUser = { _openid: OPENID, nickname: '扎染旅人', createdAt: now }
   await users.add({ data: newUser })
   return { user: Object.assign({ id: OPENID }, newUser) }
 }
