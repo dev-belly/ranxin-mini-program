@@ -8,7 +8,7 @@
 ### 1. users（用户）
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
-| _openid | string | 微信 OPENID（系统自动） |
+| _openid | string | 云函数从 getWXContext().OPENID 获取并显式保存 |
 | nickname | string | 昵称 |
 | createdAt | number | 注册时间戳 |
 

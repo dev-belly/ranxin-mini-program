@@ -5,9 +5,10 @@ const db = cloud.database()
 
 exports.main = async (event) => {
   const { OPENID } = cloud.getWXContext()
+  if (!OPENID) return { list: [], hasMore: false }
   const page = event.page || 1
   const pageSize = event.pageSize || 10
-  const where = OPENID ? { _openid: OPENID } : {}
+  const where = { _openid: OPENID }
 
   const totalRes = await db.collection('works').where(where).count()
   const total = totalRes.total || 0

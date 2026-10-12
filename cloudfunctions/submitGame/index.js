@@ -9,12 +9,13 @@ const UNLOCK_ORDER = ['shui', 'cang', 'ling', 'he']
 
 exports.main = async (event) => {
   const { OPENID } = cloud.getWXContext()
+  if (!OPENID) throw new Error('需要微信用户身份')
   const score = Number(event.score) || 0
   const duration = Number(event.duration) || 0
 
   // 1. 记录成绩
   await db.collection('game_scores').add({
-    data: { score, duration, createdAt: Date.now() }
+    data: { _openid: OPENID, score, duration, createdAt: Date.now() }
   })
 
   // 2. 分数不足 100：只记录成绩，不奖励纹样
@@ -40,6 +41,7 @@ exports.main = async (event) => {
   if (exist.data.length === 0) {
     await db.collection('user_patterns').add({
       data: {
+        _openid: OPENID,
         patternId: nextId,
         source: { sourceType: 'game' },
         createdAt: Date.now()
