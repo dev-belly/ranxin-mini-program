@@ -13,6 +13,7 @@ exports.main = async (event) => {
     patternId: payload.patternId || '',
     thumb: payload.thumb || '',
     carrier: payload.carrier || '',
+    fabric: payload.fabric || '',
     mood: payload.mood || '',
     dyeName: payload.dyeName || '',
     concentration: payload.concentration || '',

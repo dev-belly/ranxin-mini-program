@@ -117,3 +117,28 @@ test('successive cloud game rewards progress using owned unlock records', async 
   assert.ok(h.tables.game_scores.every(row => row._openid === 'alice'));
   assert.ok(h.tables.user_patterns.every(row => row._openid === 'alice'));
 });
+
+test('cloud-saved works load in the gallery with their identity, date and fabric', async () => {
+  const h = harness();
+  const saved = await h.load('saveWork')({ payload: {
+    title: 'my scarf', patternId: 'shui', fabric: '丝巾', mindfulNote: 'a quiet afternoon',
+  } });
+  const response = await h.load('getMyWorks')({});
+  let page;
+  const file = path.resolve(__dirname, '../pages/works/works.js');
+  vm.runInNewContext(fs.readFileSync(file, 'utf8'), {
+    Page: definition => { page = definition; },
+    require: id => id.includes('api.js') ? { getMyWorks: async () => response }
+      : { getPatternById: () => ({ name: '水波纹', story: '流动与生命力' }) },
+  }, { filename: file });
+  page.setData = function (patch) { Object.assign(this.data, patch); };
+  page.load();
+  await new Promise(setImmediate);
+  assert.equal(page.data.loading, false);
+  assert.equal(page.data.list.length, 1);
+  const work = page.data.list[0];
+  assert.equal(work.workId, saved.workId);
+  assert.equal(work.date, new Date(h.tables.works[0].createdAt).toISOString().slice(0, 10));
+  assert.equal(work.fabric, '丝巾');
+  assert.equal(work.mindfulNote, 'a quiet afternoon');
+});
