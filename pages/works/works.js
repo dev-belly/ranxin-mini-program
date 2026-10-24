@@ -24,19 +24,23 @@ Page({
       const seen = {};
       const list = (res.list || []).map(w => {
         const p = engine.getPatternById(w.patternId);
-        const date = (w.createdAt || w.date || '').slice(0, 10);
+        const createdAt = w.createdAt == null ? w.date : w.createdAt;
+        const timestamp = typeof createdAt === 'number' ? new Date(createdAt) : null;
+        const date = timestamp && !isNaN(timestamp.getTime())
+          ? timestamp.toISOString().slice(0, 10)
+          : (typeof createdAt === 'string' ? createdAt.slice(0, 10) : '');
         if (w.patternId && !seen[w.patternId]) {
           seen[w.patternId] = true;
         }
         return {
-          workId: w.workId,
+          workId: w.workId || w._id,
           title: w.title || (p ? p.name + ' 作品' : '未命名作品'),
           patternId: w.patternId,
           patternName: p ? p.name : (w.patternId || ''),
           story: p ? p.story : '',
           mindfulNote: w.mindfulNote || '',
           date,
-          fabric: w.fabric || '',
+          fabric: w.fabric || w.carrier || '',
           dyeName: w.dyeName || '',
           thumb: w.thumb || ''
         };

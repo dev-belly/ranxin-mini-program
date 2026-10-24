@@ -57,6 +57,7 @@
 | patternId | string | 纹样 id |
 | thumb | string | 缩略图（DIY 导出图 / 实物图） |
 | carrier / mood / dyeName / concentration / oxidationTime / untieMethod | mixed | 创作上下文 |
+| fabric | string | DIY 页面选择的载体名称（如丝巾），作品档案展示；兼容旧记录的 carrier |
 | createdAt | number | 时间戳 |
 
 ### 7. game_scores（合成大染缸成绩）
