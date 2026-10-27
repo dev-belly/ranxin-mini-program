@@ -167,11 +167,15 @@ function saveWork(payload) {
 // ============================================================
 function getMyWorks(params) {
   params = params || {};
+  const page = params.page === undefined ? 1 : params.page;
+  const pageSize = params.pageSize === undefined ? 10 : params.pageSize;
+  if (!Number.isSafeInteger(page) || page < 1 || !Number.isSafeInteger(pageSize)
+      || pageSize < 1 || pageSize > 100 || !Number.isSafeInteger(page * pageSize)) {
+    return Promise.reject(new Error('分页参数无效：page 必须为正整数，pageSize 必须为 1—100 的整数'));
+  }
   if (USE_MOCK) {
     return delay().then(() => {
       const local = readStorage('ranxin_works');
-      const page = params.page || 1;
-      const pageSize = params.pageSize || 10;
       const start = (page - 1) * pageSize;
       const list = local.slice(start, start + pageSize);
       return { list, hasMore: start + pageSize < local.length };

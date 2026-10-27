@@ -4,16 +4,16 @@ const test = require('node:test');
 
 test('cloud unlockedOnly keeps locked patterns hidden without an OPENID', async () => {
   const originalLoad = Module._load;
-  const patterns = [
-    { id: 'hudie', unlockedByDefault: true },
-    { id: 'tuan', unlockedByDefault: true },
-    { id: 'shui', unlockedByDefault: false }
-  ];
+  const { SEED_PATTERNS } = require('../cloudfunctions/shared/utils.js');
+  const patterns = SEED_PATTERNS.map(pattern => ({ ...pattern }));
   const db = {
     collection(name) {
       assert.equal(name, 'patterns');
       return {
-        count: async () => ({ total: patterns.length }),
+        where: filter => ({
+          limit() { return this; },
+          get: async () => ({ data: patterns.filter(pattern => pattern.id === filter.id) }),
+        }),
         get: async () => ({ data: patterns })
       };
     }
@@ -36,7 +36,7 @@ test('cloud unlockedOnly keeps locked patterns hidden without an OPENID', async 
     const unlocked = await main({ unlockedOnly: true });
     assert.deepEqual(unlocked.map(pattern => pattern.id), ['hudie', 'tuan']);
     const catalog = await main({});
-    assert.equal(catalog.length, 3);
+    assert.equal(catalog.length, patterns.length);
   } finally {
     Module._load = originalLoad;
   }

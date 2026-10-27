@@ -142,3 +142,35 @@ test('cloud-saved works load in the gallery with their identity, date and fabric
   assert.equal(work.fabric, '丝巾');
   assert.equal(work.mindfulNote, 'a quiet afternoon');
 });
+
+test('cloud pagination rejects invalid values without a database query', async () => {
+  const h = harness();
+  const getMyWorks = h.load('getMyWorks');
+  for (const params of [
+    { page: -1 }, { page: 0 }, { page: 1.5 }, { page: '2' },
+    { page: Infinity }, { page: Number.MAX_SAFE_INTEGER, pageSize: 2 },
+    { pageSize: '2' }, { pageSize: null }, { pageSize: 0 },
+    { pageSize: -10 }, { pageSize: 1.5 }, { pageSize: 101 },
+  ]) {
+    await assert.rejects(getMyWorks(params), /分页参数无效/);
+  }
+  assert.equal(h.calls(), 0);
+});
+
+test('cloud works pagination keeps page boundaries within the caller records', async () => {
+  const h = harness();
+  h.tables.works = Array.from({ length: 25 }, (_, index) => ({
+    _openid: 'alice', _id: `work-${index}`, createdAt: 25 - index,
+  }));
+  h.tables.works.splice(12, 0, { _openid: 'bob', _id: 'private-bob' });
+  const getMyWorks = h.load('getMyWorks');
+  const second = await getMyWorks({ page: 2, pageSize: 10 });
+  const third = await getMyWorks({ page: 3, pageSize: 10 });
+  assert.equal(second.list.length, 10);
+  assert.equal(second.list[0]._id, 'work-10');
+  assert.equal(second.hasMore, true);
+  assert.equal(third.list.length, 5);
+  assert.equal(third.list[0]._id, 'work-20');
+  assert.equal(third.hasMore, false);
+  assert.ok([...second.list, ...third.list].every(row => row._openid === 'alice'));
+});

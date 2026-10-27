@@ -17,18 +17,17 @@ const SEED_PATTERNS = MOCK_PATTERNS.map(p => {
   return Object.assign({}, p, { story: storyMap[p.id] || '' });
 });
 
-// 自动初始化 patterns 集合（幂等：已有记录则跳过）
+// 补齐缺少的种子纹样；已有业务 id 的记录（包括旧的随机 _id）保持不变。
 async function seedPatterns(db) {
-  try {
-    const { total } = await db.collection('patterns').count();
-    if (total > 0) return; // 已经初始化过
-    for (const p of SEED_PATTERNS) {
-      await db.collection('patterns').add({ data: p });
+  const patterns = db.collection('patterns');
+  for (const p of SEED_PATTERNS) {
+    const existing = await patterns.where({ id: p.id }).limit(1).get();
+    if (existing.data.length === 0) {
+      // 固定 _id 使并发首次请求写入同一记录，避免 add 生成重复纹样。
+      await patterns.doc(`seed-${p.id}`).set({ data: p });
     }
-  } catch (e) {
-    console.error('[seedPatterns] error:', e);
-    // 忽略并发重复初始化导致的异常
   }
+  // 失败向上传递，不能把不完整目录当作成功；下次请求会继续补齐。
 }
 
 // 按 id 查询单个纹样
