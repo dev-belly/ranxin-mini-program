@@ -95,7 +95,9 @@ Page({
   },
 
   setFilter(e) {
-    this.setData({ filter: e.currentTarget.dataset.key });
+    const filter = e.currentTarget.dataset.key;
+    if (this.data.filter === filter) return;
+    this.setData({ filter }, () => this.renderThumbs());
   },
 
   openDetail(e) {

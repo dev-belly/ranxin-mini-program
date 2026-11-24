@@ -125,6 +125,7 @@ Page({
   onShow() {
     const tabBar = this.getTabBar && this.getTabBar();
     if (tabBar && tabBar.setData) tabBar.setData({ selected: 1 });
+    this.applyPatternPrefill();
   },
 
   onLoad() {
@@ -139,14 +140,22 @@ Page({
     });
     this.setData({ patterns, quote: this.randomQuote(0) }, () => {
       this.updateVisible();
+      if (this.applyPatternPrefill()) return;
       const init = patterns.find(p => p.id === this.data.patternId) || patterns[0];
       this.setData({ selPattern: init });
     });
+  },
+
+  applyPatternPrefill() {
     const prefill = wx.getStorageSync('ranxin_diy_prefill');
-    if (prefill && engine.getPatternById(prefill)) {
-      this.setData({ patternId: prefill });
-      wx.removeStorageSync('ranxin_diy_prefill');
-    }
+    const pattern = this.data.patterns.find(item => item.id === prefill);
+    if (!pattern) return false;
+    wx.removeStorageSync('ranxin_diy_prefill');
+    this.setData({ patternId: pattern.id, selPattern: pattern,
+      petals: engine.getPatternById(pattern.id).petals || 8 }, () => {
+      if (this.data.stage === 'craft') this.drawCurrent();
+    });
+    return true;
   },
 
   onReady() {
