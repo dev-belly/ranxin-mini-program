@@ -147,13 +147,15 @@ Page({
   },
 
   applyPatternPrefill() {
+    if (this.data.stage === 'craft' || this.data.showResult || this.data.reviewMode) return false;
     const prefill = wx.getStorageSync('ranxin_diy_prefill');
     const pattern = this.data.patterns.find(item => item.id === prefill);
     if (!pattern) return false;
     wx.removeStorageSync('ranxin_diy_prefill');
-    this.setData({ patternId: pattern.id, selPattern: pattern,
-      petals: engine.getPatternById(pattern.id).petals || 8 }, () => {
-      if (this.data.stage === 'craft') this.drawCurrent();
+    this.setData({
+      patternId: pattern.id,
+      selPattern: pattern,
+      petals: engine.getPatternById(pattern.id).petals || 8
     });
     return true;
   },
@@ -630,6 +632,7 @@ Page({
       quote: this.randomQuote(0)
     }, () => {
       this.stopOxidation();
+      this.applyPatternPrefill();
     });
   }
 });
